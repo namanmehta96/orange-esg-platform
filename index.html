@@ -20,22 +20,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.5;min-height:100vh;}
 
-/* ── API KEY GATE ── */
-#api-gate{position:fixed;inset:0;background:rgba(26,26,26,0.85);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
-.gate-box{background:var(--white);border-radius:14px;padding:36px 40px;width:480px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.25);}
-.gate-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
-.gate-sq{width:38px;height:38px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800;}
-.gate-brand{font-size:16px;font-weight:700;color:var(--ink);}
-.gate-brand span{color:var(--ob);}
-.gate-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;}
-.gate-sub{font-size:13px;color:var(--ink3);margin-bottom:20px;line-height:1.5;}
-.gate-label{font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:6px;}
-.gate-input{width:100%;border:1.5px solid var(--line);border-radius:var(--rr);padding:10px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;transition:border-color .2s;}
-.gate-input:focus{border-color:var(--ob);}
-.gate-btn{width:100%;background:var(--ob);color:white;border:none;border-radius:var(--rr);padding:11px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;font-family:inherit;transition:background .15s;}
-.gate-btn:hover{background:var(--ob-dark);}
-.gate-note{font-size:11px;color:var(--ink3);margin-top:12px;text-align:center;line-height:1.5;}
-.gate-note a{color:var(--ob);text-decoration:none;}
+
 
 /* ── LAYOUT ── */
 .nav{background:var(--white);border-bottom:2.5px solid var(--ob);padding:0 28px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:50;box-shadow:0 1px 0 var(--line);}
@@ -46,8 +31,7 @@ body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surf
 .nav-title{font-size:13px;color:var(--ink2);font-weight:500;}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
 .nav-badge{background:var(--ob-light);color:var(--ob-dark);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
-.nav-key-btn{background:transparent;border:1.5px solid var(--line);border-radius:var(--rr);padding:5px 12px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s;}
-.nav-key-btn:hover{border-color:var(--ob);color:var(--ob);}
+
 .status-bar{background:var(--ob);color:white;padding:9px 28px;display:flex;align-items:center;gap:16px;font-size:12px;font-weight:500;}
 .sdot{width:7px;height:7px;border-radius:50%;background:white;animation:pd 1.5s infinite;display:inline-block;}
 @keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
@@ -242,31 +226,14 @@ body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surf
 </head>
 <body>
 
-<!-- API KEY GATE -->
-<div id="api-gate">
-  <div class="gate-box">
-    <div class="gate-logo">
-      <div class="gate-sq">O</div>
-      <div class="gate-brand"><span>Orange</span> Business · ESG Sales Intelligence</div>
-    </div>
-    <div class="gate-title">Enter your Anthropic API Key</div>
-    <div class="gate-sub">This tool uses Claude AI to generate live ESG profiles for any company. Your API key is stored only in your browser session and never sent to any server other than Anthropic.</div>
-    <div class="gate-label">Anthropic API Key</div>
-    <input class="gate-input" type="password" id="api-key-input" placeholder="sk-ant-api03-..." />
-    <button class="gate-btn" onclick="saveApiKey()">Launch Platform →</button>
-    <p class="gate-note">Get your API key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Key is never stored permanently</p>
-  </div>
-</div>
-
-<!-- MAIN APP (hidden until key entered) -->
-<div id="app-wrap" style="display:none;">
+<!-- MAIN APP -->
+<div id="app-wrap">
   <nav class="nav">
     <div class="nav-sq">O</div>
     <div class="nav-brand"><span>Orange</span> Business</div>
     <div class="nav-div"></div>
     <div class="nav-title">ESG Sales Intelligence Platform</div>
     <div class="nav-right">
-      <button class="nav-key-btn" onclick="resetKey()">Change API Key</button>
       <div class="nav-badge">PROTOTYPE · SIC 2025/26</div>
     </div>
   </nav>
@@ -285,9 +252,9 @@ body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surf
         <div class="sb-lbl">Analyze Any Account</div>
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="search-input" placeholder="Nike, LVMH, Nestlé, Siemens…" />
+          <input type="text" id="search-input" placeholder="Live search coming soon…" disabled />
         </div>
-        <button class="analyze-btn" id="analyze-btn" onclick="analyzeCompany()">
+        <button class="analyze-btn" id="analyze-btn" onclick="analyzeCompany()" disabled style="opacity:.5;cursor:not-allowed;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           Generate ESG Profile
         </button>
@@ -456,20 +423,7 @@ const SEED_DATA = {
   }
 };
 
-// ── API KEY ────────────────────────────────────────────────
-function saveApiKey() {
-  const k = document.getElementById('api-key-input').value.trim();
-  if(!k.startsWith('sk-')) { alert('Please enter a valid Anthropic API key starting with sk-'); return; }
-  ANTHROPIC_API_KEY = k;
-  document.getElementById('api-gate').style.display = 'none';
-  document.getElementById('app-wrap').style.display = 'block';
-}
-function resetKey() {
-  ANTHROPIC_API_KEY = '';
-  document.getElementById('api-gate').style.display = 'flex';
-  document.getElementById('app-wrap').style.display = 'none';
-}
-document.getElementById('api-key-input').addEventListener('keydown', e => { if(e.key==='Enter') saveApiKey(); });
+
 
 // ── RENDER ─────────────────────────────────────────────────
 function loadSeed(key, el) {
@@ -823,6 +777,9 @@ function generateMeetingPack(name) { alert('In the live version, this would gene
 function deepDive(name) { alert('In the live version, this would open a deep solution fit analysis for ' + name + '.'); }
 
 document.getElementById('search-input').addEventListener('keydown', e => { if(e.key==='Enter') analyzeCompany(); });
+
+// Auto-load first demo account
+window.addEventListener('DOMContentLoaded', () => { loadSeed('bnp', document.getElementById('seed-bnp')); });
 </script>
 </body>
 </html>
