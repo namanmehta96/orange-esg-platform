@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Orange Business — ESG Sales Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ob:#FF7900; --ob-dark:#E06800; --ob-light:#FFF3E8; --ob-pale:#FFFAF5;
+  --ink:#1a1a1a; --ink2:#4a4a4a; --ink3:#777; --line:#e2ddd7;
+  --surface:#f6f4f1; --white:#ffffff;
+  --green:#1a7a4a; --green-bg:#edf7f1;
+  --blue:#0056b3; --blue-bg:#e8f0fb;
+  --amber:#944d00; --amber-bg:#fef3e2;
+  --red:#c0392b; --red-bg:#fdecea;
+  --r:10px; --rr:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.5;min-height:100vh;}
+
+/* ── API KEY GATE ── */
+#api-gate{position:fixed;inset:0;background:rgba(26,26,26,0.85);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
+.gate-box{background:var(--white);border-radius:14px;padding:36px 40px;width:480px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.gate-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.gate-sq{width:38px;height:38px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800;}
+.gate-brand{font-size:16px;font-weight:700;color:var(--ink);}
+.gate-brand span{color:var(--ob);}
+.gate-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.gate-sub{font-size:13px;color:var(--ink3);margin-bottom:20px;line-height:1.5;}
+.gate-label{font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:6px;}
+.gate-input{width:100%;border:1.5px solid var(--line);border-radius:var(--rr);padding:10px 14px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;transition:border-color .2s;}
+.gate-input:focus{border-color:var(--ob);}
+.gate-btn{width:100%;background:var(--ob);color:white;border:none;border-radius:var(--rr);padding:11px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;font-family:inherit;transition:background .15s;}
+.gate-btn:hover{background:var(--ob-dark);}
+.gate-note{font-size:11px;color:var(--ink3);margin-top:12px;text-align:center;line-height:1.5;}
+.gate-note a{color:var(--ob);text-decoration:none;}
+
+/* ── LAYOUT ── */
+.nav{background:var(--white);border-bottom:2.5px solid var(--ob);padding:0 28px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:50;box-shadow:0 1px 0 var(--line);}
+.nav-sq{width:36px;height:36px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-right:10px;flex-shrink:0;}
+.nav-brand{font-size:15px;font-weight:700;color:var(--ink);margin-right:20px;}
+.nav-brand span{color:var(--ob);}
+.nav-div{width:1px;height:26px;background:var(--line);margin-right:16px;}
+.nav-title{font-size:13px;color:var(--ink2);font-weight:500;}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.nav-badge{background:var(--ob-light);color:var(--ob-dark);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.nav-key-btn{background:transparent;border:1.5px solid var(--line);border-radius:var(--rr);padding:5px 12px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s;}
+.nav-key-btn:hover{border-color:var(--ob);color:var(--ob);}
+.status-bar{background:var(--ob);color:white;padding:9px 28px;display:flex;align-items:center;gap:16px;font-size:12px;font-weight:500;}
+.sdot{width:7px;height:7px;border-radius:50%;background:white;animation:pd 1.5s infinite;display:inline-block;}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
+.si{display:flex;align-items:center;gap:6px;}
+.sck{font-size:13px;}
+
+.app{display:flex;height:calc(100vh - 56px - 38px);}
+
+/* ── SIDEBAR ── */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 0;overflow-y:auto;}
+.sb-sec{padding:0 14px 14px;}
+.sb-lbl{font-size:10px;font-weight:700;letter-spacing:.9px;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;padding:0 2px;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--rr);padding:8px 11px;transition:border-color .2s;}
+.search-box:focus-within{border-color:var(--ob);}
+.search-box svg{width:14px;height:14px;color:var(--ink3);flex-shrink:0;}
+.search-box input{border:none;background:transparent;font-size:13px;color:var(--ink);outline:none;width:100%;font-family:inherit;}
+.search-box input::placeholder{color:var(--ink3);}
+.analyze-btn{width:100%;background:var(--ob);color:white;border:none;border-radius:var(--rr);padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;transition:background .15s;font-family:inherit;}
+.analyze-btn:hover{background:var(--ob-dark);}
+.analyze-btn:disabled{opacity:.6;cursor:not-allowed;}
+.analyze-btn svg{width:13px;height:13px;}
+.sb-div{height:1px;background:var(--line);margin:4px 0 14px;}
+.acct-list{display:flex;flex-direction:column;gap:2px;padding:0 6px;}
+.acct{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rr);cursor:pointer;transition:background .15s;}
+.acct:hover{background:var(--surface);}
+.acct.active{background:var(--ob-light);}
+.av{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.ai{flex:1;min-width:0;}
+.an{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.as2{font-size:11px;color:var(--ink3);}
+.sp{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.sp-h{background:var(--green-bg);color:var(--green);}
+.sp-m{background:var(--amber-bg);color:var(--amber);}
+.sp-n{background:var(--blue-bg);color:var(--blue);}
+.sb-footer{margin-top:auto;padding:14px 14px 0;border-top:1px solid var(--line);}
+.sb-footer p{font-size:11px;color:var(--ink3);text-align:center;line-height:1.6;}
+.sb-footer span{color:var(--ob);font-weight:600;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:22px 26px;display:flex;flex-direction:column;gap:16px;}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 24px;color:var(--ink3);}
+.empty-ico{font-size:40px;margin-bottom:14px;opacity:.35;}
+.empty-h{font-size:16px;font-weight:600;color:var(--ink2);margin-bottom:8px;}
+.empty-p{font-size:13px;color:var(--ink3);max-width:380px;margin:0 auto;line-height:1.6;}
+
+/* ── LOADING ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;gap:16px;}
+.spinner{width:34px;height:34px;border:2.5px solid var(--line);border-top-color:var(--ob);border-radius:50%;animation:spin .75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:13px;color:var(--ink3);text-align:center;line-height:1.65;}
+.loading-step{font-size:12px;color:var(--ob);font-weight:600;margin-top:4px;}
+.error-state{text-align:center;padding:40px;color:var(--red);}
+
+/* ── COMPANY HEADER ── */
+.co-hdr{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;display:flex;align-items:flex-start;gap:18px;}
+.co-logo{width:54px;height:54px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0;}
+.co-meta{flex:1;}
+.co-name{font-size:20px;font-weight:700;color:var(--ink);}
+.co-sub{font-size:12px;color:var(--ink3);margin-top:3px;}
+.co-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;}
+.tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.ti{background:var(--blue-bg);color:var(--blue);}
+.ts3{background:var(--surface);color:var(--ink2);border:1px solid var(--line);}
+.tsc{background:var(--amber-bg);color:var(--amber);}
+.tcsrd{background:var(--green-bg);color:var(--green);}
+.mat-blk{text-align:right;flex-shrink:0;}
+.mat-lbl{font-size:11px;color:var(--ink3);font-weight:500;margin-bottom:5px;}
+.mat-ring{width:66px;height:66px;position:relative;display:inline-block;}
+.mat-ring svg{width:66px;height:66px;}
+.mat-score{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:700;color:var(--ob);}
+
+/* ── TABS ── */
+.full-box{background:var(--white);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;}
+.tabs{display:flex;padding:0 20px;border-bottom:2px solid var(--line);background:var(--surface);}
+.tab-btn{padding:12px 18px;font-size:13px;font-weight:600;color:var(--ink2);background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:color .15s,border-color .15s;font-family:inherit;margin-bottom:-2px;letter-spacing:.1px;}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--ob);border-bottom-color:var(--ob);background:var(--white);}
+.tab-panel{display:none;padding:20px 22px 22px;}
+.tab-panel.active{display:block;}
+
+/* ── SECTION HEADERS ── */
+.sec-hdr{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+.sec-ico{width:27px;height:27px;background:var(--ob-light);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-ico svg{width:14px;height:14px;color:var(--ob);}
+.sec-title{font-size:14px;font-weight:700;color:var(--ink);}
+.sec-sub{font-size:11px;color:var(--ink3);margin-left:auto;}
+
+/* ── ESG CARDS ── */
+.esg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.esg-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;}
+.esg-ct{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);margin-bottom:6px;}
+.esg-cv{font-size:22px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:4px;}
+.esg-cd{font-size:12px;color:var(--ink2);line-height:1.45;}
+.esg-bar{height:4px;background:var(--line);border-radius:2px;margin-top:10px;}
+.esg-fill{height:4px;border-radius:2px;}
+
+/* ── TOPICS ── */
+.topics-list{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
+.topic-row{display:flex;align-items:center;gap:11px;}
+.topic-name{font-size:13px;font-weight:600;color:var(--ink);width:175px;flex-shrink:0;}
+.topic-track{flex:1;height:6px;background:var(--surface);border-radius:3px;border:1px solid var(--line);}
+.topic-fill{height:4px;border-radius:2px;background:var(--ob);margin:1px;}
+.topic-pct{font-size:12px;color:var(--ink2);font-weight:700;width:36px;text-align:right;}
+.topic-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;flex-shrink:0;width:58px;text-align:center;}
+
+/* ── ORANGE BRIDGE ── */
+.bridge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.bridge-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:15px;cursor:pointer;transition:border-color .2s,box-shadow .2s;position:relative;overflow:hidden;}
+.bridge-card:hover{border-color:var(--ob);box-shadow:0 2px 16px rgba(255,121,0,.1);}
+.bridge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.bc-green::before{background:var(--green);}
+.bc-orange::before{background:var(--ob);}
+.bc-blue::before{background:var(--blue);}
+.bp{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.bp-green{color:var(--green);}
+.bp-orange{color:var(--ob);}
+.bp-blue{color:var(--blue);}
+.bo{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.3;}
+.bd{font-size:12px;color:var(--ink2);line-height:1.45;}
+.bf{display:flex;align-items:center;gap:3px;margin-top:10px;}
+.fd{width:7px;height:7px;border-radius:50%;}
+.fd-on{background:var(--ob);}
+.fd-off{background:var(--line);}
+.fl{font-size:11px;color:var(--ink3);margin-left:5px;}
+
+/* ── WHY BOX ── */
+.why-box{background:var(--ob-pale);border:1.5px solid #ffd4a0;border-radius:var(--rr);padding:12px 14px;margin-bottom:10px;}
+.why-box-title{font-size:11px;font-weight:700;color:var(--ob-dark);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.why-box-title svg{width:13px;height:13px;}
+.why-entry{font-size:12px;color:var(--ink2);line-height:1.5;padding:4px 0;border-bottom:1px solid #ffe4b8;}
+.why-entry:last-child{border-bottom:none;padding-bottom:0;}
+.why-entry strong{color:var(--ink);font-weight:600;}
+
+/* ── FRUGAL CARD ── */
+.frugal-card{background:#1a1a1a;border-radius:var(--r);padding:18px 22px;display:flex;align-items:flex-start;gap:14px;margin-top:14px;}
+.frugal-ico{width:42px;height:42px;background:rgba(255,121,0,.2);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.frugal-ico svg{width:20px;height:20px;}
+.frugal-lbl{font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--ob);text-transform:uppercase;margin-bottom:5px;}
+.frugal-title{font-size:14px;font-weight:700;color:white;margin-bottom:5px;}
+.frugal-desc{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;}
+.frugal-saving{background:rgba(255,121,0,.15);border:1px solid rgba(255,121,0,.3);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:12px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:6px;}
+
+/* ── STAKEHOLDERS ── */
+.stake-list{display:flex;flex-direction:column;gap:8px;}
+.stake-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);cursor:pointer;transition:border-color .15s,background .15s;}
+.stake-row:hover{border-color:var(--ob);background:var(--ob-pale);}
+.sav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.si2{flex:1;}
+.sn{font-size:13px;font-weight:700;color:var(--ink);}
+.sr{font-size:11px;color:var(--ink3);}
+.sw{font-size:11px;color:var(--ink2);background:var(--white);border:1px solid var(--line);border-radius:4px;padding:3px 8px;max-width:190px;text-align:center;line-height:1.35;}
+.spr{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;}
+.ph{background:var(--ob-light);color:var(--ob-dark);}
+.pm{background:var(--blue-bg);color:var(--blue);}
+
+/* ── QUESTIONS ── */
+.q-list{display:flex;flex-direction:column;gap:8px;}
+.q-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--ob-pale);border:1.5px solid #ffd4a0;border-radius:var(--rr);cursor:pointer;transition:border-color .15s,background .15s;}
+.q-item:hover{border-color:var(--ob);background:#fff5ea;}
+.q-num{width:22px;height:22px;border-radius:50%;background:var(--ob);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.q-text{font-size:13px;color:var(--ink);line-height:1.45;}
+.q-per{font-size:11px;color:var(--ink3);margin-top:3px;font-style:italic;}
+
+/* ── CRM ── */
+.crm-tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.crm-tag{font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+.crm-tag-dot{width:6px;height:6px;border-radius:50%;}
+.crm-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.crm-table th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);padding:0 8px 8px;border-bottom:2px solid var(--line);}
+.crm-table td{padding:8px 8px;border-bottom:1px solid var(--surface);color:var(--ink2);vertical-align:middle;}
+.crm-table tr:hover td{background:var(--surface);}
+.crm-table tr:last-child td{border-bottom:none;}
+.crm-field{font-weight:600;color:var(--ink);}
+.crm-export-btn{display:inline-flex;align-items:center;gap:7px;background:var(--ob);color:white;border:none;border-radius:var(--rr);padding:9px 16px;font-size:13px;font-weight:600;color:white;cursor:pointer;margin-top:14px;font-family:inherit;transition:background .15s;}
+.crm-export-btn:hover{background:var(--ob-dark);}
+.crm-export-btn svg{width:14px;height:14px;}
+
+/* ── ACTIONS ── */
+.actions-row{display:flex;gap:10px;}
+.action-btn{flex:1;padding:11px 14px;border-radius:var(--rr);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;}
+.action-btn svg{width:13px;height:13px;}
+.ap{background:var(--ob);color:white;border:none;}
+.ap:hover{background:var(--ob-dark);}
+.asec{background:transparent;color:var(--ink2);border:1.5px solid var(--line);}
+.asec:hover{border-color:var(--ob);color:var(--ob);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.divider{height:1px;background:var(--line);margin:16px 0;}
+</style>
+</head>
+<body>
+
+<!-- API KEY GATE -->
+<div id="api-gate">
+  <div class="gate-box">
+    <div class="gate-logo">
+      <div class="gate-sq">O</div>
+      <div class="gate-brand"><span>Orange</span> Business · ESG Sales Intelligence</div>
+    </div>
+    <div class="gate-title">Enter your Anthropic API Key</div>
+    <div class="gate-sub">This tool uses Claude AI to generate live ESG profiles for any company. Your API key is stored only in your browser session and never sent to any server other than Anthropic.</div>
+    <div class="gate-label">Anthropic API Key</div>
+    <input class="gate-input" type="password" id="api-key-input" placeholder="sk-ant-api03-..." />
+    <button class="gate-btn" onclick="saveApiKey()">Launch Platform →</button>
+    <p class="gate-note">Get your API key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Key is never stored permanently</p>
+  </div>
+</div>
+
+<!-- MAIN APP (hidden until key entered) -->
+<div id="app-wrap" style="display:none;">
+  <nav class="nav">
+    <div class="nav-sq">O</div>
+    <div class="nav-brand"><span>Orange</span> Business</div>
+    <div class="nav-div"></div>
+    <div class="nav-title">ESG Sales Intelligence Platform</div>
+    <div class="nav-right">
+      <button class="nav-key-btn" onclick="resetKey()">Change API Key</button>
+      <div class="nav-badge">PROTOTYPE · SIC 2025/26</div>
+    </div>
+  </nav>
+
+  <div class="status-bar">
+    <div class="si"><span class="sdot"></span> Live analysis engine active</div>
+    <div class="si"><span class="sck">✓</span> Claude-powered ESG profiling</div>
+    <div class="si"><span class="sck">✓</span> Orange Business solution mapping</div>
+    <div style="margin-left:auto;font-weight:400;opacity:.85;" id="status-right">Ready · Enter any company to begin</div>
+  </div>
+
+  <div class="app">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-lbl">Analyze Any Account</div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="search-input" placeholder="Nike, LVMH, Nestlé, Siemens…" />
+        </div>
+        <button class="analyze-btn" id="analyze-btn" onclick="analyzeCompany()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Generate ESG Profile
+        </button>
+      </div>
+      <div class="sb-div"></div>
+      <div class="sb-sec" style="padding-bottom:4px"><div class="sb-lbl">Demo Accounts</div></div>
+      <div class="acct-list" id="acct-list">
+        <div class="acct" id="seed-bnp" onclick="loadSeed('bnp',this)">
+          <div class="av" style="background:#003087;color:white;">BP</div>
+          <div class="ai"><div class="an">BNP Paribas</div><div class="as2">Financial Services</div></div>
+          <div class="sp sp-h">A</div>
+        </div>
+        <div class="acct" id="seed-unilever" onclick="loadSeed('unilever',this)">
+          <div class="av" style="background:#1f3c88;color:white;">UL</div>
+          <div class="ai"><div class="an">Unilever</div><div class="as2">FMCG</div></div>
+          <div class="sp sp-h">A+</div>
+        </div>
+        <div class="acct" id="seed-renault" onclick="loadSeed('renault',this)">
+          <div class="av" style="background:#f0c000;color:#1a1a1a;">RN</div>
+          <div class="ai"><div class="an">Renault Group</div><div class="as2">Automotive</div></div>
+          <div class="sp sp-m">B+</div>
+        </div>
+      </div>
+      <div class="sb-footer">
+        <p>Powered by Orange Business ESG Intelligence &amp; Claude AI<br><span>Any company · Any industry · Any sector</span></p>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content" id="main-content">
+      <div class="empty" id="empty-state">
+        <div class="empty-ico">◎</div>
+        <div class="empty-h">Enter any company to generate a meeting-ready ESG profile</div>
+        <div class="empty-p">Type a company name and click Generate, or select a demo account. The platform analyses ESG commitments, maps Orange solutions specifically to that company's targets, and prepares your full meeting brief.</div>
+      </div>
+      <div id="profile-area" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let ANTHROPIC_API_KEY = '';
+
+const CSS_TAGS = {
+  sustainability:'background:#edf7f1;color:#1a7a4a;',
+  csrd:'background:#e8f0fb;color:#0056b3;',
+  scope3:'background:#fef3e2;color:#944d00;',
+  itgreen:'background:#FFF3E8;color:#E06800;'
+};
+const DOT_COLORS = {
+  sustainability:'#1a7a4a',csrd:'#0056b3',scope3:'#944d00',itgreen:'#FF7900'
+};
+
+// ── SEED DATA ──────────────────────────────────────────────
+const SEED_DATA = {
+  bnp:{
+    name:'BNP Paribas SA',industry:'Financial Services',hq:'Paris, France',
+    size:'183,000 employees · EUR 11.2B net revenue · CAC 40',
+    score:85,initials:'BP',color:'#003087',textColor:'white',
+    tags:['Financial Services','Scope 3 Financed Emissions','CSRD Wave 1','Large Enterprise'],
+    tagClasses:['ti','tsc','tcsrd','ts3'],
+    esg:[
+      {title:'Net Zero Target',value:'2050',desc:'Portfolio alignment to 1.5°C with interim 2030 reduction targets across all financed sectors.',fill:72,fillColor:'#1a7a4a'},
+      {title:'CSRD Status',value:'Wave 1',desc:'Full ESRS disclosure required FY2024. TCFD-aligned since 2020, double materiality assessment completed.',fill:88,fillColor:'#0056b3'},
+      {title:'Carbon Scope',value:'1–3',desc:'Active Scope 3 financed emissions tracking across lending and investment portfolios. SBTi validation in progress.',fill:60,fillColor:'#FF7900'}
+    ],
+    topics:[
+      {name:'Financed emissions',pct:92,badge:'Critical',badgeBg:'#fdecea',badgeColor:'#c0392b'},
+      {name:'ESG data & reporting',pct:85,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Digital carbon footprint',pct:74,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Supply chain traceability',pct:65,badge:'Medium',badgeBg:'#fef3e2',badgeColor:'#944d00'},
+      {name:'Building energy use',pct:50,badge:'Medium',badgeBg:'#fef3e2',badgeColor:'#944d00'}
+    ],
+    solutions:[
+      {pillar:'IT for Society',cls:'bc-green',pcls:'bp-green',offer:'ESG Data Management Platform',desc:'Centralised ESG KPI collection and CSRD-ready reporting workflows. Pre-built ESRS data taxonomy reduces compliance overhead for Wave 1 reporters.',why:'BNP Paribas faces mandatory CSRD Wave 1 disclosure for FY2024 and has flagged data aggregation across business lines as a key pain point.',fit:4},
+      {pillar:'IT for Green',cls:'bc-orange',pcls:'bp-orange',offer:'Scope 3 Financed Emissions Estimator',desc:'IoT-enabled measurement and automated Scope 3 category tracking across financed portfolios. Integrates PCAF methodology for financial institutions.',why:'BNP Paribas has committed to SBTi-aligned financed emissions targets by 2030 but lacks granular portfolio-level carbon data to validate progress.',fit:5},
+      {pillar:'Frugal AI & Eco-Design',cls:'bc-blue',pcls:'bp-blue',offer:'RGESN-Compliant IT Architecture',desc:'Audit and right-size digital infrastructure using the RGESN eco-design framework. Reduce the bank\'s operational digital carbon footprint reported under ESRS E1.',why:'BNP Paribas reports Scope 1–2 IT emissions and faces internal pressure to reduce its technology footprint ahead of ESRS E1 disclosure.',fit:3}
+    ],
+    frugal:{title:'Document extraction for CSRD disclosure automation',desc:'Lightweight NLP models extract ESG data points from existing BNP Paribas sustainability reports and supplier documents — avoiding costly new data infrastructure. Aligns with Orange\'s responsible AI principles.',saving:'Est. 60–70% reduction in manual ESG data entry · No new digital infrastructure required'},
+    stakeholders:[
+      {init:'LM',bg:'#e8f0fb',tc:'#0056b3',name:'Laurent Mignon',role:'Group Chief Sustainability Officer · BNP Paribas',why:'Owns net-zero strategy & CSRD reporting',priority:'Priority 1',ph:true},
+      {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'Technology & Transformation Director',role:'CTO Office (via existing CIO relationship)',why:'Digital carbon & IT architecture',priority:'Priority 1',ph:true},
+      {init:'ESG',bg:'#edf7f1',tc:'#1a7a4a',name:'Head of ESG Reporting & Data',role:'Finance Division · BNP Paribas',why:'CSRD data workflows & tooling gaps',priority:'Priority 2',ph:false}
+    ],
+    questions:[
+      {text:'"How are you currently tracking financed emissions across your portfolio, and where are the biggest data gaps ahead of your 2030 SBTi interim targets?"',persona:'For: Chief Sustainability Officer'},
+      {text:'"As a Wave 1 CSRD reporter, what is your current process for collecting ESG data points across business lines — and how much of that remains manual today?"',persona:'For: Head of ESG Reporting'},
+      {text:'"What visibility do you have on the carbon footprint of your own digital infrastructure — and has RGESN eco-design come up internally as a priority?"',persona:'For: CTO / IT Leadership'}
+    ],
+    crmTags:[{label:'Sustainability Opportunity',cls:'sustainability'},{label:'CSRD Wave 1',cls:'csrd'},{label:'Scope 3 Priority',cls:'scope3'},{label:'IT for Society',cls:'itgreen'}],
+    crmRows:[['Account','BNP Paribas SA','Public record'],['Industry','Financial Services','Public record'],['Opportunity type','Sustainability Solution','Auto-tagged'],['ESG maturity score','85 / 100 (Advanced)','ESG analysis'],['CSRD status','Wave 1 — FY2024 filing','Annual report'],['Primary solution fit','ESG Data Mgmt Platform · Scope 3 Estimator','Orange mapping'],['Priority CSR contact','Chief Sustainability Officer','Public filings'],['Net zero commitment','2050 (1.5°C aligned)','Sustainability report'],['Next action','Schedule discovery call — CSO + IT','Recommended']]
+  },
+  unilever:{
+    name:'Unilever PLC',industry:'FMCG',hq:'London / Rotterdam',
+    size:'128,000 employees · EUR 60.1B revenue · FTSE 100',
+    score:91,initials:'UL',color:'#1f3c88',textColor:'white',
+    tags:['FMCG','Scope 3 Packaging','CSRD Wave 1','Net Zero 2039'],
+    tagClasses:['ti','tsc','tcsrd','ts3'],
+    esg:[
+      {title:'Net Zero Target',value:'2039',desc:'One of the world\'s most ambitious net-zero commitments — full value chain decarbonisation including Scope 3 supplier emissions.',fill:85,fillColor:'#1a7a4a'},
+      {title:'Packaging Goal',value:'100%',desc:'100% reusable, recyclable or compostable packaging by 2025. Halving virgin plastic usage vs 2019 baseline.',fill:78,fillColor:'#0056b3'},
+      {title:'Supplier Scope 3',value:'Tier 1–3',desc:'Mandatory supplier ESG data collection across 56,000+ suppliers. Nature-positive commitments across agricultural sourcing.',fill:65,fillColor:'#FF7900'}
+    ],
+    topics:[
+      {name:'Scope 3 supply chain',pct:95,badge:'Critical',badgeBg:'#fdecea',badgeColor:'#c0392b'},
+      {name:'Packaging & plastics',pct:88,badge:'Critical',badgeBg:'#fdecea',badgeColor:'#c0392b'},
+      {name:'Supplier ESG data',pct:80,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Deforestation & nature',pct:72,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Water & livelihoods',pct:58,badge:'Medium',badgeBg:'#fef3e2',badgeColor:'#944d00'}
+    ],
+    solutions:[
+      {pillar:'IT for Green',cls:'bc-orange',pcls:'bp-orange',offer:'Scope 3 Supplier Carbon Estimator',desc:'Automated Scope 3 category 1 & 4 tracking across Unilever\'s 56,000+ supplier network. IoT-enabled product carbon footprint (PCF) estimation by SKU.',why:'Unilever\'s 2039 net-zero target hinges on Scope 3 supplier emissions representing 70%+ of its total footprint. Current supplier data collection is largely manual.',fit:5},
+      {pillar:'IT for Society',cls:'bc-green',pcls:'bp-green',offer:'ESG Data Platform — Supplier Portal',desc:'Centralised ESG KPI collection from suppliers with CSRD-compliant ESRS data taxonomy. Validated self-reporting with automated anomaly detection.',why:'Unilever collects sustainability data from 56,000+ suppliers but faces quality and completeness challenges that risk CSRD non-compliance.',fit:4},
+      {pillar:'IT for Green',cls:'bc-blue',pcls:'bp-blue',offer:'Circular Mobility & Device Leasing',desc:'Orange mobile leasing with circular recovery targets for Unilever\'s global mobile fleet. Reduces Scope 3 category 2 (capital goods) emissions.',why:'Unilever has committed to circular economy principles across operations — circular mobile leasing applies directly to its 128,000-employee device fleet.',fit:3}
+    ],
+    frugal:{title:'Frugal AI for supplier ESG document extraction & validation',desc:'Lightweight NLP models extract and cross-validate ESG data from supplier self-assessments and third-party audit reports — no large-model overhead. Processes PDFs from 56,000+ suppliers at scale with minimal compute footprint.',saving:'Est. 75% reduction in manual supplier data validation · Aligns with Unilever\'s responsible sourcing commitments'},
+    stakeholders:[
+      {init:'RM',bg:'#edf7f1',tc:'#1a7a4a',name:'Rebecca Marmot',role:'Chief Sustainability Officer · Unilever',why:'Owns 2039 net-zero & supplier strategy',priority:'Priority 1',ph:true},
+      {init:'SC',bg:'#e8f0fb',tc:'#0056b3',name:'Supply Chain Director',role:'Global Operations (via CIO relationship)',why:'Scope 3 data & supplier traceability',priority:'Priority 1',ph:true},
+      {init:'PS',bg:'#fff3e8',tc:'#e06800',name:'Head of Sustainable Sourcing',role:'Procurement Division · Unilever',why:'Supplier ESG data collection gaps',priority:'Priority 2',ph:false}
+    ],
+    questions:[
+      {text:'"Your 2039 net-zero target relies on Scope 3 — how are you currently collecting and validating carbon data from your 56,000+ suppliers at scale?"',persona:'For: Chief Sustainability Officer'},
+      {text:'"What percentage of your CSRD supplier data collection is still manual today — and where are the biggest quality gaps in your Tier 1 reporting?"',persona:'For: Supply Chain Director'},
+      {text:'"Have you explored circular leasing for your global device fleet as a route to reducing Scope 3 capital goods emissions and progressing circular economy commitments?"',persona:'For: Head of Sustainable Sourcing'}
+    ],
+    crmTags:[{label:'Sustainability Opportunity',cls:'sustainability'},{label:'Scope 3 Critical',cls:'scope3'},{label:'Supplier ESG Data',cls:'csrd'},{label:'IT for Green',cls:'itgreen'}],
+    crmRows:[['Account','Unilever PLC','Public record'],['Industry','FMCG','Public record'],['Opportunity type','Sustainability Solution','Auto-tagged'],['ESG maturity score','91 / 100 (Leader)','ESG analysis'],['Net zero commitment','2039 (full value chain)','Sustainability report'],['Primary solution fit','Scope 3 Estimator · Supplier ESG Portal','Orange mapping'],['Priority CSR contact','Chief Sustainability Officer','Public filings'],['CSRD status','Wave 1 — FY2024 filing','Annual report'],['Next action','Scope 3 data discovery session — CSO + Supply Chain','Recommended']]
+  },
+  renault:{
+    name:'Renault Group SA',industry:'Automotive',hq:'Boulogne-Billancourt, France',
+    size:'105,000 employees · EUR 52.4B revenue · CAC 40',
+    score:72,initials:'RN',color:'#f0c000',textColor:'#1a1a1a',
+    tags:['Automotive','EV Transition','CSRD Wave 1','Circular Mobility'],
+    tagClasses:['ti','tsc','tcsrd','ts3'],
+    esg:[
+      {title:'Net Zero Target',value:'2050',desc:'Carbon neutral across full lifecycle by 2050. 90% reduction in Scope 1&2 by 2030, EV mix target of 100% passenger cars in Europe.',fill:68,fillColor:'#1a7a4a'},
+      {title:'EV Share',value:'39%',desc:'39% of European sales were electric in 2024. Ampere EV division carved out. Battery remanufacturing at Flins Circularity Hub operational.',fill:55,fillColor:'#0056b3'},
+      {title:'Circular Economy',value:'Tier 1–2',desc:'Battery second-life programme, 80% recycled content in vehicle parts by 2030. Re-Factory model at Flins facility.',fill:60,fillColor:'#FF7900'}
+    ],
+    topics:[
+      {name:'EV lifecycle emissions',pct:90,badge:'Critical',badgeBg:'#fdecea',badgeColor:'#c0392b'},
+      {name:'Battery circularity',pct:82,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Supply chain Scope 3',pct:75,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Manufacturing energy',pct:68,badge:'High',badgeBg:'#FFF3E8',badgeColor:'#E06800'},
+      {name:'Digital carbon footprint',pct:45,badge:'Medium',badgeBg:'#fef3e2',badgeColor:'#944d00'}
+    ],
+    solutions:[
+      {pillar:'IT for Green',cls:'bc-orange',pcls:'bp-orange',offer:'Smart Eco-Energy — Manufacturing Plants',desc:'IoT-based energy management across Renault\'s 15 manufacturing sites. Real-time consumption monitoring and carbon KPI dashboards aligned to ESRS E1.',why:'Renault has committed to 90% Scope 1&2 reduction by 2030 across manufacturing. Smart energy monitoring is the fastest lever to evidence progress in CSRD filings.',fit:5},
+      {pillar:'IT for Green',cls:'bc-green',pcls:'bp-green',offer:'Circular Mobility Fleet Programme',desc:'Orange device leasing with circular recovery for Renault\'s 105,000-employee mobile fleet. Certified refurbishment and end-of-life recycling with fleet carbon reporting.',why:'Renault\'s circular economy commitments apply to its own operations. A circular mobile fleet is a visible, measurable sustainability action.',fit:4},
+      {pillar:'IT for Society',cls:'bc-blue',pcls:'bp-blue',offer:'ESG Data Platform + CSRD Reporting',desc:'CSRD-compliant data collection across Renault\'s Tier 1–2 supplier network. Automated ESRS E1 and E5 reporting covering manufacturing emissions and circular economy KPIs.',why:'Renault\'s Wave 1 CSRD obligations require detailed ESRS E1 and E5 disclosures. Existing data collection is fragmented across ERP and plant systems.',fit:4}
+    ],
+    frugal:{title:'Right-sized AI for manufacturing energy anomaly detection',desc:'Deploy lightweight on-premise AI models to detect energy anomalies across Renault\'s plant IoT sensor networks in real time — with full transparency on the model\'s own carbon cost. Aligned to Orange\'s RGESN framework.',saving:'Est. 8–12% plant energy waste reduction · On-premise deployment minimises AI carbon footprint · Fully auditable'},
+    stakeholders:[
+      {init:'TP',bg:'#fff3e8',tc:'#e06800',name:'Thierry Piéton',role:'Chief Financial Officer (ESG co-owner) · Renault',why:'CSRD financial materiality & net-zero investment',priority:'Priority 1',ph:true},
+      {init:'VP',bg:'#edf7f1',tc:'#1a7a4a',name:'VP Sustainability & CSR',role:'Group Sustainability Division · Renault',why:'Owns EV lifecycle & circular economy strategy',priority:'Priority 1',ph:true},
+      {init:'MF',bg:'#e8f0fb',tc:'#0056b3',name:'Manufacturing IT Director',role:'Industrial Systems (via CIO relationship)',why:'Plant IoT & energy management systems',priority:'Priority 2',ph:false}
+    ],
+    questions:[
+      {text:'"Your 2030 Scope 1&2 target requires 90% reduction — how are you currently monitoring and reporting energy consumption at plant level in real time?"',persona:'For: VP Sustainability / CFO'},
+      {text:'"You\'ve committed to 80% recycled content by 2030 — are your current CSRD supplier data workflows capturing the circularity metrics ESRS E5 requires you to disclose?"',persona:'For: Head of Supply Chain'},
+      {text:'"Renault\'s 105,000-employee device fleet is a circular economy opportunity — has circular mobile leasing been evaluated against your Scope 3 capital goods targets?"',persona:'For: Manufacturing IT Director'}
+    ],
+    crmTags:[{label:'Sustainability Opportunity',cls:'sustainability'},{label:'Manufacturing Energy',cls:'itgreen'},{label:'CSRD Wave 1',cls:'csrd'},{label:'Circular Economy',cls:'scope3'}],
+    crmRows:[['Account','Renault Group SA','Public record'],['Industry','Automotive','Public record'],['Opportunity type','Sustainability Solution','Auto-tagged'],['ESG maturity score','72 / 100 (Advancing)','ESG analysis'],['Net zero commitment','2050 (Scope 1–3, full lifecycle)','Sustainability report'],['Primary solution fit','Smart Eco-Energy · Circular Fleet · ESG Data Platform','Orange mapping'],['Priority CSR contact','VP Sustainability & CSR','Public filings'],['CSRD status','Wave 1 — FY2024 filing','Annual report'],['Next action','Discovery session: plant energy monitoring + CSRD data gaps','Recommended']]
+  }
+};
+
+// ── API KEY ────────────────────────────────────────────────
+function saveApiKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  if(!k.startsWith('sk-')) { alert('Please enter a valid Anthropic API key starting with sk-'); return; }
+  ANTHROPIC_API_KEY = k;
+  document.getElementById('api-gate').style.display = 'none';
+  document.getElementById('app-wrap').style.display = 'block';
+}
+function resetKey() {
+  ANTHROPIC_API_KEY = '';
+  document.getElementById('api-gate').style.display = 'flex';
+  document.getElementById('app-wrap').style.display = 'none';
+}
+document.getElementById('api-key-input').addEventListener('keydown', e => { if(e.key==='Enter') saveApiKey(); });
+
+// ── RENDER ─────────────────────────────────────────────────
+function loadSeed(key, el) {
+  document.querySelectorAll('.acct').forEach(a => a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderProfile(SEED_DATA[key]);
+}
+
+function renderProfile(d) {
+  document.getElementById('empty-state').style.display = 'none';
+  const pa = document.getElementById('profile-area');
+  pa.style.display = 'flex';
+  pa.style.flexDirection = 'column';
+  pa.style.gap = '16px';
+  document.getElementById('status-right').textContent = 'Viewing: ' + d.name + ' · ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+  const scoreOffset = Math.round(164 - (d.score / 100) * 138);
+
+  pa.innerHTML = `
+  <div class="co-hdr">
+    <div class="co-logo" style="background:${d.color};color:${d.textColor};">${d.initials}</div>
+    <div class="co-meta">
+      <div class="co-name">${d.name}</div>
+      <div class="co-sub">${d.size} · ${d.hq}</div>
+      <div class="co-tags">${d.tags.map((t,i)=>`<span class="tag ${d.tagClasses[i]||'ts3'}">${t}</span>`).join('')}</div>
+    </div>
+    <div class="mat-blk">
+      <div class="mat-lbl">ESG Maturity</div>
+      <div class="mat-ring">
+        <svg viewBox="0 0 66 66">
+          <circle cx="33" cy="33" r="27" fill="none" stroke="#e2ddd7" stroke-width="5.5"/>
+          <circle cx="33" cy="33" r="27" fill="none" stroke="#FF7900" stroke-width="5.5"
+            stroke-dasharray="138 169" stroke-dashoffset="${scoreOffset}"
+            stroke-linecap="round" transform="rotate(-90 33 33)"/>
+        </svg>
+        <div class="mat-score">${d.score}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="full-box">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('brief',this)">Meeting Brief</button>
+      <button class="tab-btn" onclick="switchTab('bridge',this)">Orange Bridge</button>
+      <button class="tab-btn" onclick="switchTab('contacts',this)">Key Contacts</button>
+      <button class="tab-btn" onclick="switchTab('crm',this)">CRM Export</button>
+    </div>
+
+    <!-- BRIEF -->
+    <div class="tab-panel active" id="tab-brief">
+      <div class="sec-hdr">
+        <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+        <div class="sec-title">ESG Commitments & Targets</div>
+        <div class="sec-sub">From latest sustainability report</div>
+      </div>
+      <div class="esg-grid">${d.esg.map(e=>`
+        <div class="esg-card">
+          <div class="esg-ct">${e.title}</div>
+          <div class="esg-cv">${e.value}</div>
+          <div class="esg-cd">${e.desc}</div>
+          <div class="esg-bar"><div class="esg-fill" style="width:${e.fill}%;background:${e.fillColor}"></div></div>
+        </div>`).join('')}
+      </div>
+      <div class="divider"></div>
+      <div class="sec-hdr">
+        <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="sec-title">Material ESG Topics — Priority Ranking</div>
+      </div>
+      <div class="topics-list">${d.topics.map(t=>`
+        <div class="topic-row">
+          <div class="topic-name">${t.name}</div>
+          <div class="topic-track"><div class="topic-fill" style="width:${t.pct}%"></div></div>
+          <div class="topic-pct">${t.pct}%</div>
+          <div class="topic-badge" style="background:${t.badgeBg};color:${t.badgeColor};">${t.badge}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- BRIDGE -->
+    <div class="tab-panel" id="tab-bridge">
+      <div class="sec-hdr">
+        <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="sec-title">Orange Solutions — Matched to ${d.name.split(' ')[0]}'s Specific ESG Targets</div>
+        <div class="sec-sub">Fit rationale per solution</div>
+      </div>
+      <div class="bridge-grid">${d.solutions.map(s=>`
+        <div class="bridge-card ${s.cls}">
+          <div class="bp ${s.pcls}">${s.pillar}</div>
+          <div class="bo">${s.offer}</div>
+          <div class="bd">${s.desc}</div>
+          <div class="bf">${Array.from({length:5},(_,i)=>`<div class="fd ${i<s.fit?'fd-on':'fd-off'}"></div>`).join('')}
+            <div class="fl">${s.fit===5?'Critical fit':s.fit>=4?'Strong fit':'Good fit'}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+      <div class="why-box" style="margin-top:14px;">
+        <div class="why-box-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>Why these solutions for ${d.name.split(' ')[0]}?</div>
+        ${d.solutions.map((s,i)=>`<div class="why-entry"><strong>${s.offer}:</strong> ${s.why}</div>`).join('')}
+      </div>
+      <div class="frugal-card">
+        <div class="frugal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#FF7900" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div style="flex:1;">
+          <div class="frugal-lbl">Frugal AI Recommendation</div>
+          <div class="frugal-title">${d.frugal.title}</div>
+          <div class="frugal-desc">${d.frugal.desc}</div>
+          <div class="frugal-saving"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${d.frugal.saving}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="tab-panel" id="tab-contacts">
+      <div class="sec-hdr">
+        <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="sec-title">Stakeholder Map — Recommended Outreach</div>
+      </div>
+      <div class="stake-list">${d.stakeholders.map(s=>`
+        <div class="stake-row">
+          <div class="sav" style="background:${s.bg};color:${s.tc};">${s.init}</div>
+          <div class="si2"><div class="sn">${s.name}</div><div class="sr">${s.role}</div></div>
+          <div class="sw">${s.why}</div>
+          <div class="spr ${s.ph?'ph':'pm'}">${s.priority}</div>
+        </div>`).join('')}
+      </div>
+      <div class="divider"></div>
+      <div class="sec-hdr">
+        <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="sec-title">Conversation Starters — Tailored to ${d.name.split(' ')[0]}'s Commitments</div>
+      </div>
+      <div class="q-list">${d.questions.map((q,i)=>`
+        <div class="q-item">
+          <div class="q-num">${i+1}</div>
+          <div><div class="q-text">${q.text}</div><div class="q-per">${q.persona}</div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- CRM -->
+    <div class="tab-panel" id="tab-crm">
+      <div class="sec-hdr">
+        <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+        <div class="sec-title">CRM Record Preview</div>
+        <div class="sec-sub">Ready to push to Salesforce</div>
+      </div>
+      <div class="crm-tags-row">${d.crmTags.map(t=>`
+        <div class="crm-tag" style="${CSS_TAGS[t.cls]||''}">
+          <div class="crm-tag-dot" style="background:${DOT_COLORS[t.cls]||'#888'};"></div>${t.label}
+        </div>`).join('')}
+      </div>
+      <table class="crm-table">
+        <thead><tr><th>Field</th><th>Value</th><th>Source</th></tr></thead>
+        <tbody>${d.crmRows.map(r=>`<tr><td class="crm-field">${r[0]}</td><td>${r[1]}</td><td style="color:#777;">${r[2]}</td></tr>`).join('')}
+          <tr><td class="crm-field">Profile generated</td><td>${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}, ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</td><td style="color:#777;">System</td></tr>
+        </tbody>
+      </table>
+      <button class="crm-export-btn" onclick="exportCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export to CSV
+      </button>
+    </div>
+  </div>
+
+  <div class="actions-row">
+    <button class="action-btn ap" onclick="generateMeetingPack('${d.name}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Generate Full Meeting Pack
+    </button>
+    <button class="action-btn asec" onclick="deepDive('${d.name}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Deep Dive Solution Fit
+    </button>
+    <button class="action-btn asec" onclick="exportCSV()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Export Battle Card CSV
+    </button>
+  </div>`;
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('#profile-area .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#profile-area .tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const t = document.getElementById('tab-' + name);
+  if(t) t.classList.add('active');
+}
+
+// ── LIVE ANALYSIS ──────────────────────────────────────────
+async function analyzeCompany() {
+  const val = document.getElementById('search-input').value.trim();
+  if(!val) return;
+
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .75s linear infinite;"></div> Analyzing…';
+
+  document.getElementById('empty-state').style.display = 'none';
+  const pa = document.getElementById('profile-area');
+  pa.style.display = 'flex';
+  pa.style.flexDirection = 'column';
+  pa.style.gap = '16px';
+  pa.innerHTML = `<div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Generating ESG profile for <strong>${val}</strong><br>Scanning sustainability commitments and public filings…</div>
+    <div class="loading-step" id="lstep">Extracting material topics…</div>
+  </div>`;
+
+  const steps = ['Extracting material topics…','Mapping Orange Business solutions…','Identifying key stakeholders…','Building CRM record…','Finalising meeting brief…'];
+  let si = 0;
+  const iv = setInterval(() => { si=(si+1)%steps.length; const e=document.getElementById('lstep'); if(e) e.textContent=steps[si]; }, 2000);
+
+  try {
+    const prompt = `You are an Orange Business ESG Sales Intelligence system. Analyze the company "${val}" and return ONLY valid JSON with no markdown, no explanation, no backticks — just raw JSON.
+
+Use this exact structure:
+{
+  "name": "Full legal company name",
+  "industry": "Industry sector (2-3 words)",
+  "hq": "City, Country",
+  "size": "Xk employees · EUR/USD XB revenue · Stock exchange if applicable",
+  "score": <integer 40-95>,
+  "initials": "2 capital letters",
+  "color": "#hexcode (brand color)",
+  "textColor": "white or #1a1a1a",
+  "tags": ["Industry tag","ESG focus tag","Regulatory tag","Size tag"],
+  "tagClasses": ["ti","tsc","tcsrd","ts3"],
+  "esg": [
+    {"title":"Short commitment title","value":"Key metric or year","desc":"2 sentences on this specific commitment.","fill":<integer 20-95>,"fillColor":"#1a7a4a or #0056b3 or #FF7900"},
+    {"title":"...","value":"...","desc":"...","fill":<integer>,"fillColor":"..."},
+    {"title":"...","value":"...","desc":"...","fill":<integer>,"fillColor":"..."}
+  ],
+  "topics": [
+    {"name":"Material topic name","pct":<integer 40-98>,"badge":"Critical or High or Medium","badgeBg":"#fdecea or #FFF3E8 or #fef3e2","badgeColor":"#c0392b or #E06800 or #944d00"},
+    {"name":"...","pct":<integer>,"badge":"...","badgeBg":"...","badgeColor":"..."},
+    {"name":"...","pct":<integer>,"badge":"...","badgeBg":"...","badgeColor":"..."},
+    {"name":"...","pct":<integer>,"badge":"...","badgeBg":"...","badgeColor":"..."},
+    {"name":"...","pct":<integer>,"badge":"...","badgeBg":"...","badgeColor":"..."}
+  ],
+  "solutions": [
+    {
+      "pillar": "IT for Green or IT for Society or Frugal AI & Eco-Design",
+      "cls": "bc-orange or bc-green or bc-blue",
+      "pcls": "bp-orange or bp-green or bp-blue",
+      "offer": "Specific Orange Business solution name",
+      "desc": "2 sentences describing this solution for this company.",
+      "why": "1-2 sentences: WHY specifically does this fit this company's ESG commitments?",
+      "fit": <integer 3-5>
+    },
+    {"pillar":"...","cls":"...","pcls":"...","offer":"...","desc":"...","why":"...","fit":<integer>},
+    {"pillar":"...","cls":"...","pcls":"...","offer":"...","desc":"...","why":"...","fit":<integer>}
+  ],
+  "frugal": {
+    "title": "Specific frugal AI use case for this company",
+    "desc": "2-3 sentences on why this frugal AI approach fits this company.",
+    "saving": "Quantified estimate of benefit · Responsible AI alignment note"
+  },
+  "stakeholders": [
+    {"init":"2 letters","bg":"#e8f0fb","tc":"#0056b3","name":"Real person name or likely role","role":"Full title · Company","why":"Why relevant to Orange pitch","priority":"Priority 1","ph":true},
+    {"init":"2 letters","bg":"#fff3e8","tc":"#e06800","name":"...","role":"...","why":"...","priority":"Priority 1","ph":true},
+    {"init":"2 letters","bg":"#edf7f1","tc":"#1a7a4a","name":"...","role":"...","why":"...","priority":"Priority 2","ph":false}
+  ],
+  "questions": [
+    {"text":"Specific question tied to this company's ESG commitment","persona":"For: Role"},
+    {"text":"...","persona":"For: Role"},
+    {"text":"...","persona":"For: Role"}
+  ],
+  "crmTags": [
+    {"label":"Tag label","cls":"sustainability or csrd or scope3 or itgreen"},
+    {"label":"...","cls":"..."},
+    {"label":"...","cls":"..."},
+    {"label":"...","cls":"..."}
+  ],
+  "crmRows": [
+    ["Account","${val}","Public record"],
+    ["Industry","<industry>","Public record"],
+    ["Opportunity type","Sustainability Solution","Auto-tagged"],
+    ["ESG maturity score","<score> / 100","ESG analysis"],
+    ["Primary ESG commitment","<commitment>","Sustainability report"],
+    ["Primary solution fit","<solution 1> · <solution 2>","Orange mapping"],
+    ["Priority CSR contact","<role>","Public filings"],
+    ["CSRD / ESG regulation","<status>","Annual report"],
+    ["Next action","<specific recommended next step>","Recommended"]
+  ]
+}
+
+Base solutions ONLY on Orange Business's actual pillars:
+- IT for Green: IoT building energy management (Smart Eco-energy), circular mobility/device leasing, Scope 3 carbon estimators
+- IT for Society: ESG data management platforms, CSRD compliance tools, digital inclusion
+- Frugal AI & Eco-Design: RGESN framework, right-sized AI models, minimising digital carbon footprint
+- Credentials: EcoVadis Platinum, SBTi-aligned roadmaps
+
+Use your knowledge of ${val}'s actual ESG strategy. Return ONLY the raw JSON object.`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3500,messages:[{role:'user',content:prompt}]})
+    });
+
+    clearInterval(iv);
+
+    if(!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    let raw = data.content[0].text.trim();
+    raw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    const parsed = JSON.parse(raw);
+    addDynamicAccount(parsed);
+    renderProfile(parsed);
+
+  } catch(e) {
+    clearInterval(iv);
+    pa.innerHTML = `<div class="error-state">
+      <div style="font-size:28px;margin-bottom:10px;">⚠</div>
+      <div style="font-weight:600;margin-bottom:6px;">Could not generate profile for "${val}"</div>
+      <div style="font-size:12px;color:#777;">Error: ${e.message}. Check your API key is valid and has credits.</div>
+    </div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Generate ESG Profile';
+}
+
+function addDynamicAccount(d) {
+  const score = d.score||70;
+  const sc = score>=80?'sp-h':score>=65?'sp-m':'sp-n';
+  const sl = score>=80?'A':score>=65?'B':'C';
+  const item = document.createElement('div');
+  item.className = 'acct';
+  item.innerHTML = `<div class="av" style="background:${d.color||'#888'};color:${d.textColor||'white'};">${d.initials||'CO'}</div><div class="ai"><div class="an">${(d.name||'').split(' ').slice(0,2).join(' ')}</div><div class="as2">${d.industry||''}</div></div><div class="sp ${sc}">${sl}</div>`;
+  item.onclick = () => { document.querySelectorAll('.acct').forEach(a=>a.classList.remove('active')); item.classList.add('active'); renderProfile(d); };
+  document.getElementById('acct-list').appendChild(item);
+  document.querySelectorAll('.acct').forEach(a=>a.classList.remove('active'));
+  item.classList.add('active');
+}
+
+function exportCSV() {
+  const pa = document.getElementById('profile-area');
+  if(!pa.innerHTML) return;
+  const rows = [['Field','Value','Source']];
+  pa.querySelectorAll('.crm-table tbody tr').forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    if(cells.length>=2) rows.push([cells[0].textContent, cells[1].textContent, cells[2]?.textContent||'']);
+  });
+  const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'orange-esg-profile.csv';
+  a.click();
+}
+
+function generateMeetingPack(name) { alert('In the live version, this would generate a full PDF meeting pack for ' + name + ' including battle card, agenda, and talking points.'); }
+function deepDive(name) { alert('In the live version, this would open a deep solution fit analysis for ' + name + '.'); }
+
+document.getElementById('search-input').addEventListener('keydown', e => { if(e.key==='Enter') analyzeCompany(); });
+</script>
+</body>
+</html>
