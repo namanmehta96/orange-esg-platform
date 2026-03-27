@@ -67,7 +67,8 @@ button:active{transform:scale(0.97);}
 .hamburger svg{width:20px;height:20px;}
 .nav-sq{width:36px;height:36px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-right:10px;flex-shrink:0;cursor:pointer;transition:background .15s;}
 .nav-sq:hover{background:var(--ob-dark);}
-.nav-brand{font-size:15px;font-weight:700;color:var(--ink);margin-right:16px;white-space:nowrap;}
+.nav-brand{font-size:15px;font-weight:700;color:var(--ink);margin-right:16px;white-space:nowrap;cursor:pointer;}
+.nav-brand:hover span{text-decoration:underline;}
 .nav-brand span{color:var(--ob);}
 .nav-div{width:1px;height:26px;background:var(--line);margin-right:14px;flex-shrink:0;}
 .nav-title{font-size:13px;color:var(--ink2);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1049,7 +1050,7 @@ button:active{transform:scale(0.97);}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="nav-sq" onclick="goHome()" title="Go to Home">O</div>
-    <div class="nav-brand"><span>Orange</span> Business</div>
+    <div class="nav-brand" onclick="goHome()" title="Go to Home"><span>Orange</span> Business</div>
     <div class="nav-div"></div>
     <div class="nav-title">ESG Sales Intelligence Platform</div>
     <div class="nav-right">
@@ -2501,7 +2502,7 @@ function renderBridgeHTML(d) {
           ${Array.from({length:5},(_,j)=>`<div class="fd ${j<s.fit?'fd-on':'fd-off'}"></div>`).join('')}
           <div class="fl">${s.fit===5?'Critical fit':s.fit>=4?'Strong fit':'Good fit'}</div>
         </div>
-        <div class="pitch-toggle" onclick="togglePitch(this)">See full pitch &#9660;</div>
+        <div class="pitch-toggle" onclick="togglePitch(this)">See full pitch ▼</div>
         <div class="pitch-content">
           <div class="pitch-inner">
             <div>
@@ -2771,7 +2772,7 @@ function renderMeetingHTML(d) {
       <div class="ta-header" onclick="toggleAccordion(this)">
         <div class="ta-pillar-dot" style="background:${s.pillarColor||'#FF7900'};"></div>
         <div class="ta-offer">${s.offer}</div>
-        <div class="ta-chevron">&#9660;</div>
+        <div class="ta-chevron">▼</div>
       </div>
       <div class="ta-body">
         <div class="ta-body-inner">
@@ -2947,8 +2948,8 @@ function switchTab(name, btn) {
 function togglePitch(el) {
   const content = el.nextElementSibling;
   const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
-  if (isOpen) { content.style.maxHeight = '0px'; el.textContent = 'See full pitch &#9660;'; }
-  else { content.style.maxHeight = content.scrollHeight + 'px'; el.textContent = 'See less &#9650;'; }
+  if (isOpen) { content.style.maxHeight = '0px'; el.textContent = 'See full pitch ▼'; }
+  else { content.style.maxHeight = content.scrollHeight + 'px'; el.textContent = 'See less ▲'; }
 }
 
 function toggleAccordion(header) {
