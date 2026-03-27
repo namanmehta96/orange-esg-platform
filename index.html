@@ -65,7 +65,8 @@ button:active{transform:scale(0.97);}
 .hamburger{display:none;align-items:center;justify-content:center;width:38px;height:38px;border:none;background:transparent;cursor:pointer;color:var(--ink);border-radius:var(--rr);margin-right:8px;flex-shrink:0;}
 .hamburger:hover{background:var(--surface);}
 .hamburger svg{width:20px;height:20px;}
-.nav-sq{width:36px;height:36px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-right:10px;flex-shrink:0;}
+.nav-sq{width:36px;height:36px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-right:10px;flex-shrink:0;cursor:pointer;transition:background .15s;}
+.nav-sq:hover{background:var(--ob-dark);}
 .nav-brand{font-size:15px;font-weight:700;color:var(--ink);margin-right:16px;white-space:nowrap;}
 .nav-brand span{color:var(--ob);}
 .nav-div{width:1px;height:26px;background:var(--line);margin-right:14px;flex-shrink:0;}
@@ -509,6 +510,7 @@ button:active{transform:scale(0.97);}
   display:none; flex-direction:column; gap:14px;
   transition:opacity 0.3s ease, transform 0.3s ease;
 }
+#profile-area > * { flex-shrink:0; }
 
 /* ══════════════════════════════════════════════════════
    COMPANY HEADER
@@ -1046,7 +1048,7 @@ button:active{transform:scale(0.97);}
     <button class="hamburger" id="hamburger-btn" onclick="openSidebar()" aria-label="Menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <div class="nav-sq">O</div>
+    <div class="nav-sq" onclick="goHome()" title="Go to Home">O</div>
     <div class="nav-brand"><span>Orange</span> Business</div>
     <div class="nav-div"></div>
     <div class="nav-title">ESG Sales Intelligence Platform</div>
