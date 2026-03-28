@@ -219,7 +219,10 @@ button:active{transform:scale(0.97);}
   font-size:58px; font-weight:900; color:var(--ink); line-height:1.15;
   margin-bottom:14px; letter-spacing:-2.5px;
   padding-bottom:6px; /* prevents descender clipping with background-clip:text */
-  background:linear-gradient(130deg, #CC4400 0%, var(--ob) 45%, #FF5500 100%);
+  --shine-x: -30%;
+  background:
+    radial-gradient(ellipse 20% 120% at var(--shine-x) 48%, rgba(255,252,220,0.72) 0%, rgba(255,210,120,0.28) 38%, transparent 62%),
+    linear-gradient(130deg, #CC4400 0%, var(--ob) 45%, #FF5500 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
   overflow:visible;
 }
@@ -5079,6 +5082,7 @@ function _initAnimations() {
   _animateHeroEntrance();
   _initLogoFloat();
   _initLogoGlow();
+  _initHeadlineShine();
 }
 
 function _animateHeroEntrance() {
@@ -5138,6 +5142,18 @@ function _initLogoGlow() {
   document.addEventListener('mousemove', _logoGlowHandler, { passive: true });
 }
 
+function _initHeadlineShine() {
+  const hl = document.querySelector('.home-headline');
+  if (!hl || hl._shineInited) return;
+  hl._shineInited = true;
+  document.addEventListener('mousemove', e => {
+    const rect = hl.getBoundingClientRect();
+    if (!rect.width) return;                         // headline not visible
+    const x = (e.clientX - rect.left) / rect.width * 100;
+    hl.style.setProperty('--shine-x', x.toFixed(1) + '%');
+  }, { passive: true });
+}
+
 function _animateHomeReturn() {
   if (typeof gsap === 'undefined') return;
   gsap.fromTo('.home-logo',     { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.38, ease: 'back.out(1.5)' });
@@ -5145,6 +5161,7 @@ function _animateHomeReturn() {
   gsap.fromTo('.home-subheadline, .home-search-wrap', { opacity: 0 }, { opacity: 1, duration: 0.38, delay: 0.15 });
   _initLogoFloat();
   _initLogoGlow();
+  _initHeadlineShine();
   _startParticles();
 }
 
