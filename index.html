@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
 /* ══════════════════════════════════════════════════════
    CSS VARIABLES — LIGHT & DARK THEMES
@@ -42,11 +45,17 @@
 ══════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
 html{transition:background-color var(--t),color var(--t);}
-body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.5;min-height:100vh;padding-top:3px;
+body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.55;min-height:100vh;padding-top:3px;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   transition:background-color var(--t),color var(--t);}
 a{color:var(--ob);text-decoration:none;}
 a:hover{text-decoration:underline;}
 button:active{transform:scale(0.97);}
+/* Improved scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--ink3);}
 
 /* ══════════════════════════════════════════════════════
    SHIMMER LINE
@@ -188,12 +197,14 @@ button:active{transform:scale(0.97);}
   margin:0 auto 24px; box-shadow:0 8px 32px rgba(255,121,0,0.3);
 }
 .home-headline {
-  font-size:48px; font-weight:800; color:var(--ink); line-height:1.1;
-  margin-bottom:14px; letter-spacing:-1px;
+  font-size:44px; font-weight:800; color:var(--ink); line-height:1.08;
+  margin-bottom:16px; letter-spacing:-1.5px;
+  background:linear-gradient(135deg,var(--ink) 0%,var(--ob-dark) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 .home-subheadline {
-  font-size:18px; color:var(--ink3); line-height:1.55; margin-bottom:32px;
-  max-width:540px; margin-left:auto; margin-right:auto;
+  font-size:17px; color:var(--ink3); line-height:1.6; margin-bottom:28px;
+  max-width:520px; margin-left:auto; margin-right:auto; font-weight:400;
 }
 .home-search-wrap {
   display:flex; gap:8px; background:var(--card);
@@ -654,6 +665,26 @@ button:active{transform:scale(0.97);}
 .ph{background:var(--ob-light);color:var(--ob-dark);}
 .pm{background:var(--blue-bg);color:var(--blue);}
 
+/* LinkedIn + email buttons in stakeholder rows */
+.li-btn {
+  width:28px; height:28px; border-radius:6px;
+  background:var(--blue-bg); color:var(--blue);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .15s, transform .15s;
+  text-decoration:none;
+}
+.li-btn:hover { background:var(--blue); color:white; transform:scale(1.05); text-decoration:none; }
+.email-draft-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--ob-light); color:var(--ob-dark);
+  border:1px solid var(--ob-border); border-radius:6px;
+  padding:5px 10px; font-size:11px; font-weight:600;
+  cursor:pointer; font-family:inherit; white-space:nowrap;
+  transition:background .15s, border-color .15s;
+  flex-shrink:0;
+}
+.email-draft-btn:hover { background:var(--ob); color:white; border-color:var(--ob); }
+
 /* ══════════════════════════════════════════════════════
    QUESTIONS
 ══════════════════════════════════════════════════════ */
@@ -687,8 +718,8 @@ button:active{transform:scale(0.97);}
 /* ══════════════════════════════════════════════════════
    ACTIONS ROW
 ══════════════════════════════════════════════════════ */
-.actions-row{display:flex;gap:10px;flex-wrap:wrap;}
-.action-btn{flex:1;min-width:160px;padding:11px 14px;border-radius:var(--rr);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;}
+.actions-row{display:flex;gap:8px;flex-wrap:wrap;}
+.action-btn{flex:1;min-width:130px;max-width:200px;padding:10px 14px;border-radius:var(--rr);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
 .action-btn svg{width:13px;height:13px;flex-shrink:0;}
 .ap{background:var(--ob);color:white;border:none;}
 .ap:hover{background:var(--ob-dark);}
@@ -882,6 +913,114 @@ button:active{transform:scale(0.97);}
 .error-state{text-align:center;padding:40px;color:var(--red);}
 
 /* ══════════════════════════════════════════════════════
+   COMPARE MODAL
+══════════════════════════════════════════════════════ */
+.compare-modal-box {
+  background:var(--card); border-radius:14px; padding:28px 28px 24px;
+  max-width:820px; width:calc(100% - 32px); max-height:90vh;
+  overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.35);
+  transition:background var(--t);
+}
+.compare-select {
+  flex:1; min-width:160px; background:var(--input-bg); border:1.5px solid var(--line);
+  border-radius:var(--rr); padding:8px 12px; font-size:13px; color:var(--ink);
+  outline:none; font-family:inherit; transition:border-color .2s, background var(--t);
+  cursor:pointer;
+}
+.compare-select:focus { border-color:var(--ob); }
+.compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.compare-col { background:var(--surface); border-radius:var(--r); padding:16px; border:1px solid var(--line); }
+.compare-col-hdr { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid var(--ob); }
+.compare-av { width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; }
+.compare-name { font-size:14px; font-weight:700; color:var(--ink); }
+.compare-score { font-size:11px; font-weight:700; background:var(--ob-light); color:var(--ob-dark); padding:2px 8px; border-radius:10px; margin-top:2px; display:inline-block; }
+.compare-section { margin-bottom:12px; }
+.compare-sec-title { font-size:10px; font-weight:700; color:var(--ob-dark); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; }
+.compare-topic-row { display:flex; align-items:center; gap:6px; padding:3px 0; font-size:12px; color:var(--ink2); }
+.compare-topic-bar { flex:1; height:4px; background:var(--line); border-radius:2px; }
+.compare-topic-fill { height:4px; border-radius:2px; background:var(--ob); }
+.compare-solution-chip { display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:10px; background:var(--ob-light); color:var(--ob-dark); margin:2px; }
+
+/* ══════════════════════════════════════════════════════
+   ONBOARDING TOUR
+══════════════════════════════════════════════════════ */
+.tour-tooltip {
+  position:fixed; background:var(--card); border:1.5px solid var(--ob);
+  border-radius:12px; padding:16px 18px; max-width:300px;
+  box-shadow:0 8px 32px rgba(0,0,0,.25); z-index:9600;
+  pointer-events:all; transition:background var(--t);
+}
+.tour-title { font-size:13px; font-weight:700; color:var(--ob); margin-bottom:6px; }
+.tour-text { font-size:12.5px; color:var(--ink2); line-height:1.55; }
+.tour-nav { display:flex; align-items:center; gap:8px; margin-top:12px; }
+.tour-step-count { font-size:11px; color:var(--ink3); flex:1; }
+.tour-btn { background:var(--ob); color:white; border:none; border-radius:6px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
+.tour-btn:hover { background:var(--ob-dark); }
+.tour-skip { background:transparent; color:var(--ink3); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:12px; cursor:pointer; font-family:inherit; }
+.tour-skip:hover { color:var(--ink); }
+.tour-highlight {
+  position:fixed; border:2.5px solid var(--ob); border-radius:8px;
+  box-shadow:0 0 0 4000px rgba(0,0,0,.5);
+  pointer-events:none; z-index:9550; transition:all .35s ease;
+}
+
+/* How to use nav button */
+.nav-how-btn {
+  display:flex; align-items:center; gap:5px;
+  border:1.5px solid var(--line); background:transparent;
+  border-radius:var(--rr); padding:5px 11px; font-size:12px; font-weight:600;
+  color:var(--ink2); cursor:pointer; font-family:inherit; white-space:nowrap;
+  transition:border-color .15s, color .15s, background .15s;
+}
+.nav-how-btn:hover { border-color:var(--ob); color:var(--ob); background:var(--ob-light); }
+.nav-how-btn svg { width:13px; height:13px; }
+
+/* ══════════════════════════════════════════════════════
+   COPY MINI BUTTONS
+══════════════════════════════════════════════════════ */
+.copy-mini {
+  width:22px; height:22px; border:none; background:transparent;
+  color:var(--ink3); cursor:pointer; border-radius:4px;
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:color .15s, background .15s; flex-shrink:0;
+  vertical-align:middle;
+}
+.copy-mini:hover { color:var(--ob); background:var(--ob-light); }
+.copy-mini.copied { color:var(--green); }
+.copy-mini svg { width:12px; height:12px; }
+.tp-item { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); align-items:flex-start; }
+.tp-item:last-child { border-bottom:none; padding-bottom:0; }
+
+/* ══════════════════════════════════════════════════════
+   EMAIL MODAL BODY
+══════════════════════════════════════════════════════ */
+.email-subject { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.email-body-text {
+  font-size:12.5px; color:var(--ink2); line-height:1.7;
+  white-space:pre-wrap; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--rr); padding:14px 16px;
+  max-height:340px; overflow-y:auto;
+}
+.email-loading { display:flex; align-items:center; gap:10px; padding:20px; color:var(--ink3); }
+
+/* ══════════════════════════════════════════════════════
+   HOME RECENT
+══════════════════════════════════════════════════════ */
+.home-recent-wrap { width:100%; max-width:680px; margin-bottom:16px; text-align:left; }
+.home-recent-label { font-size:12px; color:var(--ink3); font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.home-recent-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.home-recent-chip {
+  display:inline-flex; align-items:center; gap:4px;
+  background:var(--card); border:1.5px solid var(--line);
+  color:var(--ink2); font-size:12px; font-weight:600;
+  padding:4px 10px; border-radius:20px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s;
+  font-family:inherit;
+}
+.home-recent-chip:hover { border-color:var(--ob); color:var(--ob); background:var(--ob-light); }
+.home-recent-chip svg { width:11px; height:11px; flex-shrink:0; }
+
+/* ══════════════════════════════════════════════════════
    PRINT HEADER
 ══════════════════════════════════════════════════════ */
 .print-header{display:none;}
@@ -971,6 +1110,54 @@ button:active{transform:scale(0.97);}
   .catalog-grid{grid-template-columns:1fr 1fr;}
   .co-hdr{padding:16px 18px;}
 }
+
+/* Ultra-small screens (≤ 375px) */
+@media (max-width:375px) {
+  .nav{padding:0 10px;height:50px;}
+  .nav-how-btn span{display:none;}
+  .nav-brand{font-size:13px;margin-right:8px;}
+  .home-headline{font-size:26px;}
+  .home-subheadline{font-size:14px;}
+  .home-search-wrap{padding:6px 6px 6px 12px;}
+  .home-search-input{font-size:13px;}
+  .home-demo-grid{grid-template-columns:1fr;}
+  .actions-row{gap:6px;}
+  .action-btn{padding:9px 10px;font-size:12px;}
+  #profile-area{padding:10px 10px;}
+  .co-hdr{padding:12px 12px;}
+  .co-name{font-size:17px;}
+  .tab-btn{padding:9px 10px;font-size:11.5px;}
+  .tab-panel{padding:12px 12px 14px;}
+  .compare-modal-box{padding:18px 14px 18px;}
+  .compare-grid{grid-template-columns:1fr;}
+  .esg-grid{grid-template-columns:1fr;}
+  .bridge-grid{grid-template-columns:1fr;}
+  .crm-table th,.crm-table td{padding:6px 5px;font-size:11px;}
+  .stake-row{flex-wrap:wrap;}
+  .sw{max-width:100%;width:100%;}
+  .email-draft-btn span{display:none;}
+}
+
+/* Better section spacing */
+.tab-panel + .tab-panel { margin-top: 0; }
+.sec-hdr { margin-bottom: 14px; }
+.esg-card { border-radius: 10px; }
+.bridge-card { border-radius: 10px; }
+.prod-card { border-radius: 10px; }
+
+/* Better focus rings */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--ob);
+  outline-offset: 2px;
+}
+
+/* Improved home demo cards on mobile */
+@media (max-width:480px) {
+  .home-demo-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:360px) {
+  .home-demo-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -1059,7 +1246,11 @@ button:active{transform:scale(0.97);}
         <div class="ai-status-dot"></div>
         <span>Demo Mode</span>
       </div>
-      <div class="nav-badge" style="display:none;" id="nav-proto-badge">PROTOTYPE · SIC 2025/26</div>
+      <div class="nav-badge" style="font-weight:500;opacity:0.65;" id="nav-proto-badge">SIC 2025/26</div>
+      <button class="nav-how-btn" onclick="startTour()" title="How to use this platform">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        How to use
+      </button>
       <button class="nav-icon-btn" onclick="openSettings()" title="API Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07M4.93 4.93A10 10 0 0 0 19.07 19.07"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
@@ -1166,6 +1357,7 @@ button:active{transform:scale(0.97);}
             <input type="text" class="home-search-input" id="home-search-input" placeholder="Search any company — e.g. Nike, LVMH, Nestlé…" onkeydown="if(event.key==='Enter') homeSearch()"/>
             <button class="home-search-btn" onclick="homeSearch()">Generate Profile &#8594;</button>
           </div>
+          <div id="home-recent-wrap" class="home-recent-wrap" style="display:none;"></div>
           <div class="home-demo-label">Or explore a demo account:</div>
           <div class="home-demo-grid" id="home-demo-grid">
             <!-- 9 demo cards rendered by JS -->
@@ -1183,6 +1375,55 @@ button:active{transform:scale(0.97);}
       <div id="profile-area"></div>
     </div>
   </div>
+</div>
+
+<!-- EMAIL DRAFT MODAL -->
+<div id="email-modal" class="modal-overlay" style="display:none;" onclick="emailBackdropClick(event)">
+  <div class="modal-box" style="max-width:560px;">
+    <div class="modal-head">
+      <div class="modal-title">
+        <div class="modal-title-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        Outreach Email Draft
+      </div>
+      <button class="modal-close" onclick="closeEmailModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="email-modal-contact" style="font-size:12px;color:var(--ink3);margin-bottom:12px;padding:8px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--line);"></div>
+    <div id="email-modal-body" style="min-height:200px;"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="modal-save" id="email-copy-btn" onclick="copyEmailDraft()">Copy to Clipboard</button>
+      <button class="modal-clear" onclick="closeEmailModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compare-modal" class="modal-overlay" style="display:none;" onclick="compareBackdropClick(event)">
+  <div class="compare-modal-box">
+    <div class="modal-head" style="margin-bottom:16px;">
+      <div class="modal-title">
+        <div class="modal-title-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg></div>
+        Company Comparison
+      </div>
+      <button class="modal-close" onclick="closeCompare()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="compare-select-row" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+      <select id="compare-a" class="compare-select" onchange="updateComparison()">
+        <option value="">Select company A…</option>
+      </select>
+      <div style="font-size:13px;font-weight:700;color:var(--ink3);">vs</div>
+      <select id="compare-b" class="compare-select" onchange="updateComparison()">
+        <option value="">Select company B…</option>
+      </select>
+    </div>
+    <div id="compare-body"></div>
+  </div>
+</div>
+
+<!-- TOUR OVERLAY -->
+<div id="tour-overlay" style="display:none;position:fixed;inset:0;z-index:9500;pointer-events:none;">
+  <div id="tour-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,.55);"></div>
+  <div id="tour-tooltip" class="tour-tooltip" style="display:none;"></div>
+  <div id="tour-highlight" class="tour-highlight" style="display:none;"></div>
 </div>
 
 <!-- CHATBOT BUTTON -->
@@ -2263,13 +2504,25 @@ function buildProfileHTML(d) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Print Battle Card
     </button>
+    <button class="action-btn asec" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Export PDF
+    </button>
+    <button class="action-btn asec" onclick="exportPPTX()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Export PPTX
+    </button>
     <button class="action-btn asec" onclick="exportCSV()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export CSV
     </button>
+    <button class="action-btn asec" onclick="openCompare()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
+      Compare
+    </button>
     <button class="action-btn asec" onclick="copyCRMRecord()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      Copy CRM Record
+      Copy CRM
     </button>
   </div>`;
 }
@@ -2559,13 +2812,24 @@ function renderContactsHTML(d) {
       <div class="sec-title">Stakeholder Map — Recommended Outreach</div>
     </div>
     <div class="stake-list">
-      ${d.stakeholders.map(s=>`
+      ${d.stakeholders.map(s=>{
+        const liQuery = encodeURIComponent(s.name + ' ' + (d.name.split(' ')[0]));
+        const liUrl = `https://www.linkedin.com/search/results/people/?keywords=${liQuery}`;
+        return `
       <div class="stake-row">
         <div class="sav" style="background:${s.bg};color:${s.tc};">${s.init}</div>
         <div class="si2"><div class="sn">${s.name}</div><div class="sr">${s.role}</div></div>
         <div class="sw">${s.why}</div>
         <div class="spr ${s.ph?'ph':'pm'}">${s.priority}</div>
-      </div>`).join('')}
+        <a href="${liUrl}" target="_blank" rel="noopener" class="li-btn" title="Search on LinkedIn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <button class="email-draft-btn" data-stakeholder='${JSON.stringify(s).replace(/'/g,"&#39;")}' onclick="openEmailDraft(this,currentCompany)" title="Generate outreach email">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Generate Email
+        </button>
+      </div>`;
+      }).join('')}
     </div>
     <div class="divider"></div>
     <div class="sec-hdr">
@@ -2603,7 +2867,7 @@ function renderCRMHTML(d) {
     <table class="crm-table">
       <thead><tr><th>Field</th><th>Value</th><th>Source</th></tr></thead>
       <tbody>
-        ${d.crmRows.map(r=>`<tr><td class="crm-field">${r[0]}</td><td>${r[1]}</td><td style="color:var(--ink3);">${r[2]}</td></tr>`).join('')}
+        ${d.crmRows.map(r=>`<tr><td class="crm-field">${esc(r[0])}</td><td>${esc(r[1])} <button class="copy-mini" onclick="copyAgendaItem(this)" data-copy="${String(r[1]).replace(/"/g,'&quot;')}" title="Copy value"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></td><td style="color:var(--ink3);">${esc(r[2])}</td></tr>`).join('')}
         <tr><td class="crm-field">Profile generated</td><td>${dateStr}</td><td style="color:var(--ink3);">System</td></tr>
       </tbody>
     </table>
@@ -2710,12 +2974,13 @@ function updateTalkingPoints(offer, companyKey) {
 
   if (tp) {
     panel.innerHTML = `<div class="talking-point-block">
-      <div class="tp-item"><div class="tp-label-chip">Opening Hook</div><div class="tp-text">${esc(tp.hook)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Solution Fit</div><div class="tp-text">${esc(tp.fit)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Differentiator</div><div class="tp-text">${esc(tp.diff)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Risk of Inaction</div><div class="tp-text">${esc(tp.risk)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Suggested Close</div><div class="tp-text">${esc(tp.close)}</div></div>
+      ${tpRow('Opening Hook', tp.hook)}
+      ${tpRow('Solution Fit', tp.fit)}
+      ${tpRow('Differentiator', tp.diff)}
+      ${tpRow('Risk of Inaction', tp.risk)}
+      ${tpRow('Suggested Close', tp.close)}
     </div>`;
+    attachCopyMini(panel);
   } else {
     // Generic fallback using company solutions data
     const d = currentCompany;
@@ -2724,12 +2989,13 @@ function updateTalkingPoints(offer, companyKey) {
     const risk = d ? getRiskOfInaction(d).replace(/<[^>]+>/g,'') : 'Delay risks regulatory exposure.';
     const hook = sol ? sol.why : `${offer} is directly relevant to this company's ESG agenda.`;
     panel.innerHTML = `<div class="talking-point-block">
-      <div class="tp-item"><div class="tp-label-chip">Opening Hook</div><div class="tp-text">${esc(hook)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Solution Fit</div><div class="tp-text">${sol ? esc(sol.desc) : esc(offer + ' addresses key ESG measurement and reporting needs.')}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Differentiator</div><div class="tp-text">${esc(diff)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Risk of Inaction</div><div class="tp-text">${esc(risk)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Suggested Close</div><div class="tp-text">Could we schedule a 30-minute discovery call to explore how ${esc(offer)} could address your specific ESG data challenges?</div></div>
+      ${tpRow('Opening Hook', hook)}
+      ${tpRow('Solution Fit', sol ? sol.desc : offer + ' addresses key ESG measurement and reporting needs.')}
+      ${tpRow('Differentiator', diff)}
+      ${tpRow('Risk of Inaction', risk)}
+      ${tpRow('Suggested Close', 'Could we schedule a 30-minute discovery call to explore how ' + offer + ' could address your specific ESG data challenges?')}
     </div>`;
+    attachCopyMini(panel);
   }
 }
 
@@ -2792,22 +3058,22 @@ function renderMeetingHTML(d) {
   if (companyKey && PREFAB_TALKING_POINTS[companyKey] && PREFAB_TALKING_POINTS[companyKey][initOffer]) {
     const tp = PREFAB_TALKING_POINTS[companyKey][initOffer];
     initTpHtml = `<div class="talking-point-block">
-      <div class="tp-item"><div class="tp-label-chip">Opening Hook</div><div class="tp-text">${esc(tp.hook)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Solution Fit</div><div class="tp-text">${esc(tp.fit)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Differentiator</div><div class="tp-text">${esc(tp.diff)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Risk of Inaction</div><div class="tp-text">${esc(tp.risk)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Suggested Close</div><div class="tp-text">${esc(tp.close)}</div></div>
+      ${tpRow('Opening Hook', tp.hook)}
+      ${tpRow('Solution Fit', tp.fit)}
+      ${tpRow('Differentiator', tp.diff)}
+      ${tpRow('Risk of Inaction', tp.risk)}
+      ${tpRow('Suggested Close', tp.close)}
     </div>`;
   } else {
     const sol = d.solutions.find(s => s.offer === initOffer) || d.solutions[0];
     const diff = getOrangeDiff(sol.pillar);
     const risk = getRiskOfInaction(d).replace(/<[^>]+>/g,'');
     initTpHtml = `<div class="talking-point-block">
-      <div class="tp-item"><div class="tp-label-chip">Opening Hook</div><div class="tp-text">${esc(sol.why)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Solution Fit</div><div class="tp-text">${esc(sol.desc)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Differentiator</div><div class="tp-text">${esc(diff)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Risk of Inaction</div><div class="tp-text">${esc(risk)}</div></div>
-      <div class="tp-item"><div class="tp-label-chip">Suggested Close</div><div class="tp-text">Could we schedule a 30-minute discovery call to explore how ${esc(sol.offer)} could address your specific ESG data challenges?</div></div>
+      ${tpRow('Opening Hook', sol.why)}
+      ${tpRow('Solution Fit', sol.desc)}
+      ${tpRow('Differentiator', diff)}
+      ${tpRow('Risk of Inaction', risk)}
+      ${tpRow('Suggested Close', 'Could we schedule a 30-minute discovery call to explore how '+sol.offer+' could address your specific ESG data challenges?')}
     </div>`;
   }
 
@@ -2848,7 +3114,7 @@ function renderMeetingHTML(d) {
           <div class="agenda-time-label">5 min — ESG Discovery</div>
           <div class="agenda-section-title">Tailored Conversation Starters</div>
           <div class="agenda-bullets">
-            ${d.questions.map(q=>`<div class="agenda-bullet">${q.text} <em style="font-size:11px;color:var(--ink3);"> — ${q.persona}</em></div>`).join('')}
+            ${d.questions.map(q=>`<div class="agenda-bullet" style="display:flex;align-items:flex-start;gap:6px;">${esc(q.text)} <em style="font-size:11px;color:var(--ink3);"> — ${esc(q.persona)}</em><button class="copy-mini" data-copy="${q.text.replace(/"/g,'&quot;')}" title="Copy" onclick="copyAgendaItem(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>`).join('')}
           </div>
         </div>
       </div>
@@ -2924,6 +3190,9 @@ function postRenderSetup(d) {
     }
     // Init exec benchmark chart since exec-summary is the active tab
     initExecBenchmarkChart(d);
+    // Attach copy mini buttons on initial talking points panel
+    const tpPanel = document.getElementById('talking-points-panel');
+    if (tpPanel) attachCopyMini(tpPanel);
   }, 50);
 }
 
@@ -3066,21 +3335,23 @@ function updateSearchState() {
 /* ═══════════════════════════════════════════════════════
    SEARCH HISTORY
 ═══════════════════════════════════════════════════════ */
-function initSearchHistory() { renderHistoryChips(); }
+function initSearchHistory() { renderHistoryChips(); renderHomeRecentChips(); }
 function getHistory() {
   try { return JSON.parse(localStorage.getItem('ob_esg_history')||'[]'); } catch(e) { return []; }
 }
 function addToHistory(name) {
   let h = getHistory().filter(x => x !== name);
-  h.unshift(name); h = h.slice(0,5);
+  h.unshift(name); h = h.slice(0,10);
   localStorage.setItem('ob_esg_history', JSON.stringify(h));
   renderHistoryChips();
+  renderHomeRecentChips();
 }
 function removeFromHistory(name, e) {
   e.stopPropagation();
   const h = getHistory().filter(x => x !== name);
   localStorage.setItem('ob_esg_history', JSON.stringify(h));
   renderHistoryChips();
+  renderHomeRecentChips();
 }
 function renderHistoryChips() {
   const row = document.getElementById('history-row');
@@ -3097,6 +3368,24 @@ function renderHistoryChips() {
 function rerunSearch(name) {
   document.getElementById('search-input').value = name;
   analyzeCompany();
+}
+
+function renderHomeRecentChips() {
+  const wrap = document.getElementById('home-recent-wrap');
+  if (!wrap) return;
+  const h = getHistory();
+  if (!h.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  wrap.innerHTML = `<div class="home-recent-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Recent</div>
+    <div class="home-recent-chips">${h.map(name=>`<button class="home-recent-chip" onclick="homeRecentLoad('${esc(name)}')">${esc(name)}</button>`).join('')}</div>`;
+}
+
+function homeRecentLoad(name) {
+  const sidebarInput = document.getElementById('search-input');
+  if (sidebarInput) sidebarInput.value = name;
+  document.getElementById('home-search-input').value = name;
+  if (!ANTHROPIC_API_KEY) { transitionToProfile(() => openSettings()); return; }
+  transitionToProfile(() => analyzeCompany());
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -3383,6 +3672,224 @@ function copyToClipboard(text, btn, resetLabel) {
 
 function printBattleCard() { window.print(); }
 
+async function exportPPTX() {
+  if (!currentCompany) return;
+  if (typeof PptxGenJS === 'undefined') { showToast('PPTX library loading, please retry…'); return; }
+  const d = currentCompany;
+  showToast('Generating PowerPoint deck…');
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_WIDE';
+
+  const OB_ORANGE = 'FF7900';
+  const INK = '1A1A1A';
+  const INK2 = '4A4A4A';
+  const WHITE = 'FFFFFF';
+  const LIGHT = 'FFF3E8';
+
+  // Helper: add standard header bar to slide
+  function addHeader(slide, title) {
+    slide.addShape(pptx.ShapeType.rect, {x:0,y:0,w:'100%',h:0.65,fill:{color:OB_ORANGE}});
+    slide.addText('Orange Business', {x:0.2,y:0.08,w:3,h:0.3,fontSize:11,color:WHITE,bold:true});
+    slide.addText('ESG Sales Intelligence', {x:0.2,y:0.35,w:4,h:0.22,fontSize:8,color:'FFD4A0'});
+    slide.addText(title, {x:3.5,y:0.1,w:9,h:0.45,fontSize:18,color:WHITE,bold:true,align:'right'});
+  }
+
+  // Slide 1 — Cover
+  const s1 = pptx.addSlide();
+  s1.addShape(pptx.ShapeType.rect, {x:0,y:0,w:'100%',h:'100%',fill:{color:OB_ORANGE}});
+  s1.addShape(pptx.ShapeType.rect, {x:0,y:3.5,w:'100%',h:3.5,fill:{color:'1A1A1A',transparency:30}});
+  s1.addText('Orange Business', {x:0.5,y:0.5,w:12,h:0.6,fontSize:14,color:WHITE,bold:false});
+  s1.addText('ESG Sales Intelligence', {x:0.5,y:1.0,w:12,h:0.9,fontSize:36,color:WHITE,bold:true});
+  s1.addText(d.name, {x:0.5,y:2.1,w:12,h:0.7,fontSize:28,color:'FFD4A0',bold:true});
+  s1.addText(d.industry + ' · ' + d.hq, {x:0.5,y:2.85,w:12,h:0.4,fontSize:14,color:WHITE});
+  s1.addText('ESG Score: ' + d.score + '/100', {x:0.5,y:3.35,w:12,h:0.4,fontSize:14,color:WHITE,bold:true});
+  s1.addText('Generated: ' + new Date().toLocaleDateString('en-GB'), {x:0.5,y:6.5,w:12,h:0.3,fontSize:9,color:'FFD4A0',align:'right'});
+
+  // Slide 2 — ESG Overview
+  const s2 = pptx.addSlide();
+  addHeader(s2, 'ESG Commitments');
+  s2.addText(d.name + ' — ESG Profile', {x:0.3,y:0.75,w:12,h:0.45,fontSize:16,bold:true,color:INK});
+  s2.addText(d.size + ' · CDP: ' + (d.cdpScore||'N/A'), {x:0.3,y:1.2,w:12,h:0.3,fontSize:10,color:INK2});
+  let ry = 1.65;
+  d.esg.forEach(e => {
+    s2.addText(e.title + ': ' + e.value, {x:0.3,y:ry,w:12,h:0.35,fontSize:13,bold:true,color:INK});
+    s2.addText(e.desc, {x:0.5,y:ry+0.35,w:12,h:0.45,fontSize:9,color:INK2,wrap:true});
+    ry += 0.92;
+  });
+
+  // Slide 3 — Material Topics
+  const s3 = pptx.addSlide();
+  addHeader(s3, 'Material Topics');
+  let ty = 0.85;
+  d.topics.forEach(t => {
+    s3.addText(t.name, {x:0.3,y:ty,w:4.5,h:0.4,fontSize:12,bold:true,color:INK});
+    s3.addShape(pptx.ShapeType.rect, {x:5,y:ty+0.1,w:6,h:0.2,fill:{color:'E2DDD7'}});
+    s3.addShape(pptx.ShapeType.rect, {x:5,y:ty+0.1,w:(6*t.pct/100),h:0.2,fill:{color:OB_ORANGE}});
+    s3.addText(t.pct+'%', {x:11.2,y:ty,w:0.8,h:0.4,fontSize:11,bold:true,color:INK,align:'right'});
+    s3.addText(t.badge, {x:12.1,y:ty,w:1.5,h:0.4,fontSize:9,bold:true,color:t.badgeColor||'944d00'});
+    ty += 0.72;
+  });
+
+  // Slide 4 — Recommended Solutions
+  const s4 = pptx.addSlide();
+  addHeader(s4, 'Recommended Solutions');
+  let sy = 0.85;
+  d.solutions.forEach((s,i) => {
+    s4.addShape(pptx.ShapeType.rect, {x:0.3,y:sy,w:12.8,h:1.5,fill:{color:i===0?'FFF3E8':'F6F4F1'},line:{color:'E2DDD7',width:1}});
+    s4.addText(s.offer, {x:0.5,y:sy+0.1,w:12,h:0.4,fontSize:13,bold:true,color:INK});
+    s4.addText(s.pillar, {x:0.5,y:sy+0.47,w:12,h:0.28,fontSize:9,color:OB_ORANGE,bold:true});
+    s4.addText(s.why, {x:0.5,y:sy+0.75,w:12.3,h:0.55,fontSize:9,color:INK2,wrap:true});
+    sy += 1.65;
+  });
+
+  // Slide 5 — Key Stakeholders
+  const s5 = pptx.addSlide();
+  addHeader(s5, 'Key Stakeholders');
+  let stY = 0.85;
+  d.stakeholders.forEach(s => {
+    s5.addShape(pptx.ShapeType.rect, {x:0.3,y:stY,w:12.8,h:1.1,fill:{color:'F6F4F1'},line:{color:'E2DDD7',width:0.5}});
+    s5.addText(s.name, {x:0.5,y:stY+0.1,w:8,h:0.35,fontSize:12,bold:true,color:INK});
+    s5.addText(s.role, {x:0.5,y:stY+0.45,w:8,h:0.28,fontSize:9,color:INK2});
+    s5.addText(s.why, {x:0.5,y:stY+0.72,w:8,h:0.28,fontSize:9,color:'777777'});
+    s5.addText(s.priority, {x:10.5,y:stY+0.3,w:2.4,h:0.4,fontSize:10,bold:true,color:OB_ORANGE,align:'right'});
+    stY += 1.25;
+  });
+
+  // Slide 6 — Next Steps / Conversation Starters
+  const s6 = pptx.addSlide();
+  addHeader(s6, 'Conversation Starters');
+  let qy = 0.85;
+  d.questions.forEach((q,i) => {
+    s6.addShape(pptx.ShapeType.rect, {x:0.3,y:qy,w:12.8,h:1.05,fill:{color:'FFF3E8'},line:{color:'FFD4A0',width:1}});
+    s6.addText((i+1).toString(), {x:0.4,y:qy+0.15,w:0.4,h:0.4,fontSize:13,bold:true,color:OB_ORANGE,align:'center'});
+    s6.addText(q.text, {x:0.9,y:qy+0.1,w:12,h:0.55,fontSize:10,color:INK,wrap:true,italic:true});
+    s6.addText(q.persona, {x:0.9,y:qy+0.7,w:12,h:0.24,fontSize:8.5,color:'777777'});
+    qy += 1.2;
+  });
+
+  // Slide 7 — Orange Credentials
+  const s7 = pptx.addSlide();
+  s7.addShape(pptx.ShapeType.rect, {x:0,y:0,w:'100%',h:'100%',fill:{color:OB_ORANGE}});
+  s7.addText('Why Orange Business?', {x:0.5,y:0.6,w:12,h:0.6,fontSize:24,bold:true,color:WHITE});
+  const creds = ['🏅 EcoVadis Platinum — top 1% globally in sustainability performance','🎯 SBTi-aligned net-zero 2040 with validated interim milestones','📋 CSRD Wave 1 reporter — practitioner experience, not just advisory','🌍 28,000+ enterprise customers across industries and geographies','⚡ Full solution portfolio: ESG data, IoT energy, circular devices, Frugal AI'];
+  let cy = 1.4;
+  creds.forEach(c => {
+    s7.addText(c, {x:0.5,y:cy,w:12.5,h:0.55,fontSize:12.5,color:WHITE,wrap:true});
+    cy += 0.65;
+  });
+  s7.addText('orange-business.com', {x:0.5,y:6.6,w:12,h:0.3,fontSize:10,color:'FFD4A0',align:'right'});
+
+  pptx.writeFile({ fileName: `orange-esg-${(d.name||'profile').replace(/\s+/g,'-').toLowerCase()}.pptx` })
+    .then(() => showToast('PowerPoint deck downloaded'));
+}
+
+async function exportPDF() {
+  if (!currentCompany) return;
+  const d = currentCompany;
+  showToast('Generating PDF…');
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W = 210, margin = 14;
+  let y = margin;
+  const ob = '#FF7900';
+  const ink = '#1a1a1a';
+  const ink2 = '#4a4a4a';
+  const ink3 = '#777';
+  const lineH = 5.5;
+
+  // Header bar
+  pdf.setFillColor(255,121,0);
+  pdf.rect(0,0,W,18,'F');
+  pdf.setFont('helvetica','bold');
+  pdf.setFontSize(13); pdf.setTextColor(255,255,255);
+  pdf.text('Orange Business — ESG Sales Intelligence', margin, 11);
+  pdf.setFontSize(9); pdf.setFont('helvetica','normal');
+  pdf.text('Battle Card · Generated '+new Date().toLocaleDateString('en-GB'), W-margin, 11, {align:'right'});
+  y = 26;
+
+  // Company name + score
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(16); pdf.setTextColor(ink);
+  pdf.text(d.name, margin, y); y += 7;
+  pdf.setFont('helvetica','normal'); pdf.setFontSize(9); pdf.setTextColor(ink2);
+  pdf.text(d.size + ' · ' + d.hq, margin, y); y += 5;
+  pdf.text('Industry: ' + d.industry, margin, y); y += 8;
+
+  // Score badge
+  pdf.setFillColor(255,243,232);
+  pdf.roundedRect(W-margin-28, 22, 28, 12, 2, 2, 'F');
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(224,104,0);
+  pdf.text('Score: '+d.score+'/100', W-margin-14, 29, {align:'center'});
+
+  // Divider
+  pdf.setDrawColor(226,221,215); pdf.setLineWidth(0.4);
+  pdf.line(margin, y, W-margin, y); y += 6;
+
+  // ESG Commitments
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(255,121,0);
+  pdf.text('ESG COMMITMENTS', margin, y); y += 5;
+  d.esg.forEach(e => {
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(ink);
+    pdf.text(e.title + ': ' + e.value, margin, y);
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(8); pdf.setTextColor(ink2);
+    const lines = pdf.splitTextToSize(e.desc, W - margin*2 - 5);
+    y += 4;
+    lines.forEach(l => { pdf.text(l, margin+3, y); y += lineH; });
+    y += 1;
+  });
+  y += 3;
+
+  // Material Topics
+  pdf.setDrawColor(226,221,215); pdf.line(margin, y, W-margin, y); y += 5;
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(255,121,0);
+  pdf.text('MATERIAL TOPICS', margin, y); y += 5;
+  d.topics.forEach(t => {
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(8.5); pdf.setTextColor(ink);
+    pdf.text('• ' + t.name, margin, y);
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(8); pdf.setTextColor(t.badgeColor||'#944d00');
+    pdf.text(t.badge + ' (' + t.pct + '%)', W-margin, y, {align:'right'});
+    y += lineH;
+  });
+  y += 3;
+
+  // Recommended Solutions
+  pdf.setDrawColor(226,221,215); pdf.line(margin, y, W-margin, y); y += 5;
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(255,121,0);
+  pdf.text('RECOMMENDED ORANGE SOLUTIONS', margin, y); y += 5;
+  d.solutions.forEach(s => {
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(ink);
+    pdf.text(s.offer, margin, y); y += 4;
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(8); pdf.setTextColor(ink2);
+    const lines = pdf.splitTextToSize(s.why, W - margin*2 - 5);
+    lines.forEach(l => { pdf.text(l, margin+3, y); y += lineH; });
+    y += 2;
+  });
+  y += 3;
+
+  // Key Stakeholders
+  if (y > 230) { pdf.addPage(); y = margin + 10; }
+  pdf.setDrawColor(226,221,215); pdf.line(margin, y, W-margin, y); y += 5;
+  pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(255,121,0);
+  pdf.text('KEY STAKEHOLDERS', margin, y); y += 5;
+  d.stakeholders.forEach(s => {
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(9); pdf.setTextColor(ink);
+    pdf.text(s.name, margin, y);
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(8); pdf.setTextColor(ink2);
+    pdf.text(s.role, margin+3, y+4);
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(8); pdf.setTextColor(224,104,0);
+    pdf.text(s.priority, W-margin, y, {align:'right'});
+    y += 10;
+  });
+
+  // Footer
+  pdf.setFillColor(255,121,0);
+  pdf.rect(0,287,W,10,'F');
+  pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(255,255,255);
+  pdf.text('Orange Business ESG Sales Intelligence Platform · Confidential', W/2, 293, {align:'center'});
+
+  pdf.save(`orange-esg-${(d.name||'profile').replace(/\s+/g,'-').toLowerCase()}.pdf`);
+  showToast('PDF downloaded');
+}
+
 /* ═══════════════════════════════════════════════════════
    CHATBOT
 ═══════════════════════════════════════════════════════ */
@@ -3401,6 +3908,18 @@ function initChatbot() {
   renderSuggestedPrompts();
 }
 
+function renderMarkdown(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`(.+?)`/g,'<code style="background:rgba(0,0,0,.08);padding:1px 4px;border-radius:3px;font-family:monospace;font-size:11px;">$1</code>')
+    .replace(/^#{1,3}\s+(.+)$/gm,'<strong>$1</strong>')
+    .replace(/^[-*]\s+(.+)$/gm,'<span style="display:block;padding-left:12px;position:relative;"><span style="position:absolute;left:0;">•</span>$1</span>')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
 function addChatMessage(role, content) {
   chatHistory.push({role, content});
   if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
@@ -3408,7 +3927,11 @@ function addChatMessage(role, content) {
   if (!msgs) return;
   const div = document.createElement('div');
   div.className = 'chat-msg ' + role;
-  div.textContent = content;
+  if (role === 'assistant') {
+    div.innerHTML = renderMarkdown(content);
+  } else {
+    div.textContent = content;
+  }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -3430,7 +3953,10 @@ function renderSuggestedPrompts() {
     `Explain Scope 3 financed emissions`,
     `What is RGESN eco-design?`
   ];
-  wrap.innerHTML = prompts.map(p=>`<button class="chat-suggestion-chip" onclick="useSuggestion('${p.replace(/'/g,"&#39;")}')">${p}</button>`).join('');
+  wrap.innerHTML = prompts.map(p=>`<button class="chat-suggestion-chip" data-prompt="${p.replace(/"/g,'&quot;')}">${esc(p)}</button>`).join('');
+  wrap.querySelectorAll('.chat-suggestion-chip').forEach(btn => {
+    btn.addEventListener('click', () => useSuggestion(btn.dataset.prompt));
+  });
 }
 
 function useSuggestion(text) {
@@ -3517,6 +4043,159 @@ function chatKeydown(e) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   EMAIL DRAFT GENERATOR
+═══════════════════════════════════════════════════════ */
+let currentEmailDraft = '';
+function openEmailDraft(btn, company) {
+  if (!company) return;
+  let stakeholder;
+  try { stakeholder = JSON.parse(btn.dataset.stakeholder); } catch(e) { return; }
+  const modal = document.getElementById('email-modal');
+  const contactEl = document.getElementById('email-modal-contact');
+  const bodyEl = document.getElementById('email-modal-body');
+  contactEl.innerHTML = `<strong>${stakeholder.name}</strong> · ${stakeholder.role}`;
+  bodyEl.innerHTML = '<div class="email-loading"><div class="spinner-sm"></div>Generating personalised email…</div>';
+  modal.style.display = 'flex';
+  generateOutreachEmail(stakeholder, company).then(email => {
+    currentEmailDraft = email;
+    bodyEl.innerHTML = `
+      <div class="email-subject" style="margin-bottom:8px;">
+        <span style="font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;">Subject:</span><br>
+        ${esc(email.subject)}
+      </div>
+      <div class="email-body-text">${esc(email.body)}</div>`;
+  }).catch(err => {
+    bodyEl.innerHTML = `<div style="color:var(--red);padding:12px;">${esc(err.message||'Could not generate email')}</div>`;
+  });
+}
+
+async function generateOutreachEmail(stakeholder, company) {
+  if (ANTHROPIC_API_KEY) {
+    const prompt = `Generate a professional, personalised cold outreach email for an Orange Business sales rep to send to ${stakeholder.name} (${stakeholder.role}) at ${company.name}.
+
+Context:
+- Company: ${company.name} (${company.industry}, ESG score ${company.score}/100)
+- Contact reason: ${stakeholder.why}
+- Company's top ESG priority: ${company.topics[0]?.name} (${company.topics[0]?.pct}% priority)
+- Recommended Orange solution: ${company.solutions[0]?.offer}
+- Orange credentials: EcoVadis Platinum, SBTi-aligned net-zero 2040, CSRD Wave 1 reporter
+
+Write a concise, professional cold outreach email. Keep it under 200 words. Focus on their specific ESG challenge, not a generic pitch.
+
+Return ONLY a JSON object: {"subject":"email subject","body":"full email body text, no HTML, with line breaks"}`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    if (!res.ok) throw new Error('API error '+res.status);
+    const data = await res.json();
+    let raw = data.content[0].text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    return JSON.parse(raw);
+  }
+  // Template fallback
+  const sol = company.solutions[0];
+  return {
+    subject: `${company.name.split(' ')[0]} × Orange Business — ${sol.offer}`,
+    body: `Dear ${stakeholder.name.split(' ')[0]},
+
+I hope this finds you well. I'm reaching out from Orange Business, where we partner with organisations like ${company.name} to address their most pressing ESG challenges.
+
+Given ${company.name}'s commitment to ${company.topics[0]?.name?.toLowerCase() || 'sustainable development'} and your upcoming CSRD obligations, I believe our ${sol.offer} could offer immediate, measurable value.
+
+We've helped comparable ${company.industry} organisations reduce their ESG reporting overhead by 40–60% while improving data quality scores — and our own EcoVadis Platinum status means we bring practitioner experience, not just advisory.
+
+I'd love to share a 20-minute overview of how we've approached similar challenges in your sector. Would you be open to a brief call next week?
+
+Best regards,
+[Your name]
+Orange Business ESG Sales
+[Your email] | [Your phone]
+
+P.S. I noticed ${stakeholder.why?.toLowerCase()}. This is precisely where we've seen the strongest ROI for our clients.`
+  };
+}
+
+function closeEmailModal() { document.getElementById('email-modal').style.display = 'none'; }
+function emailBackdropClick(e) { if (e.target === document.getElementById('email-modal')) closeEmailModal(); }
+function copyEmailDraft() {
+  if (!currentEmailDraft) return;
+  const text = `Subject: ${currentEmailDraft.subject}\n\n${currentEmailDraft.body}`;
+  copyToClipboard(text, null);
+}
+
+/* ═══════════════════════════════════════════════════════
+   COMPANY COMPARISON
+═══════════════════════════════════════════════════════ */
+function openCompare() {
+  const modal = document.getElementById('compare-modal');
+  const selA = document.getElementById('compare-a');
+  const selB = document.getElementById('compare-b');
+  const keys = Object.keys(SEED_DATA);
+  const opts = keys.map(k=>`<option value="${k}">${SEED_DATA[k].name}</option>`).join('');
+  selA.innerHTML = '<option value="">Select company A…</option>' + opts;
+  selB.innerHTML = '<option value="">Select company B…</option>' + opts;
+  // Pre-select current company as A
+  if (currentCompany) {
+    const k = getCompanyKey(currentCompany);
+    if (k) selA.value = k;
+  }
+  updateComparison();
+  modal.style.display = 'flex';
+}
+function closeCompare() { document.getElementById('compare-modal').style.display = 'none'; }
+function compareBackdropClick(e) { if (e.target === document.getElementById('compare-modal')) closeCompare(); }
+
+function updateComparison() {
+  const kA = document.getElementById('compare-a').value;
+  const kB = document.getElementById('compare-b').value;
+  const body = document.getElementById('compare-body');
+  if (!kA || !kB) { body.innerHTML = '<div style="text-align:center;padding:24px;color:var(--ink3);font-size:13px;">Select two companies to compare</div>'; return; }
+  const dA = SEED_DATA[kA], dB = SEED_DATA[kB];
+  body.innerHTML = renderCompareHTML(dA, dB);
+}
+
+function renderCompareHTML(a, b) {
+  const scoreBarA = `<div style="height:6px;background:var(--line);border-radius:3px;margin-top:4px;"><div style="width:${a.score}%;height:6px;background:var(--ob);border-radius:3px;"></div></div>`;
+  const scoreBarB = `<div style="height:6px;background:var(--line);border-radius:3px;margin-top:4px;"><div style="width:${b.score}%;height:6px;background:var(--ob);border-radius:3px;"></div></div>`;
+  const topicsA = a.topics.map(t=>`<div class="compare-topic-row"><span style="width:130px;flex-shrink:0;">${t.name}</span><div class="compare-topic-bar"><div class="compare-topic-fill" style="width:${t.pct}%;"></div></div><span style="width:36px;text-align:right;font-weight:700;">${t.pct}%</span><span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:${t.badgeBg};color:${t.badgeColor};">${t.badge}</span></div>`).join('');
+  const topicsB = b.topics.map(t=>`<div class="compare-topic-row"><span style="width:130px;flex-shrink:0;">${t.name}</span><div class="compare-topic-bar"><div class="compare-topic-fill" style="width:${t.pct}%;"></div></div><span style="width:36px;text-align:right;font-weight:700;">${t.pct}%</span><span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:${t.badgeBg};color:${t.badgeColor};">${t.badge}</span></div>`).join('');
+  const solsA = a.solutions.map(s=>`<div class="compare-solution-chip">${esc(s.offer)}</div>`).join('');
+  const solsB = b.solutions.map(s=>`<div class="compare-solution-chip">${esc(s.offer)}</div>`).join('');
+  const kpisA = a.esg.map(e=>`<div style="margin-bottom:6px;"><span style="font-size:11px;color:var(--ink3);">${e.title}</span><br><strong style="font-size:14px;">${e.value}</strong></div>`).join('');
+  const kpisB = b.esg.map(e=>`<div style="margin-bottom:6px;"><span style="font-size:11px;color:var(--ink3);">${e.title}</span><br><strong style="font-size:14px;">${e.value}</strong></div>`).join('');
+  return `<div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-col-hdr">
+        <div class="compare-av" style="background:${a.color};color:${a.textColor};">${a.initials}</div>
+        <div><div class="compare-name">${esc(a.name)}</div><div class="compare-score">ESG Score: ${a.score}/100</div></div>
+      </div>
+      ${scoreBarA}
+      <div style="margin-top:14px;" class="compare-section">
+        <div class="compare-sec-title">Key ESG Metrics</div>${kpisA}
+      </div>
+      <div class="compare-section"><div class="compare-sec-title">Material Topics</div>${topicsA}</div>
+      <div class="compare-section"><div class="compare-sec-title">Orange Solutions</div>${solsA}</div>
+      <div class="compare-section"><div class="compare-sec-title">CDP Score</div><span style="font-size:16px;font-weight:700;color:var(--green);">${a.cdpScore||'N/A'}</span></div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-col-hdr">
+        <div class="compare-av" style="background:${b.color};color:${b.textColor};">${b.initials}</div>
+        <div><div class="compare-name">${esc(b.name)}</div><div class="compare-score">ESG Score: ${b.score}/100</div></div>
+      </div>
+      ${scoreBarB}
+      <div style="margin-top:14px;" class="compare-section">
+        <div class="compare-sec-title">Key ESG Metrics</div>${kpisB}
+      </div>
+      <div class="compare-section"><div class="compare-sec-title">Material Topics</div>${topicsB}</div>
+      <div class="compare-section"><div class="compare-sec-title">Orange Solutions</div>${solsB}</div>
+      <div class="compare-section"><div class="compare-sec-title">CDP Score</div><span style="font-size:16px;font-weight:700;color:var(--green);">${b.cdpScore||'N/A'}</span></div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════
    TOAST
 ═══════════════════════════════════════════════════════ */
 function showToast(msg) {
@@ -3526,6 +4205,131 @@ function showToast(msg) {
   el.className = 'toast'; el.textContent = msg;
   document.body.appendChild(el);
   setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2400);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONBOARDING TOUR
+═══════════════════════════════════════════════════════ */
+const TOUR_STEPS = [
+  { selector:'#home-search-input', title:'🔍 Search Bar', text:'Type any company name and click "Generate Profile →" to instantly create a full AI-powered ESG battle card. Requires an Anthropic API key.' },
+  { selector:'#home-demo-grid', title:'📋 Demo Accounts', text:'No API key? Explore 9 pre-loaded companies: BNP Paribas, Unilever, Renault, LVMH, and more. Click any card to load the full ESG profile.' },
+  { selector:'#main-tabs', title:'🗂️ Profile Tabs', text:'Once a profile loads, navigate 6 tabs: Executive Summary, Orange Bridge (solutions), Solution Catalog, Meeting Intel, Key Contacts, and CRM Export.' },
+  { selector:'#chatbot-btn', title:'🤖 ESG Assistant', text:'Open the AI chatbot to get real-time sales coaching — objection handling, opening lines, follow-up emails, and more. Works best with an API key.' },
+  { selector:'.actions-row', title:'📤 Export Options', text:'Export the battle card as a PDF, PowerPoint deck, or CSV. Print directly, or copy the CRM record for Salesforce.' }
+];
+let tourStep = 0;
+let tourTarget = null;
+
+function startTour() {
+  // If on home page, show home tour; otherwise show profile tour
+  const isHome = document.getElementById('home-page').style.display !== 'none';
+  if (!isHome) {
+    TOUR_STEPS[1] = { selector:'#main-tabs', title:'🗂️ Profile Tabs', text:'Navigate 6 tabs: Executive Summary, Orange Bridge (solutions), Solution Catalog, Meeting Intel, Key Contacts, and CRM Export.' };
+    TOUR_STEPS[2] = { selector:'.actions-row', title:'📤 Export Options', text:'Export the battle card as PDF, PowerPoint, or CSV. Use Compare to view two companies side by side.' };
+  }
+  tourStep = 0;
+  document.getElementById('tour-overlay').style.display = 'block';
+  showTourStep();
+}
+
+function showTourStep() {
+  const step = TOUR_STEPS[tourStep];
+  const overlay = document.getElementById('tour-overlay');
+  const tooltip = document.getElementById('tour-tooltip');
+  const highlight = document.getElementById('tour-highlight');
+  if (!step) { endTour(); return; }
+
+  const target = document.querySelector(step.selector);
+  overlay.style.display = 'block';
+
+  if (target) {
+    const rect = target.getBoundingClientRect();
+    const pad = 6;
+    highlight.style.display = 'block';
+    highlight.style.left = (rect.left - pad) + 'px';
+    highlight.style.top = (rect.top - pad) + 'px';
+    highlight.style.width = (rect.width + pad*2) + 'px';
+    highlight.style.height = (rect.height + pad*2) + 'px';
+
+    // Position tooltip below or above target
+    tooltip.style.display = 'block';
+    const tW = 290, tH = 140;
+    let tx = rect.left, ty = rect.bottom + 14;
+    if (ty + tH > window.innerHeight - 20) ty = rect.top - tH - 14;
+    if (tx + tW > window.innerWidth - 20) tx = window.innerWidth - tW - 20;
+    if (tx < 12) tx = 12;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top = ty + 'px';
+  } else {
+    highlight.style.display = 'none';
+    tooltip.style.display = 'block';
+    tooltip.style.left = '50%';
+    tooltip.style.top = '50%';
+    tooltip.style.transform = 'translate(-50%,-50%)';
+  }
+
+  tooltip.innerHTML = `
+    <div class="tour-title">${step.title}</div>
+    <div class="tour-text">${step.text}</div>
+    <div class="tour-nav">
+      <span class="tour-step-count">Step ${tourStep+1} of ${TOUR_STEPS.length}</span>
+      <button class="tour-skip" onclick="endTour()">Skip</button>
+      ${tourStep > 0 ? `<button class="tour-btn" onclick="tourPrev()" style="background:var(--surface);color:var(--ink);border:1.5px solid var(--line);">← Back</button>` : ''}
+      <button class="tour-btn" onclick="tourNext()">${tourStep === TOUR_STEPS.length-1 ? 'Done ✓' : 'Next →'}</button>
+    </div>`;
+}
+
+function tourNext() { tourStep++; if (tourStep >= TOUR_STEPS.length) endTour(); else showTourStep(); }
+function tourPrev() { tourStep--; if (tourStep < 0) tourStep = 0; showTourStep(); }
+function endTour() {
+  document.getElementById('tour-overlay').style.display = 'none';
+  document.getElementById('tour-tooltip').style.display = 'none';
+  document.getElementById('tour-highlight').style.display = 'none';
+}
+// Click outside tour tooltip ends tour
+document.addEventListener('click', e => {
+  if (document.getElementById('tour-overlay').style.display === 'block') {
+    if (!document.getElementById('tour-tooltip').contains(e.target)) endTour();
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   COPY HELPERS
+═══════════════════════════════════════════════════════ */
+function tpRow(label, text) {
+  return `<div class="tp-item">
+    <div class="tp-label-chip">${esc(label)}</div>
+    <div class="tp-text">${esc(text)}</div>
+    <button class="copy-mini" data-copy="${text.replace(/"/g,'&quot;')}" title="Copy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+  </div>`;
+}
+
+function copyAgendaItem(btn) {
+  const text = btn.dataset.copy;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 2000);
+  });
+}
+
+function attachCopyMini(container) {
+  container.querySelectorAll('.copy-mini').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        }, 2000);
+      });
+    });
+  });
 }
 
 /* ═══════════════════════════════════════════════════════
