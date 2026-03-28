@@ -6,6 +6,9 @@
 <title>Orange Business — ESG Sales Intelligence Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -45,11 +48,9 @@
 ══════════════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
 html{transition:background-color var(--t),color var(--t);}
-@keyframes bodyFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.55;min-height:100vh;padding-top:3px;
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-  transition:background-color var(--t),color var(--t);
-  animation:bodyFadeIn .5s ease;}
+  transition:background-color var(--t),color var(--t);}
 a{color:var(--ob);text-decoration:none;}
 a:hover{text-decoration:underline;}
 button:active{transform:scale(0.97);}
@@ -76,8 +77,9 @@ button:active{transform:scale(0.97);}
 .hamburger{display:none;align-items:center;justify-content:center;width:38px;height:38px;border:none;background:transparent;cursor:pointer;color:var(--ink);border-radius:var(--rr);margin-right:8px;flex-shrink:0;}
 .hamburger:hover{background:var(--surface);}
 .hamburger svg{width:20px;height:20px;}
-.nav-sq{width:36px;height:36px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-right:10px;flex-shrink:0;cursor:pointer;transition:background .15s;}
+.nav-sq{width:36px;height:36px;background:var(--ob);border-radius:5px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;margin-right:10px;flex-shrink:0;cursor:pointer;transition:background .15s;outline:none;box-shadow:none;border:none;}
 .nav-sq:hover{background:var(--ob-dark);}
+.nav-sq:focus,.nav-sq:focus-visible{outline:none;box-shadow:none;}
 .nav-brand{font-size:15px;font-weight:700;color:var(--ink);margin-right:16px;white-space:nowrap;cursor:pointer;}
 .nav-brand:hover span{text-decoration:underline;}
 .nav-brand span{color:var(--ob);}
@@ -199,23 +201,21 @@ button:active{transform:scale(0.97);}
   display:flex; align-items:center; justify-content:center;
   color:white; font-size:42px; font-weight:900;
   margin:0 auto 28px;
-  box-shadow:0 8px 32px rgba(255,121,0,0.4), 0 0 0 4px rgba(255,121,0,0.15);
+  box-shadow:0 8px 32px rgba(255,121,0,0.4), 0 0 0 4px rgba(255,121,0,0.12);
   position:relative;
-  animation:logoPulse 3s ease-in-out infinite;
-}
-@keyframes logoPulse {
-  0%,100% { box-shadow:0 8px 32px rgba(255,121,0,0.4), 0 0 0 4px rgba(255,121,0,0.15); }
-  50% { box-shadow:0 8px 40px rgba(255,121,0,0.55), 0 0 0 8px rgba(255,121,0,0.1); }
+  will-change:transform; /* GSAP float handles animation */
 }
 .home-logo::after {
   content:''; position:absolute; bottom:-4px; left:50%; transform:translateX(-50%);
   width:44px; height:3px; background:white; border-radius:2px; opacity:0.4;
 }
 .home-headline {
-  font-size:58px; font-weight:900; color:var(--ink); line-height:1.02;
+  font-size:58px; font-weight:900; color:var(--ink); line-height:1.15;
   margin-bottom:14px; letter-spacing:-2.5px;
+  padding-bottom:6px; /* prevents descender clipping with background-clip:text */
   background:linear-gradient(130deg, #CC4400 0%, var(--ob) 45%, #FF5500 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  overflow:visible;
 }
 .home-subheadline {
   font-size:17px; color:var(--ink2); line-height:1.65; margin-bottom:30px;
@@ -2410,10 +2410,10 @@ function renderHomePageCards() {
   const grid = document.getElementById('home-demo-grid');
   if (!grid) return;
   const keys = ['bnp','unilever','renault','lvmh','schneider','total','axa','danone','airbus'];
-  grid.innerHTML = keys.map(key => {
+  grid.innerHTML = keys.map((key, _kIdx) => {
     const d = SEED_DATA[key];
     const scoreWidth = d.score + '%';
-    return `<div class="home-demo-card" onclick="loadSeedFromHome('${key}')">
+    return `<div class="home-demo-card" data-aos="fade-up" data-aos-delay="${_kIdx * 55}" onclick="loadSeedFromHome('${key}')">
       <div class="home-card-top">
         <div class="home-card-av" style="background:${d.color};color:${d.textColor};">${d.initials}</div>
         <div>
@@ -2486,35 +2486,62 @@ function showHomePage() {
 function goHome() {
   const profileArea = document.getElementById('profile-area');
   const homePage = document.getElementById('home-page');
-  profileArea.classList.add('page-exit');
-  setTimeout(() => {
-    profileArea.classList.remove('page-exit');
-    profileArea.style.display = 'none';
-    homePage.style.display = 'flex';
-    homePage.classList.add('page-enter');
-    setTimeout(() => homePage.classList.remove('page-enter'), 300);
-    document.getElementById('nav-breadcrumb').classList.remove('visible');
-    document.querySelectorAll('.acct').forEach(a => a.classList.remove('active'));
-    document.getElementById('status-right').textContent = 'Ready · Select a demo account or search any company';
-    currentCompany = null;
-  }, 300);
+  if (typeof gsap !== 'undefined') {
+    gsap.to(profileArea, { opacity: 0, y: -12, duration: 0.25, ease: 'power2.in', onComplete: () => {
+      profileArea.style.display = 'none';
+      gsap.set(profileArea, { opacity: 1, y: 0, clearProps: 'opacity,y,transform' });
+      homePage.style.display = 'flex';
+      document.getElementById('nav-breadcrumb').classList.remove('visible');
+      document.querySelectorAll('.acct').forEach(a => a.classList.remove('active'));
+      document.getElementById('status-right').textContent = 'Ready · Select a demo account or search any company';
+      currentCompany = null;
+      _animateHomeReturn();
+    }});
+  } else {
+    profileArea.classList.add('page-exit');
+    setTimeout(() => {
+      profileArea.classList.remove('page-exit');
+      profileArea.style.display = 'none';
+      homePage.style.display = 'flex';
+      homePage.classList.add('page-enter');
+      setTimeout(() => homePage.classList.remove('page-enter'), 300);
+      document.getElementById('nav-breadcrumb').classList.remove('visible');
+      document.querySelectorAll('.acct').forEach(a => a.classList.remove('active'));
+      document.getElementById('status-right').textContent = 'Ready · Select a demo account or search any company';
+      currentCompany = null;
+    }, 300);
+  }
 }
 
 function transitionToProfile(callback) {
   const homePage = document.getElementById('home-page');
   const profileArea = document.getElementById('profile-area');
-  homePage.classList.add('page-exit');
-  setTimeout(() => {
-    homePage.classList.remove('page-exit');
-    homePage.style.display = 'none';
-    profileArea.style.display = 'flex';
-    profileArea.style.flexDirection = 'column';
-    profileArea.style.gap = '14px';
-    profileArea.classList.add('page-enter');
-    setTimeout(() => profileArea.classList.remove('page-enter'), 300);
-    document.getElementById('nav-breadcrumb').classList.add('visible');
-    if (callback) callback();
-  }, 300);
+  if (typeof gsap !== 'undefined') {
+    gsap.to(homePage, { opacity: 0, scale: 0.97, duration: 0.28, ease: 'power2.in', onComplete: () => {
+      homePage.style.display = 'none';
+      gsap.set(homePage, { opacity: 1, scale: 1, clearProps: 'opacity,scale,transform' });
+      profileArea.style.display = 'flex';
+      profileArea.style.flexDirection = 'column';
+      profileArea.style.gap = '14px';
+      document.getElementById('nav-breadcrumb').classList.add('visible');
+      gsap.fromTo(profileArea, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.38, ease: 'power3.out',
+        clearProps: 'opacity,y,transform' });
+      if (callback) callback();
+    }});
+  } else {
+    homePage.classList.add('page-exit');
+    setTimeout(() => {
+      homePage.classList.remove('page-exit');
+      homePage.style.display = 'none';
+      profileArea.style.display = 'flex';
+      profileArea.style.flexDirection = 'column';
+      profileArea.style.gap = '14px';
+      profileArea.classList.add('page-enter');
+      setTimeout(() => profileArea.classList.remove('page-enter'), 300);
+      document.getElementById('nav-breadcrumb').classList.add('visible');
+      if (callback) callback();
+    }, 300);
+  }
 }
 
 function homeSearch() {
@@ -2556,7 +2583,7 @@ function renderProfile(d) {
 
 function buildProfileHTML(d) {
   return `
-  <div class="co-hdr">
+  <div class="co-hdr" data-aos="fade-up">
     <div class="co-logo" style="background:${d.color};color:${d.textColor};">${d.initials}</div>
     <div class="co-meta">
       <div class="co-name">${d.name}</div>
@@ -2577,7 +2604,7 @@ function buildProfileHTML(d) {
     </div>
   </div>
 
-  <div class="full-box">
+  <div class="full-box" data-aos="fade-up" data-aos-delay="80">
     <div class="tabs" id="main-tabs">
       <button class="tab-btn active" onclick="switchTab('exec-summary',this)">Executive Summary</button>
       <button class="tab-btn" onclick="switchTab('bridge',this)">Orange Bridge</button>
@@ -2705,7 +2732,7 @@ function renderExecSummaryHTML(d) {
     </div>
     <div class="esg-grid">
       ${d.esg.map((e,i)=>`
-      <div class="esg-card stagger-${i+1}" style="animation:cardFadeIn .4s ease both ${i*80}ms;">
+      <div class="esg-card stagger-${i+1}" data-aos="fade-up" data-aos-delay="${i*80}">
         <div class="esg-ct">${e.title}</div>
         <div class="esg-cv">${e.value}</div>
         <div class="esg-cd">${e.desc}</div>
@@ -2842,7 +2869,7 @@ function renderBridgeHTML(d) {
     </div>
     <div class="bridge-grid">
       ${d.solutions.map((s,i)=>`
-      <div class="bridge-card ${s.cls}" style="animation:cardFadeIn .4s ease ${i*80}ms both;">
+      <div class="bridge-card ${s.cls}" data-aos="fade-up" data-aos-delay="${i*80}">
         <div class="bp ${s.pcls}">${s.pillar}</div>
         <div class="bo">${s.offer}</div>
         <div class="bd">${s.desc}</div>
@@ -2991,7 +3018,7 @@ function renderCatalogHTML(d) {
     const score = getMatchScore(p, d);
     const delay = (i % 6) * 60;
     const urlHtml = p.url ? `<a href="${p.url}" class="prod-link" target="_blank" rel="noopener">Read more &#8594;</a>` : '<span style="color:var(--ink3);font-size:11px;">Coming soon</span>';
-    return `<div class="prod-card" data-pillar="${p.pillarKey}" data-name="${p.name.toLowerCase()}" style="animation-delay:${delay}ms;">
+    return `<div class="prod-card" data-pillar="${p.pillarKey}" data-name="${p.name.toLowerCase()}" data-aos="fade-up" data-aos-delay="${delay}">
       <div class="prod-pillar-bar" style="background:${p.pillarColor};"></div>
       <div class="prod-body">
         <div class="prod-pillar-label" style="color:${p.pillarColor};">${p.pillar}</div>
@@ -3270,24 +3297,42 @@ function renderMeetingHTML(d) {
 ═══════════════════════════════════════════════════════ */
 function postRenderSetup(d) {
   setTimeout(() => {
-    document.querySelectorAll('.esg-fill').forEach(el => { el.style.width = el.dataset.fill + '%'; });
-    document.querySelectorAll('.topic-fill').forEach(el => { el.style.width = el.dataset.fill + '%'; });
+    // Animate progress bars with GSAP (staggered)
+    document.querySelectorAll('.esg-fill').forEach((el, i) => {
+      if (typeof gsap !== 'undefined') {
+        gsap.to(el, { width: el.dataset.fill + '%', duration: 0.85, ease: 'power2.out', delay: 0.05 + i * 0.05 });
+      } else { el.style.width = el.dataset.fill + '%'; }
+    });
+    document.querySelectorAll('.topic-fill').forEach((el, i) => {
+      if (typeof gsap !== 'undefined') {
+        gsap.to(el, { width: el.dataset.fill + '%', duration: 0.85, ease: 'power2.out', delay: 0.1 + i * 0.06 });
+      } else { el.style.width = el.dataset.fill + '%'; }
+    });
+    // Score ring animation with GSAP
     const ring = document.getElementById('score-ring');
     const scoreEl = document.getElementById('score-num');
+    const targetOffset = ring ? Math.round(164 - (d.score/100)*138) : 0;
     if (ring) {
-      const target = Math.round(164 - (d.score/100)*138);
-      ring.style.strokeDashoffset = target;
+      if (typeof gsap !== 'undefined') {
+        gsap.fromTo(ring, { strokeDashoffset: 164 }, { strokeDashoffset: targetOffset, duration: 1.2, ease: 'power3.out' });
+      } else { ring.style.strokeDashoffset = targetOffset; }
     }
     if (scoreEl) {
-      let start = 0; const end = d.score;
-      const step = () => { start = Math.min(start+2, end); scoreEl.textContent = start; if(start<end) requestAnimationFrame(step); };
-      requestAnimationFrame(step);
+      if (typeof gsap !== 'undefined') {
+        const counter = { val: 0 };
+        gsap.to(counter, { val: d.score, duration: 1.2, ease: 'power3.out',
+          onUpdate() { scoreEl.textContent = Math.round(counter.val); } });
+      } else {
+        let start = 0;
+        const tick = () => { start = Math.min(start+2, d.score); scoreEl.textContent = start; if(start<d.score) requestAnimationFrame(tick); };
+        requestAnimationFrame(tick);
+      }
     }
-    // Init exec benchmark chart since exec-summary is the active tab
     initExecBenchmarkChart(d);
-    // Attach copy mini buttons on initial talking points panel
     const tpPanel = document.getElementById('talking-points-panel');
     if (tpPanel) attachCopyMini(tpPanel);
+    // Refresh AOS for dynamically rendered elements
+    if (typeof AOS !== 'undefined') AOS.refresh();
   }, 50);
 }
 
@@ -4497,17 +4542,22 @@ function startTour() {
   showTourStep();
 }
 
-function showTourStep() {
+function _buildTourHtml() {
   const step = TOUR_STEPS[tourStep];
-  const overlay = document.getElementById('tour-overlay');
+  return `<div class="tour-title">${step.title}</div>
+    <div class="tour-text">${step.text}</div>
+    <div class="tour-nav">
+      <span class="tour-step-count">Step ${tourStep+1} of ${TOUR_STEPS.length}</span>
+      <button class="tour-skip" onclick="endTour()">Skip</button>
+      ${tourStep > 0 ? `<button class="tour-btn" onclick="tourPrev()" style="background:var(--surface);color:var(--ink);border:1.5px solid var(--line);">← Back</button>` : ''}
+      <button class="tour-btn" onclick="tourNext()">${tourStep === TOUR_STEPS.length-1 ? 'Done ✓' : 'Next →'}</button>
+    </div>`;
+}
+
+function _placeTourTooltip(target) {
   const tooltip = document.getElementById('tour-tooltip');
   const highlight = document.getElementById('tour-highlight');
-  if (!step) { endTour(); return; }
-
-  const target = document.querySelector(step.selector);
-  overlay.style.display = 'block';
-
-  tooltip.style.transform = ''; // reset any previous centering
+  tooltip.style.transform = '';
   if (target) {
     const rect = target.getBoundingClientRect();
     const pad = 6;
@@ -4516,32 +4566,43 @@ function showTourStep() {
     highlight.style.top = (rect.top - pad) + 'px';
     highlight.style.width = (rect.width + pad*2) + 'px';
     highlight.style.height = (rect.height + pad*2) + 'px';
-
     tooltip.style.display = 'block';
-    const tW = 300, tH = 170;
-    let tx = rect.left, ty = rect.bottom + 16;
-    if (ty + tH > window.innerHeight - 20) ty = Math.max(12, rect.top - tH - 16);
-    if (tx + tW > window.innerWidth - 20) tx = window.innerWidth - tW - 20;
+    tooltip.innerHTML = _buildTourHtml();
+    const tW = 300, tH = tooltip.offsetHeight + 8;
+    const vW = window.innerWidth, vH = window.innerHeight;
+    let tx = rect.left;
+    let ty = rect.bottom + 16;
+    if (ty + tH > vH - 16) ty = rect.top - tH - 16; // try above
+    if (ty < 12) ty = Math.max(12, (vH - tH) / 2);  // center if no room
+    if (tx + tW > vW - 16) tx = vW - tW - 16;
     if (tx < 12) tx = 12;
+    ty = Math.max(12, Math.min(ty, vH - tH - 12));    // hard clamp
     tooltip.style.left = tx + 'px';
     tooltip.style.top = ty + 'px';
   } else {
     highlight.style.display = 'none';
     tooltip.style.display = 'block';
+    tooltip.innerHTML = _buildTourHtml();
     tooltip.style.left = '50%';
     tooltip.style.top = '50%';
     tooltip.style.transform = 'translate(-50%,-50%)';
   }
+}
 
-  tooltip.innerHTML = `
-    <div class="tour-title">${step.title}</div>
-    <div class="tour-text">${step.text}</div>
-    <div class="tour-nav">
-      <span class="tour-step-count">Step ${tourStep+1} of ${TOUR_STEPS.length}</span>
-      <button class="tour-skip" onclick="endTour()">Skip</button>
-      ${tourStep > 0 ? `<button class="tour-btn" onclick="tourPrev()" style="background:var(--surface);color:var(--ink);border:1.5px solid var(--line);">← Back</button>` : ''}
-      <button class="tour-btn" onclick="tourNext()">${tourStep === TOUR_STEPS.length-1 ? 'Done ✓' : 'Next →'}</button>
-    </div>`;
+function showTourStep() {
+  const step = TOUR_STEPS[tourStep];
+  const overlay = document.getElementById('tour-overlay');
+  const tooltip = document.getElementById('tour-tooltip');
+  if (!step) { endTour(); return; }
+  overlay.style.display = 'block';
+  const target = document.querySelector(step.selector);
+  if (target) {
+    // Scroll target into view, then position tooltip after scroll settles
+    target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    setTimeout(() => _placeTourTooltip(target), 350);
+  } else {
+    _placeTourTooltip(null);
+  }
 }
 
 function tourNext() { _tourIgnoreNextClick = true; tourStep++; if (tourStep >= TOUR_STEPS.length) endTour(); else showTourStep(); }
@@ -4613,18 +4674,68 @@ function esc(str) {
 ═══════════════════════════════════════════════════════ */
 document.getElementById('search-input').addEventListener('keydown', e => { if(e.key==='Enter') analyzeCompany(); });
 
+/* ═══════════════════════════════════════════════════════
+   GSAP + AOS ANIMATION HELPERS
+═══════════════════════════════════════════════════════ */
+let _logoFloatTween = null;
+
+function _initAnimations() {
+  if (typeof AOS !== 'undefined') {
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 30 });
+  }
+  _animateHeroEntrance();
+  _initLogoFloat();
+}
+
+function _animateHeroEntrance() {
+  if (typeof gsap === 'undefined') return;
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  tl.fromTo('.home-logo',
+      { opacity: 0, scale: 0.72, y: -12 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: 'back.out(1.7)' })
+    .fromTo('.home-headline',
+      { opacity: 0, y: 36 },
+      { opacity: 1, y: 0, duration: 0.58 }, '-=0.18')
+    .fromTo('.home-subheadline',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.45 }, '-=0.28')
+    .fromTo('.home-search-wrap',
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: 0.42 }, '-=0.22')
+    .fromTo('.home-recent-wrap, .home-demo-label',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.38 }, '-=0.15');
+}
+
+function _initLogoFloat() {
+  if (typeof gsap === 'undefined') return;
+  const logo = document.querySelector('.home-logo');
+  if (!logo) return;
+  if (_logoFloatTween) _logoFloatTween.kill();
+  _logoFloatTween = gsap.to(logo, { y: -9, duration: 2.2, ease: 'sine.inOut', repeat: -1, yoyo: true });
+}
+
+function _animateHomeReturn() {
+  if (typeof gsap === 'undefined') return;
+  gsap.fromTo('.home-logo',     { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.38, ease: 'back.out(1.5)' });
+  gsap.fromTo('.home-headline', { opacity: 0, y: 22 },       { opacity: 1, y: 0, duration: 0.42, ease: 'power3.out', delay: 0.05 });
+  gsap.fromTo('.home-subheadline, .home-search-wrap', { opacity: 0 }, { opacity: 1, duration: 0.38, delay: 0.15 });
+  _initLogoFloat();
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   initDarkMode();
   initAPIKey();
   initSearchHistory();
   updateSearchState();
   renderHomePageCards();
-  // Show home page on load
   showHomePage();
-  // Pulse chatbot button after 2s
+  // Initialize GSAP + AOS and run hero entrance
+  _initAnimations();
+  // Pulse chatbot button after delay
   setTimeout(() => {
     const btn = document.getElementById('chatbot-btn');
-    if (btn) { btn.classList.add('pulse'); }
+    if (btn) btn.classList.add('pulse');
   }, 2000);
 });
 
