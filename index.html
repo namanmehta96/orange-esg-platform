@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -1098,6 +1098,251 @@ button:active{transform:scale(0.97);}
 .skeleton-card { height:90px; width:100%; border-radius:var(--r); }
 .skeleton-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:11px; }
 .skeleton-grid-item { height:80px; }
+
+/* ══════════════════════════════════════════════════════
+   DARK MODE — POLISH & DEPTH
+══════════════════════════════════════════════════════ */
+
+/* Nav: deeper shadow in dark for clear separation */
+[data-theme="dark"] .nav {
+  box-shadow: 0 2px 24px rgba(0,0,0,0.55), 0 1px 0 rgba(255,121,0,0.15);
+}
+
+/* Sidebar: slightly richer border */
+[data-theme="dark"] .sidebar {
+  border-right-color: #2a2a2a;
+  background: #141414;
+}
+[data-theme="dark"] .sb-footer {
+  border-top-color: #2a2a2a;
+}
+
+/* Home search wrap: visible depth on dark */
+[data-theme="dark"] .home-search-wrap {
+  background: #1c1c1c;
+  border-color: #333;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(255,121,0,0.06);
+}
+[data-theme="dark"] .home-search-wrap:focus-within {
+  border-color: var(--ob);
+  box-shadow: 0 4px 28px rgba(255,121,0,0.22), 0 0 0 3px rgba(255,121,0,0.1);
+}
+
+/* Home demo cards: more defined on dark surface */
+[data-theme="dark"] .home-demo-card {
+  background: #1c1c1c;
+  border-color: #2e2e2e;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+[data-theme="dark"] .home-demo-card:hover {
+  border-color: var(--ob);
+  box-shadow: 0 8px 32px rgba(255,121,0,0.18), 0 2px 12px rgba(0,0,0,0.5);
+}
+
+/* Profile cards: lift from surface */
+[data-theme="dark"] .co-hdr,
+[data-theme="dark"] .full-box,
+[data-theme="dark"] .bridge-card,
+[data-theme="dark"] .quote-card,
+[data-theme="dark"] .case-card,
+[data-theme="dark"] .news-card,
+[data-theme="dark"] .prod-card {
+  background: #1c1c1c;
+  border-color: #2e2e2e;
+}
+[data-theme="dark"] .bridge-card:hover,
+[data-theme="dark"] .prod-card:hover {
+  border-color: var(--ob);
+  box-shadow: 0 6px 28px rgba(255,121,0,0.14), 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* Tab bar: clear distinction between surface and active tab */
+[data-theme="dark"] .tabs {
+  background: #161616;
+  border-bottom-color: #2a2a2a;
+}
+[data-theme="dark"] .tab-btn.active {
+  background: #1c1c1c;
+  border-bottom-color: var(--ob);
+}
+[data-theme="dark"] .tab-btn:hover:not(.active) {
+  background: rgba(255,121,0,0.07) !important;
+}
+
+/* ESG cards */
+[data-theme="dark"] .esg-card {
+  background: #1c1c1c;
+  border-color: #2e2e2e;
+}
+
+/* CDP badge and sector leader — fix nearly-invisible green borders */
+[data-theme="dark"] .cdp-badge {
+  border-color: rgba(26,122,74,0.40);
+  background: rgba(26,122,74,0.14);
+}
+[data-theme="dark"] .sector-leader-card {
+  border-color: rgba(26,122,74,0.28);
+}
+
+/* Input fields: clear but not harsh */
+[data-theme="dark"] .search-box,
+[data-theme="dark"] .catalog-search {
+  background: #1a1a1a;
+  border-color: #333;
+}
+[data-theme="dark"] .search-box:focus-within,
+[data-theme="dark"] .catalog-search:focus-within {
+  border-color: var(--ob);
+}
+[data-theme="dark"] .modal-input,
+[data-theme="dark"] .notes-area,
+[data-theme="dark"] .chatbot-input,
+[data-theme="dark"] .compare-select {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+/* CRM table: visible row separation */
+[data-theme="dark"] .crm-table td {
+  border-bottom-color: #252525;
+}
+[data-theme="dark"] .crm-table tr:hover td {
+  background: #222;
+}
+[data-theme="dark"] .crm-table th {
+  border-bottom-color: #333;
+}
+
+/* Chatbot panel */
+[data-theme="dark"] #chatbot-panel {
+  background: #1c1c1c;
+  border-color: #333;
+  box-shadow: 0 16px 56px rgba(0,0,0,0.65);
+}
+[data-theme="dark"] .chatbot-input-area {
+  background: #1c1c1c;
+  border-top-color: #2a2a2a;
+}
+[data-theme="dark"] .chat-msg.assistant {
+  background: #222;
+  border-color: #333;
+  color: #c8c8c8;
+}
+
+/* Modal boxes */
+[data-theme="dark"] .modal-box,
+[data-theme="dark"] .compare-modal-box,
+[data-theme="dark"] .loading-box {
+  background: #1c1c1c;
+  border: 1px solid #333;
+  box-shadow: 0 24px 72px rgba(0,0,0,0.75);
+}
+[data-theme="dark"] .modal-close {
+  background: #252525;
+  color: #aaa;
+}
+[data-theme="dark"] .modal-close:hover {
+  background: #333;
+}
+
+/* Talking points & notes */
+[data-theme="dark"] .talking-point-block,
+[data-theme="dark"] .exec-summary,
+[data-theme="dark"] .notes-result,
+[data-theme="dark"] .chart-interp {
+  background: #1c1c1c;
+  border-color: #2e2e2e;
+}
+[data-theme="dark"] .ta-item {
+  border-color: #2a2a2a;
+}
+[data-theme="dark"] .ta-header {
+  background: #1c1c1c;
+}
+[data-theme="dark"] .ta-body-inner {
+  background: #181818;
+  border-top-color: #2a2a2a;
+}
+
+/* Stake rows and agenda items */
+[data-theme="dark"] .stake-row {
+  background: #1c1c1c;
+  border-color: #2a2a2a;
+}
+[data-theme="dark"] .stake-row:hover {
+  background: rgba(255,121,0,0.08);
+  border-color: rgba(255,121,0,0.3);
+}
+
+/* CRM buttons */
+[data-theme="dark"] .crm-btn-secondary {
+  border-color: #333;
+  color: #aaa;
+}
+
+/* Action row secondary buttons */
+[data-theme="dark"] .asec {
+  border-color: #333;
+  color: #aaa;
+}
+[data-theme="dark"] .asec:hover {
+  border-color: var(--ob);
+  color: var(--ob);
+}
+
+/* Pitch box backgrounds */
+[data-theme="dark"] .pitch-risk-box {
+  border-color: rgba(192,57,43,0.35);
+}
+
+/* Filter pills */
+[data-theme="dark"] .filter-pill,
+[data-theme="dark"] .sol-pill {
+  background: #1c1c1c;
+  border-color: #333;
+  color: #aaa;
+}
+
+/* Why box */
+[data-theme="dark"] .why-box {
+  background: rgba(255,121,0,0.07);
+  border-color: rgba(255,121,0,0.25);
+}
+
+/* Tour tooltip */
+[data-theme="dark"] .tour-tooltip {
+  background: #1c1c1c;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+}
+
+/* Loading overlay */
+[data-theme="dark"] .loading-step.active {
+  background: rgba(255,121,0,0.12);
+}
+
+/* Home page mesh: more atmospheric in dark */
+[data-theme="dark"] .home-mesh {
+  opacity: 0.9;
+}
+[data-theme="dark"] .home-mesh::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,121,0,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(255,153,50,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 50% 80%, rgba(255,80,0,0.10) 0%, transparent 50%);
+}
+
+/* Home demo grid label */
+[data-theme="dark"] .home-demo-label {
+  color: #666;
+}
+
+/* Scrollbar - slightly more visible in dark */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #333;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
 
 /* ══════════════════════════════════════════════════════
    PRINT STYLES
@@ -3388,8 +3633,9 @@ function toggleAccordion(header) {
 ═══════════════════════════════════════════════════════ */
 function initDarkMode() {
   const saved = localStorage.getItem('ob_esg_darkmode');
-  if (saved === 'dark') applyDark(true);
-  else applyDark(false);
+  // Default to dark; only switch to light if explicitly saved as 'light'
+  if (saved === 'light') applyDark(false);
+  else applyDark(true);
 }
 function toggleDarkMode() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -4715,17 +4961,18 @@ function _startParticles() {
   canvas._moveH  = onMove;
   canvas._leaveH = onLeave;
 
-  const N = 72;
+  const N = 115;
   let W = canvas.width, H = canvas.height;
   const pts = Array.from({length:N}, () => ({
     x:  Math.random() * W,
     y:  Math.random() * H,
-    vx: (Math.random() - 0.5) * 0.55,
-    vy: (Math.random() - 0.5) * 0.55,
-    r:  1.4 + Math.random() * 1.6
+    vx: (Math.random() - 0.5) * 0.6,
+    vy: (Math.random() - 0.5) * 0.6,
+    r:  1.8 + Math.random() * 1.8
   }));
 
-  const ATTRACT_R = 170, CONNECT_D = 125;
+  const ATTRACT_R = 210, CONNECT_D = 145;
+  const CURSOR_GLOW_R = 90;
   const ctx = canvas.getContext('2d');
 
   function tick() {
@@ -4736,6 +4983,18 @@ function _startParticles() {
     const mx = _particleMX, my = _particleMY;
     const hasM = mx > -999;
 
+    // Cursor ambient glow
+    if (hasM) {
+      const grad = ctx.createRadialGradient(mx, my, 0, mx, my, CURSOR_GLOW_R);
+      grad.addColorStop(0,   dark ? 'rgba(255,121,0,0.22)' : 'rgba(255,121,0,0.14)');
+      grad.addColorStop(0.5, dark ? 'rgba(255,121,0,0.08)' : 'rgba(255,121,0,0.05)');
+      grad.addColorStop(1,   'rgba(255,121,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(mx, my, CURSOR_GLOW_R, 0, 6.28318);
+      ctx.fill();
+    }
+
     // Update positions
     for (const p of pts) {
       if (hasM) {
@@ -4743,14 +5002,14 @@ function _startParticles() {
         const d2 = dx*dx + dy*dy;
         if (d2 < ATTRACT_R * ATTRACT_R && d2 > 0) {
           const d = Math.sqrt(d2);
-          const f = (ATTRACT_R - d) / ATTRACT_R * 0.038;
+          const f = (ATTRACT_R - d) / ATTRACT_R * 0.055;
           p.vx += dx/d * f;
           p.vy += dy/d * f;
         }
       }
-      p.vx *= 0.975; p.vy *= 0.975;
+      p.vx *= 0.972; p.vy *= 0.972;
       const spd = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
-      if (spd > 2.2) { p.vx = p.vx/spd*2.2; p.vy = p.vy/spd*2.2; }
+      if (spd > 2.8) { p.vx = p.vx/spd*2.8; p.vy = p.vy/spd*2.8; }
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0) p.x += W; if (p.x > W) p.x -= W;
       if (p.y < 0) p.y += H; if (p.y > H) p.y -= H;
@@ -4763,27 +5022,31 @@ function _startParticles() {
         const dx = a.x-b.x, dy = a.y-b.y;
         const d = Math.sqrt(dx*dx+dy*dy);
         if (d < CONNECT_D) {
-          const base = (1 - d/CONNECT_D) * (dark ? 0.16 : 0.20);
+          const base = (1 - d/CONNECT_D) * (dark ? 0.26 : 0.30);
           let boost = 0;
           if (hasM) {
             const da = Math.hypot(mx-a.x, my-a.y);
             const db = Math.hypot(mx-b.x, my-b.y);
-            boost = Math.max(0, 1 - Math.min(da,db)/210) * 0.45;
+            boost = Math.max(0, 1 - Math.min(da,db)/200) * 0.52;
           }
-          const alpha = Math.min(0.75, base + boost);
+          const alpha = Math.min(0.88, base + boost);
           ctx.strokeStyle = `rgba(255,121,0,${alpha.toFixed(2)})`;
-          ctx.lineWidth = 0.85;
+          ctx.lineWidth = alpha > 0.4 ? 1.1 : 0.75;
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         }
       }
     }
 
-    // Draw dots
-    const dotA = dark ? 0.52 : 0.70;
-    ctx.fillStyle = `rgba(255,121,0,${dotA})`;
+    // Draw dots — brighter near cursor
     for (const p of pts) {
+      let dotA = dark ? 0.62 : 0.75;
+      if (hasM) {
+        const pd = Math.hypot(mx-p.x, my-p.y);
+        dotA = Math.min(1.0, dotA + Math.max(0, 1 - pd/130) * 0.35);
+      }
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, 6.28318);
+      ctx.fillStyle = `rgba(255,121,0,${dotA.toFixed(2)})`;
       ctx.fill();
     }
 
