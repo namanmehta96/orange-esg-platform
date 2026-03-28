@@ -4734,16 +4734,23 @@ Best regards,
 Orange Business ESG Sales
 [Your email] | [Your phone]
 
-P.S. I noticed ${(()=>{
-  const e = company.esg?.[0];
-  const t = company.topics?.[0];
-  if (e?.title && e?.value) {
-    const tl = e.title.toLowerCase();
-    return `${company.name} has set ${/^[aeiou]/i.test(tl)?'an':'a'} ${tl} of ${e.value}`;
+P.S. ${(()=>{
+  const critical = company.topics?.find(t => t.badge === 'Critical') || company.topics?.[0];
+  const csrdEsg  = company.esg?.find(e => /csrd|wave/i.test(e.title + ' ' + e.value));
+  const sol      = company.solutions?.[0];
+  const ind      = (company.industry || 'sector').toLowerCase();
+  if (csrdEsg && critical) {
+    const wave = /wave/i.test(csrdEsg.value) ? csrdEsg.value : 'Wave 1';
+    return `As a CSRD ${wave} reporter, ${company.name}'s ${critical.name.toLowerCase()} data (${critical.pct}% materiality) will face external audit this reporting cycle — in our experience, that's precisely where organisations most regret not having the right infrastructure in place sooner.`;
   }
-  if (t?.name) return `${company.name} has identified ${t.name.toLowerCase()} as a critical priority`;
-  return `${company.name} has made significant ESG commitments`;
-})()} — this is precisely where we've seen the strongest ROI for our clients.`
+  if (critical && critical.pct >= 88) {
+    return `With ${critical.name.toLowerCase()} at ${critical.pct}% on ${company.name}'s materiality matrix, this is the pressure point where reactive management starts becoming a real liability — it's also where we've delivered the fastest, most measurable impact for comparable ${ind} clients.`;
+  }
+  if (critical) {
+    return `${company.name} has flagged ${critical.name.toLowerCase()} as a critical material issue — our ${sol?.pillar || 'approach'} is built specifically for organisations at exactly this stage of their ESG journey.`;
+  }
+  return `${company.name}'s ESG disclosures show the kind of ambition where execution infrastructure — not strategy — becomes the limiting factor. That's the conversation I'd most like to have.`;
+})()}`
   };
 }
 
