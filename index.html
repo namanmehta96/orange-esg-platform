@@ -191,30 +191,39 @@ button:active{transform:scale(0.97);}
   100% { transform:scale(1.05) translate(10px,-10px); }
 }
 .home-logo {
-  width:72px; height:72px; background:var(--ob); border-radius:14px;
+  width:76px; height:76px;
+  background:linear-gradient(135deg, #0A2240 0%, #1a3d63 100%);
+  border-radius:18px;
   display:flex; align-items:center; justify-content:center;
-  color:white; font-size:38px; font-weight:800;
-  margin:0 auto 24px; box-shadow:0 8px 32px rgba(255,121,0,0.3);
+  color:white; font-size:40px; font-weight:900;
+  margin:0 auto 26px;
+  box-shadow:0 12px 40px rgba(10,34,64,0.25), 0 0 0 3px rgba(255,121,0,0.4);
+  position:relative;
+}
+.home-logo::after {
+  content:''; position:absolute; bottom:-3px; left:50%; transform:translateX(-50%);
+  width:40px; height:3px; background:var(--ob); border-radius:2px;
 }
 .home-headline {
-  font-size:44px; font-weight:800; color:var(--ink); line-height:1.08;
-  margin-bottom:16px; letter-spacing:-1.5px;
-  background:linear-gradient(135deg,var(--ink) 0%,var(--ob-dark) 100%);
+  font-size:52px; font-weight:900; color:var(--ink); line-height:1.04;
+  margin-bottom:14px; letter-spacing:-2px;
+  background:linear-gradient(130deg, #0A2240 0%, var(--ob) 55%, #FF5500 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 .home-subheadline {
-  font-size:17px; color:var(--ink3); line-height:1.6; margin-bottom:28px;
+  font-size:17px; color:var(--ink2); line-height:1.65; margin-bottom:30px;
   max-width:520px; margin-left:auto; margin-right:auto; font-weight:400;
 }
 .home-search-wrap {
   display:flex; gap:8px; background:var(--card);
-  border:2px solid var(--line); border-radius:12px;
-  padding:8px 8px 8px 16px; margin-bottom:28px;
-  box-shadow:var(--shadow);
+  border:2px solid var(--line); border-radius:14px;
+  padding:7px 7px 7px 18px; margin-bottom:14px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
   transition:border-color 0.2s, box-shadow 0.2s, background var(--t);
 }
 .home-search-wrap:focus-within {
-  border-color:var(--ob); box-shadow:0 4px 20px rgba(255,121,0,0.15);
+  border-color:var(--ob);
+  box-shadow:0 4px 24px rgba(255,121,0,0.18), 0 0 0 3px rgba(255,121,0,0.08);
 }
 .home-search-input {
   flex:1; border:none; background:transparent;
@@ -223,14 +232,19 @@ button:active{transform:scale(0.97);}
 }
 .home-search-input::placeholder { color:var(--ink3); }
 .home-search-btn {
-  background:var(--ob); color:white; border:none;
-  border-radius:8px; padding:10px 20px; font-size:14px; font-weight:700;
-  cursor:pointer; white-space:nowrap; transition:background 0.15s;
+  background:linear-gradient(135deg, var(--ob) 0%, #FF5500 100%);
+  color:white; border:none;
+  border-radius:10px; padding:11px 22px; font-size:14px; font-weight:700;
+  cursor:pointer; white-space:nowrap;
+  transition:opacity 0.15s, transform 0.1s;
   font-family:inherit;
+  box-shadow:0 3px 12px rgba(255,121,0,0.35);
 }
-.home-search-btn:hover { background:var(--ob-dark); }
+.home-search-btn:hover { opacity:0.9; transform:scale(1.02); }
+.home-search-btn:active { transform:scale(0.98); }
 .home-demo-label {
-  font-size:13px; color:var(--ink3); margin-bottom:16px; font-weight:500;
+  font-size:11px; color:var(--ink3); margin-bottom:14px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.8px;
 }
 .home-demo-grid {
   display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;
@@ -238,34 +252,43 @@ button:active{transform:scale(0.97);}
 }
 .home-demo-card {
   background:var(--card); border:1.5px solid var(--line);
-  border-radius:12px; padding:16px; cursor:pointer;
-  transition:border-color 0.2s, box-shadow 0.2s, transform 0.2s, background var(--t);
-  display:flex; flex-direction:column; gap:8px;
+  border-radius:14px; padding:16px 16px 14px; cursor:pointer;
+  transition:border-color 0.2s, box-shadow 0.25s, transform 0.2s, background var(--t);
+  display:flex; flex-direction:column; gap:10px;
+  position:relative; overflow:hidden;
+}
+.home-demo-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--ob), #FF5500);
+  opacity:0; transition:opacity 0.2s;
 }
 .home-demo-card:hover {
-  border-color:var(--ob); box-shadow:0 4px 20px rgba(255,121,0,0.12);
-  transform:translateY(-2px);
+  border-color:var(--ob); box-shadow:0 8px 28px rgba(255,121,0,0.16);
+  transform:translateY(-3px);
 }
+.home-demo-card:hover::before { opacity:1; }
 .home-card-top { display:flex; align-items:center; gap:10px; }
 .home-card-av {
-  width:36px; height:36px; border-radius:8px;
+  width:40px; height:40px; border-radius:10px;
   display:flex; align-items:center; justify-content:center;
-  font-size:12px; font-weight:800; flex-shrink:0;
+  font-size:13px; font-weight:900; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.12);
 }
 .home-card-name { font-size:13px; font-weight:700; color:var(--ink); line-height:1.2; }
-.home-card-industry { font-size:11px; color:var(--ink3); }
+.home-card-industry { font-size:11px; color:var(--ink3); margin-top:1px; }
 .home-card-score {
-  display:flex; align-items:center; gap:6px; margin-top:2px;
+  display:flex; align-items:center; gap:7px; margin-top:1px;
 }
 .home-score-badge {
-  font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;
+  font-size:11px; font-weight:800; padding:2px 9px; border-radius:10px;
   background:var(--ob-light); color:var(--ob-dark);
 }
 .home-score-bar {
-  flex:1; height:4px; background:var(--line); border-radius:2px;
+  flex:1; height:5px; background:var(--line); border-radius:3px;
 }
 .home-score-fill {
-  height:4px; border-radius:2px; background:var(--ob);
+  height:5px; border-radius:3px;
+  background:linear-gradient(90deg, var(--ob), #FF5500);
 }
 .home-footer {
   font-size:11px; color:var(--ink3); text-align:center; line-height:1.7;
@@ -834,7 +857,7 @@ button:active{transform:scale(0.97);}
 
 .notes-area{width:100%;border:1.5px solid var(--line);border-radius:var(--rr);padding:12px 14px;font-size:13px;color:var(--ink);background:var(--input-bg);font-family:inherit;resize:vertical;min-height:120px;outline:none;transition:border-color .2s,background var(--t),color var(--t);}
 .notes-area:focus{border-color:var(--ob);}
-.notes-btn{display:inline-flex;align-items:center;gap:7px;background:var(--ob);color:white;border:none;border-radius:var(--rr);padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;font-family:inherit;}
+.notes-btn{display:inline-flex;align-items:center;gap:7px;background:var(--ob);color:white;border:none;border-radius:var(--rr);padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;font-family:inherit;align-self:flex-start;width:auto;}
 .notes-btn:hover{background:var(--ob-dark);}
 .notes-btn:disabled{opacity:.5;cursor:not-allowed;}
 .notes-result{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px;transition:background var(--t);}
@@ -1006,19 +1029,24 @@ button:active{transform:scale(0.97);}
 /* ══════════════════════════════════════════════════════
    HOME RECENT
 ══════════════════════════════════════════════════════ */
-.home-recent-wrap { width:100%; max-width:680px; margin-bottom:16px; text-align:left; }
-.home-recent-label { font-size:12px; color:var(--ink3); font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.home-recent-wrap { width:100%; max-width:680px; margin-bottom:20px; text-align:left; }
+.home-recent-label {
+  font-size:11px; color:var(--ink3); font-weight:700;
+  text-transform:uppercase; letter-spacing:.7px; margin-bottom:8px;
+}
 .home-recent-chips { display:flex; flex-wrap:wrap; gap:6px; }
 .home-recent-chip {
-  display:inline-flex; align-items:center; gap:4px;
+  display:inline-flex; align-items:center;
   background:var(--card); border:1.5px solid var(--line);
   color:var(--ink2); font-size:12px; font-weight:600;
-  padding:4px 10px; border-radius:20px; cursor:pointer;
-  transition:border-color .15s, color .15s, background .15s;
+  padding:5px 13px; border-radius:20px; cursor:pointer;
+  transition:border-color .15s, color .15s, background .15s, transform .1s;
   font-family:inherit;
 }
-.home-recent-chip:hover { border-color:var(--ob); color:var(--ob); background:var(--ob-light); }
-.home-recent-chip svg { width:11px; height:11px; flex-shrink:0; }
+.home-recent-chip:hover {
+  border-color:var(--ob); color:var(--ob);
+  background:var(--ob-light); transform:translateY(-1px);
+}
 
 /* ══════════════════════════════════════════════════════
    PRINT HEADER
@@ -3376,7 +3404,7 @@ function renderHomeRecentChips() {
   const h = getHistory();
   if (!h.length) { wrap.style.display = 'none'; return; }
   wrap.style.display = 'block';
-  wrap.innerHTML = `<div class="home-recent-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Recent</div>
+  wrap.innerHTML = `<div class="home-recent-label">Recent searches</div>
     <div class="home-recent-chips">${h.map(name=>`<button class="home-recent-chip" onclick="homeRecentLoad('${esc(name)}')">${esc(name)}</button>`).join('')}</div>`;
 }
 
@@ -3680,104 +3708,262 @@ async function exportPPTX() {
   const pptx = new PptxGenJS();
   pptx.layout = 'LAYOUT_WIDE';
 
-  const OB_ORANGE = 'FF7900';
-  const INK = '1A1A1A';
-  const INK2 = '4A4A4A';
-  const WHITE = 'FFFFFF';
-  const LIGHT = 'FFF3E8';
+  // Brand palette
+  const NAVY    = '0A2240';
+  const ORANGE  = 'FF7900';
+  const ORANGE2 = 'E56A00';
+  const WHITE   = 'FFFFFF';
+  const LIGHT_BG= 'F4F6F9';
+  const CARD_BG = 'FFFFFF';
+  const MUTED   = '8A96A3';
+  const INK     = '0D1B2A';
+  const INK2    = '3D5166';
 
-  // Helper: add standard header bar to slide
-  function addHeader(slide, title) {
-    slide.addShape(pptx.ShapeType.rect, {x:0,y:0,w:'100%',h:0.65,fill:{color:OB_ORANGE}});
-    slide.addText('Orange Business', {x:0.2,y:0.08,w:3,h:0.3,fontSize:11,color:WHITE,bold:true});
-    slide.addText('ESG Sales Intelligence', {x:0.2,y:0.35,w:4,h:0.22,fontSize:8,color:'FFD4A0'});
-    slide.addText(title, {x:3.5,y:0.1,w:9,h:0.45,fontSize:18,color:WHITE,bold:true,align:'right'});
+  // Badge colour map by urgency/level text
+  function badgeCol(badge) {
+    const b = (badge||'').toLowerCase();
+    if (b.includes('high') || b.includes('critical') || b.includes('leading')) return 'C0392B';
+    if (b.includes('medium') || b.includes('emerging')) return 'E67E22';
+    if (b.includes('low') || b.includes('stable')) return '27AE60';
+    return ORANGE2;
   }
 
-  // Slide 1 — Cover
+  // ── Helper: navy header bar ──────────────────────────────────────────────
+  function addHeader(slide, title, subtitle) {
+    // Navy top bar
+    slide.addShape(pptx.ShapeType.rect, {x:0, y:0, w:'100%', h:0.72, fill:{color:NAVY}});
+    // Orange accent strip at bottom of header
+    slide.addShape(pptx.ShapeType.rect, {x:0, y:0.72, w:'100%', h:0.04, fill:{color:ORANGE}});
+    // Brand name
+    slide.addText('Orange Business', {x:0.25, y:0.1, w:3.5, h:0.28, fontSize:10, color:WHITE, bold:true, fontFace:'Calibri'});
+    slide.addText('ESG Sales Intelligence', {x:0.25, y:0.38, w:4, h:0.22, fontSize:7.5, color:'A8BFCF', fontFace:'Calibri'});
+    // Slide title (right-aligned)
+    slide.addText(title, {x:4, y:0.1, w:9.1, h:0.32, fontSize:15, color:WHITE, bold:true, align:'right', fontFace:'Calibri'});
+    if (subtitle) slide.addText(subtitle, {x:4, y:0.42, w:9.1, h:0.22, fontSize:8, color:'A8BFCF', align:'right', fontFace:'Calibri'});
+  }
+
+  // ── Helper: light-grey slide background ─────────────────────────────────
+  function addBg(slide) {
+    slide.addShape(pptx.ShapeType.rect, {x:0, y:0, w:'100%', h:'100%', fill:{color:LIGHT_BG}});
+  }
+
+  // ── SLIDE 1 — Cover ──────────────────────────────────────────────────────
   const s1 = pptx.addSlide();
-  s1.addShape(pptx.ShapeType.rect, {x:0,y:0,w:'100%',h:'100%',fill:{color:OB_ORANGE}});
-  s1.addShape(pptx.ShapeType.rect, {x:0,y:3.5,w:'100%',h:3.5,fill:{color:'1A1A1A',transparency:30}});
-  s1.addText('Orange Business', {x:0.5,y:0.5,w:12,h:0.6,fontSize:14,color:WHITE,bold:false});
-  s1.addText('ESG Sales Intelligence', {x:0.5,y:1.0,w:12,h:0.9,fontSize:36,color:WHITE,bold:true});
-  s1.addText(d.name, {x:0.5,y:2.1,w:12,h:0.7,fontSize:28,color:'FFD4A0',bold:true});
-  s1.addText(d.industry + ' · ' + d.hq, {x:0.5,y:2.85,w:12,h:0.4,fontSize:14,color:WHITE});
-  s1.addText('ESG Score: ' + d.score + '/100', {x:0.5,y:3.35,w:12,h:0.4,fontSize:14,color:WHITE,bold:true});
-  s1.addText('Generated: ' + new Date().toLocaleDateString('en-GB'), {x:0.5,y:6.5,w:12,h:0.3,fontSize:9,color:'FFD4A0',align:'right'});
+  // Full navy background
+  s1.addShape(pptx.ShapeType.rect, {x:0, y:0, w:'100%', h:'100%', fill:{color:NAVY}});
+  // Orange vertical accent bar (left edge)
+  s1.addShape(pptx.ShapeType.rect, {x:0, y:0, w:0.18, h:'100%', fill:{color:ORANGE}});
+  // Subtle diagonal band (decorative rectangle rotated via wide/short shape)
+  s1.addShape(pptx.ShapeType.rect, {x:8.5, y:0, w:5, h:'100%', fill:{color:'0D2D52',transparency:0}});
+  s1.addShape(pptx.ShapeType.rect, {x:9.5, y:0, w:3.8, h:'100%', fill:{color:'0F3460',transparency:0}});
 
-  // Slide 2 — ESG Overview
+  // "Orange Business" wordmark
+  s1.addText('ORANGE BUSINESS', {x:0.45, y:0.45, w:8, h:0.38, fontSize:11, color:ORANGE, bold:true, charSpacing:3, fontFace:'Calibri'});
+  s1.addText('ESG Sales Intelligence Platform', {x:0.45, y:0.82, w:8, h:0.28, fontSize:9, color:'7FA8C4', fontFace:'Calibri'});
+
+  // Divider line
+  s1.addShape(pptx.ShapeType.rect, {x:0.45, y:1.3, w:4.5, h:0.03, fill:{color:ORANGE}});
+
+  // Company name — hero
+  s1.addText(d.name, {x:0.45, y:1.5, w:8.5, h:1.0, fontSize:38, color:WHITE, bold:true, fontFace:'Calibri'});
+  s1.addText(d.industry + '  ·  ' + d.hq, {x:0.45, y:2.55, w:8.5, h:0.38, fontSize:13, color:'7FA8C4', fontFace:'Calibri'});
+  s1.addText(d.size, {x:0.45, y:2.92, w:8.5, h:0.3, fontSize:11, color:'5A7A90', fontFace:'Calibri'});
+
+  // ESG Score badge (orange circle)
+  s1.addShape(pptx.ShapeType.ellipse, {x:10.0, y:1.6, w:2.4, h:2.4, fill:{color:ORANGE}});
+  s1.addShape(pptx.ShapeType.ellipse, {x:10.12, y:1.72, w:2.16, h:2.16, fill:{color:NAVY}});
+  s1.addText(String(d.score), {x:10.0, y:2.2, w:2.4, h:0.9, fontSize:44, color:ORANGE, bold:true, align:'center', fontFace:'Calibri'});
+  s1.addText('/100', {x:10.0, y:3.05, w:2.4, h:0.3, fontSize:11, color:'7FA8C4', align:'center', fontFace:'Calibri'});
+  s1.addText('ESG SCORE', {x:10.0, y:3.35, w:2.4, h:0.25, fontSize:8, color:ORANGE, align:'center', bold:true, charSpacing:2, fontFace:'Calibri'});
+
+  // Prepared for / date strip at bottom
+  s1.addShape(pptx.ShapeType.rect, {x:0, y:6.55, w:'100%', h:0.45, fill:{color:'061729'}});
+  s1.addText('Prepared by Orange Business  ·  ESG Sales Intelligence  ·  ' + new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}), {x:0.45, y:6.62, w:12.5, h:0.28, fontSize:8, color:'5A7A90', fontFace:'Calibri'});
+
+  // ── SLIDE 2 — Company ESG Overview ───────────────────────────────────────
   const s2 = pptx.addSlide();
-  addHeader(s2, 'ESG Commitments');
-  s2.addText(d.name + ' — ESG Profile', {x:0.3,y:0.75,w:12,h:0.45,fontSize:16,bold:true,color:INK});
-  s2.addText(d.size + ' · CDP: ' + (d.cdpScore||'N/A'), {x:0.3,y:1.2,w:12,h:0.3,fontSize:10,color:INK2});
-  let ry = 1.65;
-  d.esg.forEach(e => {
-    s2.addText(e.title + ': ' + e.value, {x:0.3,y:ry,w:12,h:0.35,fontSize:13,bold:true,color:INK});
-    s2.addText(e.desc, {x:0.5,y:ry+0.35,w:12,h:0.45,fontSize:9,color:INK2,wrap:true});
-    ry += 0.92;
+  addBg(s2);
+  addHeader(s2, 'ESG Overview', d.name);
+
+  // Score circle (smaller, top-right)
+  s2.addShape(pptx.ShapeType.ellipse, {x:11.1, y:0.9, w:1.7, h:1.7, fill:{color:NAVY}});
+  s2.addText(String(d.score), {x:11.1, y:1.1, w:1.7, h:0.75, fontSize:30, color:ORANGE, bold:true, align:'center', fontFace:'Calibri'});
+  s2.addText('/100', {x:11.1, y:1.82, w:1.7, h:0.25, fontSize:8, color:MUTED, align:'center', fontFace:'Calibri'});
+
+  // Company meta
+  s2.addText(d.name, {x:0.35, y:0.9, w:10.5, h:0.5, fontSize:20, color:INK, bold:true, fontFace:'Calibri'});
+  const metaParts = [d.size, 'HQ: '+d.hq, d.cdpScore ? 'CDP: '+d.cdpScore : null, d.revenue ? 'Revenue: '+d.revenue : null].filter(Boolean);
+  s2.addText(metaParts.join('   ·   '), {x:0.35, y:1.42, w:10.5, h:0.28, fontSize:9.5, color:INK2, fontFace:'Calibri'});
+
+  // Orange divider
+  s2.addShape(pptx.ShapeType.rect, {x:0.35, y:1.82, w:12.6, h:0.025, fill:{color:ORANGE}});
+
+  // ESG commitment cards — 2 per row
+  let ry = 2.0;
+  const esgPairs = [];
+  for (let i=0; i<d.esg.length; i+=2) esgPairs.push([d.esg[i], d.esg[i+1]]);
+  esgPairs.forEach(pair => {
+    pair.forEach((e,ci) => {
+      if (!e) return;
+      const cx = 0.35 + ci * 6.65;
+      s2.addShape(pptx.ShapeType.rect, {x:cx, y:ry, w:6.3, h:1.05, fill:{color:CARD_BG}, line:{color:'D8E2EA', width:0.75}});
+      // Orange left accent border
+      s2.addShape(pptx.ShapeType.rect, {x:cx, y:ry, w:0.06, h:1.05, fill:{color:ORANGE}});
+      s2.addText(e.title, {x:cx+0.14, y:ry+0.07, w:5.8, h:0.28, fontSize:8, color:MUTED, bold:true, charSpacing:1, fontFace:'Calibri'});
+      s2.addText(e.value, {x:cx+0.14, y:ry+0.32, w:5.8, h:0.32, fontSize:13, color:INK, bold:true, fontFace:'Calibri'});
+      const descLines = e.desc ? e.desc.substring(0,80) : '';
+      s2.addText(descLines, {x:cx+0.14, y:ry+0.65, w:5.8, h:0.3, fontSize:8, color:INK2, wrap:true, fontFace:'Calibri'});
+    });
+    ry += 1.18;
   });
 
-  // Slide 3 — Material Topics
+  // ── SLIDE 3 — Material Topics ────────────────────────────────────────────
   const s3 = pptx.addSlide();
-  addHeader(s3, 'Material Topics');
-  let ty = 0.85;
-  d.topics.forEach(t => {
-    s3.addText(t.name, {x:0.3,y:ty,w:4.5,h:0.4,fontSize:12,bold:true,color:INK});
-    s3.addShape(pptx.ShapeType.rect, {x:5,y:ty+0.1,w:6,h:0.2,fill:{color:'E2DDD7'}});
-    s3.addShape(pptx.ShapeType.rect, {x:5,y:ty+0.1,w:(6*t.pct/100),h:0.2,fill:{color:OB_ORANGE}});
-    s3.addText(t.pct+'%', {x:11.2,y:ty,w:0.8,h:0.4,fontSize:11,bold:true,color:INK,align:'right'});
-    s3.addText(t.badge, {x:12.1,y:ty,w:1.5,h:0.4,fontSize:9,bold:true,color:t.badgeColor||'944d00'});
-    ty += 0.72;
+  addBg(s3);
+  addHeader(s3, 'Material ESG Topics', d.name);
+
+  // Table header
+  s3.addShape(pptx.ShapeType.rect, {x:0.35, y:0.88, w:12.6, h:0.38, fill:{color:NAVY}});
+  s3.addText('Topic', {x:0.45, y:0.93, w:4.5, h:0.28, fontSize:8.5, color:WHITE, bold:true, fontFace:'Calibri'});
+  s3.addText('Priority', {x:5.0, y:0.93, w:5.5, h:0.28, fontSize:8.5, color:WHITE, bold:true, fontFace:'Calibri'});
+  s3.addText('Score', {x:10.6, y:0.93, w:1.2, h:0.28, fontSize:8.5, color:WHITE, bold:true, align:'center', fontFace:'Calibri'});
+  s3.addText('Status', {x:11.85, y:0.93, w:0.95, h:0.28, fontSize:8.5, color:WHITE, bold:true, align:'center', fontFace:'Calibri'});
+
+  let ty = 1.28;
+  d.topics.forEach((t, i) => {
+    const rowBg = i % 2 === 0 ? CARD_BG : 'EEF2F5';
+    s3.addShape(pptx.ShapeType.rect, {x:0.35, y:ty, w:12.6, h:0.54, fill:{color:rowBg}, line:{color:'D8E2EA', width:0.5}});
+    // Row number dot
+    s3.addShape(pptx.ShapeType.ellipse, {x:0.42, y:ty+0.12, w:0.28, h:0.28, fill:{color:ORANGE}});
+    s3.addText(String(i+1), {x:0.42, y:ty+0.12, w:0.28, h:0.28, fontSize:7, color:WHITE, bold:true, align:'center', fontFace:'Calibri'});
+    // Topic name
+    s3.addText(t.name, {x:0.78, y:ty+0.06, w:4.1, h:0.42, fontSize:10, color:INK, bold:true, wrap:true, fontFace:'Calibri'});
+    // Progress bar background
+    s3.addShape(pptx.ShapeType.rect, {x:5.0, y:ty+0.18, w:5.4, h:0.18, fill:{color:'D8E2EA'}, line:{color:'D8E2EA', width:0}});
+    // Progress fill
+    const fillW = Math.max(0.1, 5.4 * (t.pct||0) / 100);
+    s3.addShape(pptx.ShapeType.rect, {x:5.0, y:ty+0.18, w:fillW, h:0.18, fill:{color:ORANGE}, line:{color:ORANGE, width:0}});
+    // Percentage
+    s3.addText((t.pct||0)+'%', {x:10.55, y:ty+0.08, w:1.2, h:0.38, fontSize:10, color:INK, bold:true, align:'center', fontFace:'Calibri'});
+    // Badge pill
+    const bc = badgeCol(t.badge);
+    s3.addShape(pptx.ShapeType.roundRect, {x:11.85, y:ty+0.1, w:0.95, h:0.3, fill:{color:bc}, line:{color:bc, width:0}, rectRadius:0.06});
+    s3.addText((t.badge||'').substring(0,8), {x:11.85, y:ty+0.1, w:0.95, h:0.3, fontSize:6.5, color:WHITE, bold:true, align:'center', fontFace:'Calibri'});
+    ty += 0.58;
   });
 
-  // Slide 4 — Recommended Solutions
+  // ── SLIDE 4 — Recommended Solutions ─────────────────────────────────────
   const s4 = pptx.addSlide();
-  addHeader(s4, 'Recommended Solutions');
-  let sy = 0.85;
-  d.solutions.forEach((s,i) => {
-    s4.addShape(pptx.ShapeType.rect, {x:0.3,y:sy,w:12.8,h:1.5,fill:{color:i===0?'FFF3E8':'F6F4F1'},line:{color:'E2DDD7',width:1}});
-    s4.addText(s.offer, {x:0.5,y:sy+0.1,w:12,h:0.4,fontSize:13,bold:true,color:INK});
-    s4.addText(s.pillar, {x:0.5,y:sy+0.47,w:12,h:0.28,fontSize:9,color:OB_ORANGE,bold:true});
-    s4.addText(s.why, {x:0.5,y:sy+0.75,w:12.3,h:0.55,fontSize:9,color:INK2,wrap:true});
-    sy += 1.65;
+  addBg(s4);
+  addHeader(s4, 'Recommended Orange Solutions', d.name);
+
+  const solColors = [ORANGE, '0074CC', '27AE60', '8E44AD', 'C0392B'];
+  let sy = 0.88;
+  d.solutions.forEach((sol, i) => {
+    const accentCol = solColors[i % solColors.length];
+    const cardH = 1.38;
+    s4.addShape(pptx.ShapeType.rect, {x:0.35, y:sy, w:12.6, h:cardH, fill:{color:CARD_BG}, line:{color:'D8E2EA', width:0.75}});
+    // Thick left border
+    s4.addShape(pptx.ShapeType.rect, {x:0.35, y:sy, w:0.09, h:cardH, fill:{color:accentCol}});
+    // Solution name
+    s4.addText(sol.offer, {x:0.55, y:sy+0.1, w:9.5, h:0.38, fontSize:13, color:INK, bold:true, fontFace:'Calibri'});
+    // Pillar tag
+    s4.addShape(pptx.ShapeType.roundRect, {x:0.55, y:sy+0.5, w:Math.min(3.5, (sol.pillar||'').length*0.1+0.4), h:0.24, fill:{color:accentCol}, line:{color:accentCol, width:0}, rectRadius:0.05});
+    s4.addText(sol.pillar||'', {x:0.55, y:sy+0.5, w:3.5, h:0.24, fontSize:7.5, color:WHITE, bold:true, fontFace:'Calibri'});
+    // Why text
+    const whyText = (sol.why||'').substring(0, 160);
+    s4.addText(whyText, {x:0.55, y:sy+0.8, w:12.0, h:0.48, fontSize:9, color:INK2, wrap:true, fontFace:'Calibri'});
+    sy += cardH + 0.1;
   });
 
-  // Slide 5 — Key Stakeholders
+  // ── SLIDE 5 — Key Stakeholders ───────────────────────────────────────────
   const s5 = pptx.addSlide();
-  addHeader(s5, 'Key Stakeholders');
-  let stY = 0.85;
-  d.stakeholders.forEach(s => {
-    s5.addShape(pptx.ShapeType.rect, {x:0.3,y:stY,w:12.8,h:1.1,fill:{color:'F6F4F1'},line:{color:'E2DDD7',width:0.5}});
-    s5.addText(s.name, {x:0.5,y:stY+0.1,w:8,h:0.35,fontSize:12,bold:true,color:INK});
-    s5.addText(s.role, {x:0.5,y:stY+0.45,w:8,h:0.28,fontSize:9,color:INK2});
-    s5.addText(s.why, {x:0.5,y:stY+0.72,w:8,h:0.28,fontSize:9,color:'777777'});
-    s5.addText(s.priority, {x:10.5,y:stY+0.3,w:2.4,h:0.4,fontSize:10,bold:true,color:OB_ORANGE,align:'right'});
-    stY += 1.25;
+  addBg(s5);
+  addHeader(s5, 'Key Stakeholders', d.name);
+
+  let stY = 0.88;
+  d.stakeholders.forEach((st, i) => {
+    const rowH = 1.1;
+    s5.addShape(pptx.ShapeType.rect, {x:0.35, y:stY, w:12.6, h:rowH, fill:{color:CARD_BG}, line:{color:'D8E2EA', width:0.75}});
+    // Priority badge (top-right)
+    const priCol = (st.priority||'').toLowerCase().includes('high') ? 'C0392B' :
+                   (st.priority||'').toLowerCase().includes('medium') ? 'E67E22' : '27AE60';
+    s5.addShape(pptx.ShapeType.roundRect, {x:11.4, y:stY+0.15, w:1.3, h:0.28, fill:{color:priCol}, line:{color:priCol, width:0}, rectRadius:0.05});
+    s5.addText(st.priority||'', {x:11.4, y:stY+0.15, w:1.3, h:0.28, fontSize:7.5, color:WHITE, bold:true, align:'center', fontFace:'Calibri'});
+    // Avatar circle
+    const avatarCol = ['1ABC9C','3498DB','9B59B6','E74C3C','F39C12'][i%5];
+    s5.addShape(pptx.ShapeType.ellipse, {x:0.45, y:stY+0.2, w:0.62, h:0.62, fill:{color:avatarCol}});
+    const initials = (st.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    s5.addText(initials, {x:0.45, y:stY+0.2, w:0.62, h:0.62, fontSize:10, color:WHITE, bold:true, align:'center', fontFace:'Calibri'});
+    // Name + role
+    s5.addText(st.name||'', {x:1.18, y:stY+0.08, w:9.8, h:0.35, fontSize:12, color:INK, bold:true, fontFace:'Calibri'});
+    s5.addText(st.role||'', {x:1.18, y:stY+0.43, w:9.8, h:0.25, fontSize:9, color:ORANGE, bold:true, fontFace:'Calibri'});
+    s5.addText(st.why||'', {x:1.18, y:stY+0.7, w:9.8, h:0.3, fontSize:8.5, color:INK2, fontFace:'Calibri'});
+    stY += rowH + 0.1;
   });
 
-  // Slide 6 — Next Steps / Conversation Starters
+  // ── SLIDE 6 — Conversation Starters ─────────────────────────────────────
   const s6 = pptx.addSlide();
-  addHeader(s6, 'Conversation Starters');
-  let qy = 0.85;
-  d.questions.forEach((q,i) => {
-    s6.addShape(pptx.ShapeType.rect, {x:0.3,y:qy,w:12.8,h:1.05,fill:{color:'FFF3E8'},line:{color:'FFD4A0',width:1}});
-    s6.addText((i+1).toString(), {x:0.4,y:qy+0.15,w:0.4,h:0.4,fontSize:13,bold:true,color:OB_ORANGE,align:'center'});
-    s6.addText(q.text, {x:0.9,y:qy+0.1,w:12,h:0.55,fontSize:10,color:INK,wrap:true,italic:true});
-    s6.addText(q.persona, {x:0.9,y:qy+0.7,w:12,h:0.24,fontSize:8.5,color:'777777'});
-    qy += 1.2;
+  addBg(s6);
+  addHeader(s6, 'Conversation Starters', d.name);
+
+  let qy = 0.88;
+  d.questions.forEach((q, i) => {
+    const qH = 1.08;
+    s6.addShape(pptx.ShapeType.rect, {x:0.35, y:qy, w:12.6, h:qH, fill:{color:CARD_BG}, line:{color:'D8E2EA', width:0.75}});
+    // Number circle
+    s6.addShape(pptx.ShapeType.ellipse, {x:0.42, y:qy+0.22, w:0.56, h:0.56, fill:{color:NAVY}});
+    s6.addText(String(i+1), {x:0.42, y:qy+0.22, w:0.56, h:0.56, fontSize:12, color:ORANGE, bold:true, align:'center', fontFace:'Calibri'});
+    // Question text
+    s6.addText(q.text||q, {x:1.1, y:qy+0.08, w:11.3, h:0.55, fontSize:10.5, color:INK, italic:true, wrap:true, fontFace:'Calibri'});
+    // Persona tag
+    if (q.persona) {
+      s6.addText('For: ' + q.persona, {x:1.1, y:qy+0.72, w:11.3, h:0.25, fontSize:8, color:MUTED, fontFace:'Calibri'});
+    }
+    qy += qH + 0.1;
   });
 
-  // Slide 7 — Orange Credentials
+  // ── SLIDE 7 — Why Orange Business ────────────────────────────────────────
   const s7 = pptx.addSlide();
-  s7.addShape(pptx.ShapeType.rect, {x:0,y:0,w:'100%',h:'100%',fill:{color:OB_ORANGE}});
-  s7.addText('Why Orange Business?', {x:0.5,y:0.6,w:12,h:0.6,fontSize:24,bold:true,color:WHITE});
-  const creds = ['🏅 EcoVadis Platinum — top 1% globally in sustainability performance','🎯 SBTi-aligned net-zero 2040 with validated interim milestones','📋 CSRD Wave 1 reporter — practitioner experience, not just advisory','🌍 28,000+ enterprise customers across industries and geographies','⚡ Full solution portfolio: ESG data, IoT energy, circular devices, Frugal AI'];
-  let cy = 1.4;
-  creds.forEach(c => {
-    s7.addText(c, {x:0.5,y:cy,w:12.5,h:0.55,fontSize:12.5,color:WHITE,wrap:true});
-    cy += 0.65;
+  // Full navy bg
+  s7.addShape(pptx.ShapeType.rect, {x:0, y:0, w:'100%', h:'100%', fill:{color:NAVY}});
+  // Left orange accent bar
+  s7.addShape(pptx.ShapeType.rect, {x:0, y:0, w:0.18, h:'100%', fill:{color:ORANGE}});
+  // Lighter navy panel right side
+  s7.addShape(pptx.ShapeType.rect, {x:8.5, y:0, w:4.9, h:'100%', fill:{color:'0D2D52'}});
+
+  s7.addText('WHY ORANGE BUSINESS?', {x:0.45, y:0.45, w:7.5, h:0.32, fontSize:10, color:ORANGE, bold:true, charSpacing:3, fontFace:'Calibri'});
+  s7.addText('Your ESG Transformation Partner', {x:0.45, y:0.78, w:7.5, h:0.55, fontSize:22, color:WHITE, bold:true, fontFace:'Calibri'});
+  s7.addShape(pptx.ShapeType.rect, {x:0.45, y:1.38, w:4, h:0.035, fill:{color:ORANGE}});
+
+  const creds = [
+    ['EcoVadis Platinum', 'Top 1% globally in sustainability performance'],
+    ['SBTi Net-Zero 2040', 'Science-based targets with validated interim milestones'],
+    ['CSRD Wave 1 Reporter', 'Practitioner experience — not just advisory'],
+    ['28,000+ Enterprise Clients', 'Across industries and geographies worldwide'],
+    ['Full ESG Portfolio', 'ESG data, IoT energy, circular devices, Frugal AI'],
+  ];
+  let credY = 1.6;
+  creds.forEach(([title, sub]) => {
+    s7.addShape(pptx.ShapeType.rect, {x:0.45, y:credY, w:0.06, h:0.7, fill:{color:ORANGE}});
+    s7.addText(title, {x:0.65, y:credY, w:7, h:0.32, fontSize:11, color:WHITE, bold:true, fontFace:'Calibri'});
+    s7.addText(sub, {x:0.65, y:credY+0.32, w:7, h:0.28, fontSize:8.5, color:'7FA8C4', fontFace:'Calibri'});
+    credY += 0.88;
   });
-  s7.addText('orange-business.com', {x:0.5,y:6.6,w:12,h:0.3,fontSize:10,color:'FFD4A0',align:'right'});
+
+  // Right panel — contact details
+  s7.addText('GET IN TOUCH', {x:8.7, y:1.2, w:4.6, h:0.28, fontSize:9, color:ORANGE, bold:true, charSpacing:2, fontFace:'Calibri'});
+  s7.addShape(pptx.ShapeType.rect, {x:8.7, y:1.52, w:4.4, h:0.025, fill:{color:'1D4A72'}});
+  const contacts = ['Orange Business Sales Team', 'enterprise@orange-business.com', 'orange-business.com/esg', '', 'Follow us: @OrangeBusiness'];
+  let cY = 1.65;
+  contacts.forEach(c => {
+    s7.addText(c, {x:8.7, y:cY, w:4.5, h:0.32, fontSize:9.5, color:c?'A8BFCF':'transparent', fontFace:'Calibri'});
+    cY += 0.42;
+  });
+
+  // Bottom footer bar
+  s7.addShape(pptx.ShapeType.rect, {x:0, y:6.55, w:'100%', h:0.45, fill:{color:'061729'}});
+  s7.addText('Confidential — prepared for ' + d.name + '  ·  ' + new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'}), {x:0.45, y:6.62, w:12.5, h:0.28, fontSize:7.5, color:'3D5166', fontFace:'Calibri'});
 
   pptx.writeFile({ fileName: `orange-esg-${(d.name||'profile').replace(/\s+/g,'-').toLowerCase()}.pptx` })
     .then(() => showToast('PowerPoint deck downloaded'));
@@ -4210,23 +4396,31 @@ function showToast(msg) {
 /* ═══════════════════════════════════════════════════════
    ONBOARDING TOUR
 ═══════════════════════════════════════════════════════ */
-const TOUR_STEPS = [
-  { selector:'#home-search-input', title:'🔍 Search Bar', text:'Type any company name and click "Generate Profile →" to instantly create a full AI-powered ESG battle card. Requires an Anthropic API key.' },
-  { selector:'#home-demo-grid', title:'📋 Demo Accounts', text:'No API key? Explore 9 pre-loaded companies: BNP Paribas, Unilever, Renault, LVMH, and more. Click any card to load the full ESG profile.' },
-  { selector:'#main-tabs', title:'🗂️ Profile Tabs', text:'Once a profile loads, navigate 6 tabs: Executive Summary, Orange Bridge (solutions), Solution Catalog, Meeting Intel, Key Contacts, and CRM Export.' },
-  { selector:'#chatbot-btn', title:'🤖 ESG Assistant', text:'Open the AI chatbot to get real-time sales coaching — objection handling, opening lines, follow-up emails, and more. Works best with an API key.' },
-  { selector:'.actions-row', title:'📤 Export Options', text:'Export the battle card as a PDF, PowerPoint deck, or CSV. Print directly, or copy the CRM record for Salesforce.' }
-];
+const TOUR_STEPS = []; // populated dynamically by startTour()
 let tourStep = 0;
-let tourTarget = null;
 
 function startTour() {
-  // If on home page, show home tour; otherwise show profile tour
+  _tourIgnoreNextClick = true; // prevent the same click from immediately closing the tour
   const isHome = document.getElementById('home-page').style.display !== 'none';
-  if (!isHome) {
-    TOUR_STEPS[1] = { selector:'#main-tabs', title:'🗂️ Profile Tabs', text:'Navigate 6 tabs: Executive Summary, Orange Bridge (solutions), Solution Catalog, Meeting Intel, Key Contacts, and CRM Export.' };
-    TOUR_STEPS[2] = { selector:'.actions-row', title:'📤 Export Options', text:'Export the battle card as PDF, PowerPoint, or CSV. Use Compare to view two companies side by side.' };
-  }
+  // Reset steps to correct context
+  const homeSteps = [
+    { selector:'#home-search-input', title:'Step 1: Search Bar', text:'Type any company name and press Enter or click "Generate Profile". Requires an Anthropic API key — add it via the gear icon.' },
+    { selector:'#home-demo-grid', title:'Step 2: Demo Accounts', text:'No API key yet? Click any card to instantly load a full ESG battle card for BNP Paribas, Unilever, Renault, LVMH, and 5 more companies.' },
+    { selector:'#chatbot-btn', title:'Step 3: ESG Assistant', text:'Click the orange chat button for AI coaching — opening lines, objection handling, follow-up emails, and competitive positioning.' },
+    { selector:'.nav-right', title:'Step 4: Settings & Theme', text:'Gear icon → add your Anthropic API key to enable live company search. Moon icon → toggle dark mode.' },
+    { selector:'#home-demo-grid', title:'Step 5: Export & Compare', text:'Once a profile is loaded, use the action buttons to export as PDF or PowerPoint, compare two companies, or copy the CRM record.' }
+  ];
+  const profileSteps = [
+    { selector:'.co-hdr', title:'Step 1: Company Header', text:'Company name, industry, HQ, and the ESG maturity score ring. The score is calculated from ESG commitments, material topics, and regulatory exposure.' },
+    { selector:'#main-tabs', title:'Step 2: Six Profile Tabs', text:'Navigate 6 tabs: Executive Summary (benchmark), Orange Bridge (solutions), Solution Catalog, Meeting Intel (talking points), Key Contacts, and CRM Export.' },
+    { selector:'.actions-row', title:'Step 3: Export Options', text:'Export as PDF, PowerPoint deck, or CSV. Compare two companies side-by-side, or copy the full CRM record for Salesforce.' },
+    { selector:'#chatbot-btn', title:'Step 4: ESG Assistant', text:'Click the orange chat button to get AI coaching tailored to this specific company — opening lines, objection handling, and more.' },
+    { selector:'.tab-btn.active', title:'Step 5: Talking Points', text:'In Meeting Intel tab: select any Orange solution to get custom talking points — hook, fit, differentiator, risk of inaction, and closing line.' }
+  ];
+  const steps = isHome ? homeSteps : profileSteps;
+  // Replace TOUR_STEPS content
+  TOUR_STEPS.length = 0;
+  steps.forEach(s => TOUR_STEPS.push(s));
   tourStep = 0;
   document.getElementById('tour-overlay').style.display = 'block';
   showTourStep();
@@ -4242,6 +4436,7 @@ function showTourStep() {
   const target = document.querySelector(step.selector);
   overlay.style.display = 'block';
 
+  tooltip.style.transform = ''; // reset any previous centering
   if (target) {
     const rect = target.getBoundingClientRect();
     const pad = 6;
@@ -4251,11 +4446,10 @@ function showTourStep() {
     highlight.style.width = (rect.width + pad*2) + 'px';
     highlight.style.height = (rect.height + pad*2) + 'px';
 
-    // Position tooltip below or above target
     tooltip.style.display = 'block';
-    const tW = 290, tH = 140;
-    let tx = rect.left, ty = rect.bottom + 14;
-    if (ty + tH > window.innerHeight - 20) ty = rect.top - tH - 14;
+    const tW = 300, tH = 170;
+    let tx = rect.left, ty = rect.bottom + 16;
+    if (ty + tH > window.innerHeight - 20) ty = Math.max(12, rect.top - tH - 16);
     if (tx + tW > window.innerWidth - 20) tx = window.innerWidth - tW - 20;
     if (tx < 12) tx = 12;
     tooltip.style.left = tx + 'px';
@@ -4286,10 +4480,14 @@ function endTour() {
   document.getElementById('tour-tooltip').style.display = 'none';
   document.getElementById('tour-highlight').style.display = 'none';
 }
-// Click outside tour tooltip ends tour
+// Click outside tour tooltip ends tour (but not when clicking the How to use button itself)
+let _tourIgnoreNextClick = false;
 document.addEventListener('click', e => {
+  if (_tourIgnoreNextClick) { _tourIgnoreNextClick = false; return; }
   if (document.getElementById('tour-overlay').style.display === 'block') {
-    if (!document.getElementById('tour-tooltip').contains(e.target)) endTour();
+    const tooltip = document.getElementById('tour-tooltip');
+    const howBtn = document.querySelector('.nav-how-btn');
+    if (!tooltip.contains(e.target) && !(howBtn && howBtn.contains(e.target))) endTour();
   }
 });
 
