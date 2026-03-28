@@ -169,10 +169,15 @@ button:active{transform:scale(0.97);}
 ══════════════════════════════════════════════════════ */
 .home-page {
   position:absolute; inset:0; overflow-y:auto;
-  background:var(--surface);
+  background:#fdf8f0;
   display:flex; flex-direction:column; align-items:center;
   padding:40px 24px 60px;
   transition:opacity 0.3s ease, transform 0.3s ease;
+}
+[data-theme="dark"] .home-page { background:var(--surface); }
+#home-particles {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  display:none; width:100%; height:100%;
 }
 .home-hero {
   width:100%; max-width:680px; text-align:center; margin-bottom:40px;
@@ -1410,6 +1415,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     <div class="content" id="main-content">
       <!-- HOME PAGE -->
       <div id="home-page" class="home-page">
+        <canvas id="home-particles"></canvas>
         <div class="home-mesh"></div>
         <div class="home-hero">
           <div class="home-logo">O</div>
@@ -2510,11 +2516,13 @@ function goHome() {
       document.querySelectorAll('.acct').forEach(a => a.classList.remove('active'));
       document.getElementById('status-right').textContent = 'Ready · Select a demo account or search any company';
       currentCompany = null;
+      _startParticles();
     }, 300);
   }
 }
 
 function transitionToProfile(callback) {
+  _stopParticles();
   const homePage = document.getElementById('home-page');
   const profileArea = document.getElementById('profile-area');
   if (typeof gsap !== 'undefined') {
@@ -2622,7 +2630,7 @@ function buildProfileHTML(d) {
     ${renderCRMHTML(d)}
   </div>
 
-  <div class="actions-row">
+  <div class="actions-row" id="actions-row">
     <button class="action-btn ap" onclick="printBattleCard()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Print Battle Card
@@ -4530,7 +4538,7 @@ function startTour() {
   const profileSteps = [
     { selector:'.co-hdr', title:'Step 1: Company Header', text:'Company name, industry, HQ, and the ESG maturity score ring. The score is calculated from ESG commitments, material topics, and regulatory exposure.' },
     { selector:'#main-tabs', title:'Step 2: Six Profile Tabs', text:'Navigate 6 tabs: Executive Summary (benchmark), Orange Bridge (solutions), Solution Catalog, Meeting Intel (talking points), Key Contacts, and CRM Export.' },
-    { selector:'.actions-row', title:'Step 3: Export Options', text:'Export as PDF, PowerPoint deck, or CSV. Compare two companies side-by-side, or copy the full CRM record for Salesforce.' },
+    { selector:'#actions-row', title:'Step 3: Export Options', text:'Export as PDF, PowerPoint deck, or CSV. Compare two companies side-by-side, or copy the full CRM record for Salesforce.' },
     { selector:'#chatbot-btn', title:'Step 4: ESG Assistant', text:'Click the orange chat button to get AI coaching tailored to this specific company — opening lines, objection handling, and more.' },
     { selector:'.tab-btn.active', title:'Step 5: Talking Points', text:'In Meeting Intel tab: select any Orange solution to get custom talking points — hook, fit, differentiator, risk of inaction, and closing line.' }
   ];
@@ -4598,9 +4606,9 @@ function showTourStep() {
   overlay.style.display = 'block';
   const target = document.querySelector(step.selector);
   if (target) {
-    // Scroll target into view, then position tooltip after scroll settles
-    target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-    setTimeout(() => _placeTourTooltip(target), 350);
+    // Use instant scroll so getBoundingClientRect() is accurate immediately
+    target.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' });
+    requestAnimationFrame(() => requestAnimationFrame(() => _placeTourTooltip(target)));
   } else {
     _placeTourTooltip(null);
   }
@@ -4674,6 +4682,126 @@ function esc(str) {
    EVENT LISTENERS & INIT
 ═══════════════════════════════════════════════════════ */
 document.getElementById('search-input').addEventListener('keydown', e => { if(e.key==='Enter') analyzeCompany(); });
+
+/* ═══════════════════════════════════════════════════════
+   HOMEPAGE PARTICLE NETWORK
+═══════════════════════════════════════════════════════ */
+let _particleRAF = null;
+let _particleMX = -9999, _particleMY = -9999;
+
+function _startParticles() {
+  const canvas = document.getElementById('home-particles');
+  if (!canvas) return;
+  _stopParticles();
+  canvas.style.display = 'block';
+
+  const resize = () => {
+    canvas.width  = canvas.offsetWidth  || window.innerWidth;
+    canvas.height = canvas.offsetHeight || window.innerHeight;
+  };
+  resize();
+  window._particleResize = resize;
+  window.addEventListener('resize', resize);
+
+  // Track mouse relative to canvas
+  const onMove = e => {
+    const r = canvas.getBoundingClientRect();
+    _particleMX = e.clientX - r.left;
+    _particleMY = e.clientY - r.top;
+  };
+  const onLeave = () => { _particleMX = -9999; _particleMY = -9999; };
+  document.addEventListener('mousemove',  onMove,  { passive:true });
+  document.addEventListener('mouseleave', onLeave, { passive:true });
+  canvas._moveH  = onMove;
+  canvas._leaveH = onLeave;
+
+  const N = 72;
+  let W = canvas.width, H = canvas.height;
+  const pts = Array.from({length:N}, () => ({
+    x:  Math.random() * W,
+    y:  Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.55,
+    vy: (Math.random() - 0.5) * 0.55,
+    r:  1.4 + Math.random() * 1.6
+  }));
+
+  const ATTRACT_R = 170, CONNECT_D = 125;
+  const ctx = canvas.getContext('2d');
+
+  function tick() {
+    W = canvas.width; H = canvas.height;
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    ctx.clearRect(0, 0, W, H);
+
+    const mx = _particleMX, my = _particleMY;
+    const hasM = mx > -999;
+
+    // Update positions
+    for (const p of pts) {
+      if (hasM) {
+        const dx = mx - p.x, dy = my - p.y;
+        const d2 = dx*dx + dy*dy;
+        if (d2 < ATTRACT_R * ATTRACT_R && d2 > 0) {
+          const d = Math.sqrt(d2);
+          const f = (ATTRACT_R - d) / ATTRACT_R * 0.038;
+          p.vx += dx/d * f;
+          p.vy += dy/d * f;
+        }
+      }
+      p.vx *= 0.975; p.vy *= 0.975;
+      const spd = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+      if (spd > 2.2) { p.vx = p.vx/spd*2.2; p.vy = p.vy/spd*2.2; }
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x += W; if (p.x > W) p.x -= W;
+      if (p.y < 0) p.y += H; if (p.y > H) p.y -= H;
+    }
+
+    // Draw connections
+    for (let i = 0; i < N; i++) {
+      for (let j = i+1; j < N; j++) {
+        const a = pts[i], b = pts[j];
+        const dx = a.x-b.x, dy = a.y-b.y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < CONNECT_D) {
+          const base = (1 - d/CONNECT_D) * (dark ? 0.16 : 0.20);
+          let boost = 0;
+          if (hasM) {
+            const da = Math.hypot(mx-a.x, my-a.y);
+            const db = Math.hypot(mx-b.x, my-b.y);
+            boost = Math.max(0, 1 - Math.min(da,db)/210) * 0.45;
+          }
+          const alpha = Math.min(0.75, base + boost);
+          ctx.strokeStyle = `rgba(255,121,0,${alpha.toFixed(2)})`;
+          ctx.lineWidth = 0.85;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+    }
+
+    // Draw dots
+    const dotA = dark ? 0.52 : 0.70;
+    ctx.fillStyle = `rgba(255,121,0,${dotA})`;
+    for (const p of pts) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 6.28318);
+      ctx.fill();
+    }
+
+    _particleRAF = requestAnimationFrame(tick);
+  }
+
+  _particleRAF = requestAnimationFrame(tick);
+}
+
+function _stopParticles() {
+  if (_particleRAF) { cancelAnimationFrame(_particleRAF); _particleRAF = null; }
+  const canvas = document.getElementById('home-particles');
+  if (!canvas) return;
+  canvas.style.display = 'none';
+  if (window._particleResize) { window.removeEventListener('resize', window._particleResize); window._particleResize = null; }
+  if (canvas._moveH)  { document.removeEventListener('mousemove',  canvas._moveH);  canvas._moveH  = null; }
+  if (canvas._leaveH) { document.removeEventListener('mouseleave', canvas._leaveH); canvas._leaveH = null; }
+}
 
 /* ═══════════════════════════════════════════════════════
    GSAP + AOS ANIMATION HELPERS
@@ -4754,6 +4882,7 @@ function _animateHomeReturn() {
   gsap.fromTo('.home-subheadline, .home-search-wrap', { opacity: 0 }, { opacity: 1, duration: 0.38, delay: 0.15 });
   _initLogoFloat();
   _initLogoGlow();
+  _startParticles();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -4763,6 +4892,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateSearchState();
   renderHomePageCards();
   showHomePage();
+  _startParticles();
   // Initialize GSAP + AOS and run hero entrance
   _initAnimations();
   // Pulse chatbot button after delay
