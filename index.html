@@ -4734,7 +4734,16 @@ Best regards,
 Orange Business ESG Sales
 [Your email] | [Your phone]
 
-P.S. I noticed ${stakeholder.why?.toLowerCase()}. This is precisely where we've seen the strongest ROI for our clients.`
+P.S. I noticed ${(()=>{
+  const e = company.esg?.[0];
+  const t = company.topics?.[0];
+  if (e?.title && e?.value) {
+    const tl = e.title.toLowerCase();
+    return `${company.name} has set ${/^[aeiou]/i.test(tl)?'an':'a'} ${tl} of ${e.value}`;
+  }
+  if (t?.name) return `${company.name} has identified ${t.name.toLowerCase()} as a critical priority`;
+  return `${company.name} has made significant ESG commitments`;
+})()} — this is precisely where we've seen the strongest ROI for our clients.`
   };
 }
 
