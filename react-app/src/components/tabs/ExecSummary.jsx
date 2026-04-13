@@ -194,33 +194,45 @@ export default function ExecSummary({ company }) {
       )}
 
       {/* Leader Quotes */}
-      {company.leaderQuotes && company.leaderQuotes.length > 0 && (
-        <>
-          <div className="divider" />
-          <div className="sec-hdr">
-            <div className="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></div>
-            <div className="sec-title">{T('exec.leaders')}</div>
-          </div>
-          <div className="quotes-grid">
-            {company.leaderQuotes.map((q, i) => (
-              <div key={i} className="quote-card">
-                <div className="quote-exec-name">{esc(q.name)}</div>
-                <div className="quote-exec-title">{esc(q.title)}</div>
-                <div className="quote-text">{esc(q.quote)}</div>
-                <div className="quote-source">
-                  {T('misc.source')}{' '}
-                  {sustainabilityUrl ? (
-                    <a href={esc(sustainabilityUrl)} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--ob)' }}>{esc(q.source)}</a>
-                  ) : esc(q.source)}
-                </div>
-                <div className="quote-opportunity">
-                  <div className="quote-opp-label">{T('exec.opportunity')}</div>
-                  <div className="quote-opp-text">{esc(q.orangeOpportunity)}</div>
-                </div>
+      <div className="divider" />
+      <div className="sec-hdr">
+        <div className="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg></div>
+        <div className="sec-title">{T('exec.leaders')}</div>
+      </div>
+      {Array.isArray(company.leaderQuotes) && company.leaderQuotes.length > 0 ? (
+        <div className="quotes-grid">
+          {company.leaderQuotes.map((q, i) => (
+            <div key={i} className="quote-card">
+              <div className="quote-exec-name">{esc(q.name)}</div>
+              <div className="quote-exec-title">{esc(q.title)}</div>
+              <div className="quote-text">{esc(q.quote)}</div>
+              <div className="quote-source">
+                {T('misc.source')}{' '}
+                {sustainabilityUrl ? (
+                  <a href={esc(sustainabilityUrl)} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--ob)' }}>{esc(q.source)}</a>
+                ) : esc(q.source)}
               </div>
-            ))}
-          </div>
-        </>
+              <div className="quote-opportunity">
+                <div className="quote-opp-label">{T('exec.opportunity')}</div>
+                <div className="quote-opp-text">{esc(q.orangeOpportunity)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div
+          style={{
+            padding: '16px 18px',
+            background: 'var(--surface)',
+            border: '1px dashed var(--line)',
+            borderRadius: 'var(--rr)',
+            color: 'var(--ink3)',
+            fontSize: 12.5,
+            lineHeight: 1.55,
+          }}
+        >
+          {T('exec.leaders.empty')}
+        </div>
       )}
 
       <div className="divider" />

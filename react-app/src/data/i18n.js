@@ -63,6 +63,7 @@ export const I18N = {
   'exec.cdp': {en:'CDP Climate Score', fr:'Score Climat CDP'},
   'exec.cdp.source': {en:'Source: CDP 2024 disclosure', fr:'Source : déclaration CDP 2024'},
   'exec.leaders': {en:'What Leaders Are Saying — Orange Opportunity Mapping', fr:'Ce que disent les dirigeants — Cartographie des opportunités Orange'},
+  'exec.leaders.empty': {en:'No verified executive quotes were available for this company. Quotes appear here when public statements from senior leaders can be sourced and mapped to an Orange Business opportunity.', fr:'Aucune citation vérifiée de dirigeant n\'est disponible pour cette entreprise. Les citations apparaissent ici lorsque des déclarations publiques de dirigeants peuvent être sourcées et mappées à une opportunité Orange Business.'},
   'exec.opportunity': {en:'Orange Opportunity', fr:'Opportunité Orange'},
   'exec.benchmark.title': {en:'Sector Benchmark:', fr:'Benchmark sectoriel :'},
   'exec.orange.role': {en:'Orange Role:', fr:'Rôle d\'Orange :'},

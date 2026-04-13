@@ -58,6 +58,10 @@ Use this exact structure:
     ["Priority CSR contact","<role>","Public filings"],
     ["CSRD / ESG regulation","<status>","Annual report"],
     ["Next action","<specific next step>","Recommended"]
+  ],
+  "leaderQuotes": [
+    {"name":"Executive name","title":"Title, Company","quote":"Verified public quote from this executive","source":"Source document or speech with date","orangeOpportunity":"1 sentence on which Orange solution this signals a need for"},
+    {"name":"...","title":"...","quote":"...","source":"...","orangeOpportunity":"..."}
   ]
 }
 
@@ -68,7 +72,9 @@ Use ONLY Orange Business's actual pillars:
 - Strategic Decarbonisation: Corporate Decarbonisation Roadmap, Scope 3 Estimator, CSRD Acceleration, EcoVadis Programme
 - Orange credentials: EcoVadis Platinum, SBTi-aligned net-zero 2040, RGESN certified, 28,000+ enterprise customers
 
-Use your knowledge of ${val}'s actual published ESG strategy. Where possible, include real source URLs for ESG claims and ratings. Add a "leaderQuotes" array with real executive quotes from published sources — include the source name and URL where available.${lang === 'fr' ? ' IMPORTANT: All text values in the JSON must be written in natural, professional business French suitable for a French executive audience. Keep proper nouns in their original form.' : ''} Return ONLY the raw JSON object.`;
+Use your knowledge of ${val}'s actual published ESG strategy. Where possible, include real source URLs for ESG claims and ratings.
+
+The "leaderQuotes" array is REQUIRED and must contain 2-3 entries with real, verifiable executive quotes from published sources (annual reports, press releases, earnings calls, conference speeches, LinkedIn posts). Each entry must include the executive's name, title and company, the verbatim quote, the source document with date, and a one-sentence orangeOpportunity mapping the quote to a specific Orange Business solution. If you cannot find verified public quotes for this company, return an empty array [] rather than fabricating quotes.${lang === 'fr' ? ' IMPORTANT: All text values in the JSON must be written in natural, professional business French suitable for a French executive audience. Keep proper nouns in their original form.' : ''} Return ONLY the raw JSON object.`;
 }
 
 export async function analyzeCompany(val, apiKey, lang) {

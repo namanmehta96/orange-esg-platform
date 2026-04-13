@@ -71,10 +71,27 @@ export default function Chatbot() {
       const welcomeMsg = co
         ? T('chat.welcome.co', { name: co.name })
         : T('chat.welcome.gen');
-      setChatHistory([{ role: 'assistant', content: welcomeMsg }]);
+      setChatHistory([{ role: 'assistant', content: welcomeMsg, _auto: true }]);
       setSuggestions(buildSuggestions());
     }
   }, [chatbotOpen, chatHistory.length, currentCompany, T, setChatHistory, buildSuggestions]);
+
+  // Re-translate welcome + suggestions when language toggles (only if still auto-state)
+  useEffect(() => {
+    if (!initializedRef.current) return;
+    const onlyAutoWelcome = chatHistory.length === 1 && chatHistory[0]._auto;
+    if (onlyAutoWelcome) {
+      const co = currentCompany;
+      const welcomeMsg = co
+        ? T('chat.welcome.co', { name: co.name })
+        : T('chat.welcome.gen');
+      setChatHistory([{ role: 'assistant', content: welcomeMsg, _auto: true }]);
+    }
+    if (suggestions.length > 0) {
+      setSuggestions(buildSuggestions());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLang]);
 
   // Reset initialized state when chatHistory is cleared externally (e.g. company change)
   useEffect(() => {
@@ -269,8 +286,13 @@ export default function Chatbot() {
 
         {/* API Notice */}
         {showNotice && (
-          <div id="chat-api-notice" className="chat-api-notice">
-            Add your <a onClick={openSettings}>API key in Settings</a> to enable AI coaching.
+          <div
+            id="chat-api-notice"
+            className="chat-api-notice"
+            onClick={openSettings}
+            style={{ cursor: 'pointer' }}
+          >
+            {T('chat.apinotice')}
           </div>
         )}
       </div>
