@@ -144,3 +144,71 @@ Return ONLY raw JSON.`;
   let raw = data.content[0].text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
   return JSON.parse(raw);
 }
+
+export async function generateOutreachEmail(stakeholder, company, apiKey, lang) {
+  if (apiKey) {
+    const langInstruction = lang === 'fr'
+      ? ' Write the email in natural, professional business French suitable for a French executive audience.'
+      : '';
+    const prompt = `Generate a professional, personalised cold outreach email for an Orange Business sales rep to send to ${stakeholder.name} (${stakeholder.role}) at ${company.name}.
+
+Context:
+- Company: ${company.name} (${company.industry}, ESG score ${company.score}/100)
+- Contact reason: ${stakeholder.why}
+- Company's top ESG priority: ${company.topics[0]?.name} (${company.topics[0]?.pct}% priority)
+- Recommended Orange solution: ${company.solutions[0]?.offer}
+- Orange credentials: EcoVadis Platinum, SBTi-aligned net-zero 2040, CSRD Wave 1 reporter
+
+Write a concise, professional cold outreach email. Keep it under 200 words. Focus on their specific ESG challenge, not a generic pitch.${langInstruction}
+
+Return ONLY a JSON object: {"subject":"email subject","body":"full email body text, no HTML, with line breaks"}`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    let raw = data.content[0].text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+    return JSON.parse(raw);
+  }
+
+  // Template fallback (no API key)
+  const sol = company.solutions[0] || { offer: 'ESG Data Platform', pillar: 'IT for Society' };
+  const critical = company.topics?.find(t => t.badge === 'Critical' || t.badge === 'Critique') || company.topics?.[0];
+  const csrdEsg = company.esg?.find(e => /csrd|wave/i.test(e.title + ' ' + e.value));
+  const ind = (company.industry || 'sector').toLowerCase();
+
+  let postscript;
+  if (csrdEsg && critical) {
+    const wave = /wave/i.test(csrdEsg.value) ? csrdEsg.value : 'Wave 1';
+    postscript = `As a CSRD ${wave} reporter, ${company.name}'s ${critical.name.toLowerCase()} data (${critical.pct}% materiality) will face external audit this reporting cycle — in our experience, that's precisely where organisations most regret not having the right infrastructure in place sooner.`;
+  } else if (critical && critical.pct >= 88) {
+    postscript = `With ${critical.name.toLowerCase()} at ${critical.pct}% on ${company.name}'s materiality matrix, this is the pressure point where reactive management starts becoming a real liability — it's also where we've delivered the fastest, most measurable impact for comparable ${ind} clients.`;
+  } else if (critical) {
+    postscript = `${company.name} has flagged ${critical.name.toLowerCase()} as a critical material issue — our ${sol.pillar || 'approach'} is built specifically for organisations at exactly this stage of their ESG journey.`;
+  } else {
+    postscript = `${company.name}'s ESG disclosures show the kind of ambition where execution infrastructure — not strategy — becomes the limiting factor. That's the conversation I'd most like to have.`;
+  }
+
+  return {
+    subject: `${company.name.split(' ')[0]} × Orange Business — ${sol.offer}`,
+    body: `Dear ${stakeholder.name.split(' ')[0]},
+
+I hope this finds you well. I'm reaching out from Orange Business, where we partner with organisations like ${company.name} to address their most pressing ESG challenges.
+
+Given ${company.name}'s commitment to ${company.topics[0]?.name?.toLowerCase() || 'sustainable development'} and your upcoming CSRD obligations, I believe our ${sol.offer} could offer immediate, measurable value.
+
+We've helped comparable ${company.industry} organisations reduce their ESG reporting overhead by 40–60% while improving data quality scores — and our own EcoVadis Platinum status means we bring practitioner experience, not just advisory.
+
+I'd love to share a 20-minute overview of how we've approached similar challenges in your sector. Would you be open to a brief call next week?
+
+Best regards,
+[Your name]
+Orange Business ESG Sales
+[Your email] | [Your phone]
+
+P.S. ${postscript}`
+  };
+}
