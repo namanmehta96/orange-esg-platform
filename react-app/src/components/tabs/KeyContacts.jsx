@@ -28,7 +28,7 @@ export default function KeyContacts({ company }) {
     const text = `Subject: ${modalState.email.subject}\n\n${modalState.email.body}`;
     try {
       await navigator.clipboard.writeText(text);
-      showToast(T('contacts.email.copied') || 'Email copied to clipboard');
+      showToast(T('contacts.email.copied'));
     } catch {
       showToast('Copy failed');
     }
@@ -59,7 +59,7 @@ export default function KeyContacts({ company }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="li-btn"
-                title={T('contacts.linkedin.title') || 'Search on LinkedIn'}
+                title={T('contacts.linkedin.title')}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg>
               </a>
@@ -67,10 +67,10 @@ export default function KeyContacts({ company }) {
                 type="button"
                 className="email-draft-btn"
                 onClick={() => openEmailDraft(s)}
-                title={T('contacts.email.title') || 'Generate outreach email'}
+                title={T('contacts.email.title')}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                {T('contacts.email.generate') || 'Generate Email'}
+                {T('contacts.email.generate')}
               </button>
             </div>
           );
@@ -104,7 +104,7 @@ export default function KeyContacts({ company }) {
                 <div className="modal-title-ico">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                 </div>
-                {T('contacts.email.modalTitle') || 'Outreach Email Draft'}
+                {T('contacts.email.modalTitle')}
               </div>
               <button className="modal-close" onClick={closeModal} aria-label="Close">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
@@ -118,7 +118,7 @@ export default function KeyContacts({ company }) {
             {modalState.loading && (
               <div className="email-loading">
                 <div className="spinner-sm" />
-                {T('contacts.email.loading') || 'Generating personalised email…'}
+                {T('contacts.email.loading')}
               </div>
             )}
 
@@ -130,7 +130,7 @@ export default function KeyContacts({ company }) {
               <>
                 <div className="email-subject">
                   <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '.6px' }}>
-                    {T('contacts.email.subject') || 'Subject'}:
+                    {T('contacts.email.subject')}:
                   </span>
                   <br />
                   {modalState.email.subject}
@@ -138,10 +138,10 @@ export default function KeyContacts({ company }) {
                 <div className="email-body-text">{modalState.email.body}</div>
                 <div className="modal-btns">
                   <button className="modal-save" onClick={copyDraft}>
-                    {T('contacts.email.copy') || 'Copy to clipboard'}
+                    {T('contacts.email.copy')}
                   </button>
                   <button className="modal-clear" onClick={closeModal}>
-                    {T('contacts.email.close') || 'Close'}
+                    {T('contacts.email.close')}
                   </button>
                 </div>
               </>
