@@ -2,14 +2,17 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { useApp } from '../../contexts/AppContext';
-import { esc, genExecSummary } from '../../utils/helpers';
+import { esc, genExecSummary, splitSourceAndUrl } from '../../utils/helpers';
 import { copyToClipboard } from '../../utils/exports';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
+const FAQ_KEYS = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+
 export default function ExecSummary({ company }) {
   const { currentLang, T, getSourceUrl, getSources, locale } = useApp();
   const [copyLabel, setCopyLabel] = useState(null);
+  const [openFaq, setOpenFaq] = useState(null);
   const esgFillRefs = useRef([]);
   const topicFillRefs = useRef([]);
 
@@ -51,10 +54,10 @@ export default function ExecSummary({ company }) {
   const textColor = isDarkMode ? '#c0c0c0' : '#666';
 
   const chartData = {
-    labels: [company.name.split(' ')[0], bd.industryLabel, leaderName, T('chart.ob')],
+    labels: [company.name.split(' ')[0], bd.industryLabel, leaderName],
     datasets: [{
-      data: [company.score, bd.industryAvg, bd.sectorLeaderScore || bd.sectorLeader, bd.obScore],
-      backgroundColor: ['#FF7900', '#888888', '#1a7a4a', '#003087'],
+      data: [company.score, bd.industryAvg, bd.sectorLeaderScore || bd.sectorLeader],
+      backgroundColor: ['#FF7900', '#888888', '#1a7a4a'],
       borderRadius: 6,
       borderSkipped: false
     }]
@@ -84,12 +87,12 @@ export default function ExecSummary({ company }) {
 
   // Chart interpretation
   const pos = company.score > bd.industryAvg ? T('chart.ahead') : company.score === bd.industryAvg ? T('chart.inline') : T('chart.behind');
-  const gap = Math.abs(company.score - bd.obScore);
+  const leaderGap = Math.abs((bd.sectorLeaderScore || bd.sectorLeader) - company.score);
   let interpText;
   if (currentLang === 'fr') {
-    interpText = `${company.name.split(' ')[0]} obtient ${company.score}/100 \u2014 ${pos} la moyenne sectorielle (${bd.industryLabel}) de ${bd.industryAvg}. ${gap <= 5 ? 'Cela les place au niveau du benchmark Orange Business, sugg\u00e9rant un partenariat d\u0027\u00e9gal \u00e0 \u00e9gal plut\u00f4t qu\u0027une d\u00e9marche corrective.' : `Avec un \u00e9cart de ${gap} points par rapport au benchmark d'Orange Business, il existe un argumentaire clair et cr\u00e9dible sur la mani\u00e8re dont l'expertise d'Orange peut acc\u00e9l\u00e9rer le programme ESG de l'entreprise.`}`;
+    interpText = `${company.name.split(' ')[0]} obtient ${company.score}/100 \u2014 ${pos} la moyenne sectorielle (${bd.industryLabel}) de ${bd.industryAvg}. ${leaderGap <= 5 ? `Cela place l\u0027entreprise au niveau du leader sectoriel (${leaderName}), traduisant une maturit\u00e9 ESG de premier plan.` : `L\u0027\u00e9cart de ${leaderGap} points avec ${leaderName} trace une feuille de route claire pour combler les lacunes restantes et d\u00e9montrer des progr\u00e8s mesurables.`}`;
   } else {
-    interpText = `${company.name.split(' ')[0]} scores ${company.score}/100 \u2014 ${pos} the ${bd.industryLabel} of ${bd.industryAvg}. ${gap <= 5 ? 'This puts them close to Orange Business benchmark standards, suggesting a partnership of equals rather than a remediation sell.' : `With a ${gap}-point gap to Orange Business\u0027s own benchmark, there is a clear and credible narrative around how Orange\u0027s expertise can accelerate the company\u0027s ESG programme.`}`;
+    interpText = `${company.name.split(' ')[0]} scores ${company.score}/100 \u2014 ${pos} the ${bd.industryLabel} of ${bd.industryAvg}. ${leaderGap <= 5 ? `This puts the company at the level of the sector leader (${leaderName}), signalling top-tier ESG maturity.` : `A ${leaderGap}-point gap to ${leaderName} sets a clear roadmap for closing the remaining disclosure and infrastructure gaps.`}`;
   }
 
   // CDP Badge
@@ -201,23 +204,35 @@ export default function ExecSummary({ company }) {
       </div>
       {Array.isArray(company.leaderQuotes) && company.leaderQuotes.length > 0 ? (
         <div className="quotes-grid">
-          {company.leaderQuotes.map((q, i) => (
-            <div key={i} className="quote-card">
-              <div className="quote-exec-name">{esc(q.name)}</div>
-              <div className="quote-exec-title">{esc(q.title)}</div>
-              <div className="quote-text">{esc(q.quote)}</div>
-              <div className="quote-source">
-                {T('misc.source')}{' '}
-                {sustainabilityUrl ? (
-                  <a href={esc(sustainabilityUrl)} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--ob)' }}>{esc(q.source)}</a>
-                ) : esc(q.source)}
+          {company.leaderQuotes.map((q, i) => {
+            const { label, url } = splitSourceAndUrl(q.source);
+            return (
+              <div key={i} className="quote-card">
+                <div className="quote-exec-name">{esc(q.name)}</div>
+                <div className="quote-exec-title">{esc(q.title)}</div>
+                <div className="quote-text">{esc(q.quote)}</div>
+                <div className="quote-source">
+                  {T('misc.source')}{' '}
+                  {url ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="quote-source-link"
+                    >
+                      {label}
+                    </a>
+                  ) : (
+                    <em className="quote-source-text">{label}</em>
+                  )}
+                </div>
+                <div className="quote-opportunity">
+                  <div className="quote-opp-label">{T('exec.opportunity')}</div>
+                  <div className="quote-opp-text">{esc(q.orangeOpportunity)}</div>
+                </div>
               </div>
-              <div className="quote-opportunity">
-                <div className="quote-opp-label">{T('exec.opportunity')}</div>
-                <div className="quote-opp-text">{esc(q.orangeOpportunity)}</div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div
@@ -305,6 +320,34 @@ export default function ExecSummary({ company }) {
         ))}
       </div>
       <div style={{ fontSize: '11px', color: 'var(--ink3)', textAlign: 'center', marginTop: '10px', fontStyle: 'italic' }}>{T('exec.news.disclaimer')}</div>
+
+      {/* FAQ Section */}
+      <div className="divider" />
+      <div className="sec-hdr">
+        <div className="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg></div>
+        <div className="sec-title">{T('faq.title')}</div>
+      </div>
+      <div className="faq-list">
+        {FAQ_KEYS.map((k) => {
+          const isOpen = openFaq === k;
+          return (
+            <div key={k} className={`faq-item${isOpen ? ' open' : ''}`}>
+              <button
+                type="button"
+                className="faq-q"
+                onClick={() => setOpenFaq(prev => prev === k ? null : k)}
+                aria-expanded={isOpen}
+              >
+                <span>{T('faq.q' + k)}</span>
+                <svg className="faq-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {isOpen && <div className="faq-a">{T('faq.a' + k)}</div>}
+            </div>
+          );
+        })}
+      </div>
 
       {/* Sources & References */}
       {sources.length > 0 && (

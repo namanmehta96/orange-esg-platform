@@ -25,6 +25,8 @@ export function AppProvider({ children }) {
   const [searchHistory, setSearchHistory] = useState(() => {
     try { return JSON.parse(localStorage.getItem('ob_esg_history') || '[]'); } catch { return []; }
   });
+  const [uploadedDoc, setUploadedDoc] = useState(null); // { name, content }
+  const [tutorialOpen, setTutorialOpen] = useState(false);
 
   // Apply dark mode
   useEffect(() => {
@@ -134,6 +136,8 @@ export function AppProvider({ children }) {
     settingsOpen, setSettingsOpen,
     sidebarOpen, setSidebarOpen,
     searchHistory, addToHistory, removeFromHistory,
+    uploadedDoc, setUploadedDoc,
+    tutorialOpen, setTutorialOpen,
     T, getLocalizedData, getLocalizedCatalog,
     getSourceUrl, getSources, locale,
   };

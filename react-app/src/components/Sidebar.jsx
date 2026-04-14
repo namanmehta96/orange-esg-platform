@@ -3,7 +3,7 @@ import { useApp } from '../contexts/AppContext';
 import { SEED_DATA } from '../data/seedData';
 import { SEED_DATA_FR } from '../data/seedDataFr';
 import { analyzeCompany as apiAnalyze } from '../utils/api';
-import { esc, showToast } from '../utils/helpers';
+import { esc, showToast, readUploadedDocument } from '../utils/helpers';
 
 const DEMO_KEYS = ['bnp', 'unilever', 'renault', 'lvmh', 'schneider', 'total', 'axa', 'danone', 'airbus'];
 
@@ -28,11 +28,37 @@ export default function Sidebar() {
     setLoadingOverlay,
     sidebarOpen, setSidebarOpen,
     searchHistory, addToHistory, removeFromHistory,
+    uploadedDoc, setUploadedDoc,
     T, getLocalizedData,
   } = useApp();
 
   const [searchVal, setSearchVal] = useState('');
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const handleUploadClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const lower = file.name.toLowerCase();
+    if (!lower.endsWith('.pdf') && !lower.endsWith('.docx')) {
+      showToast(T('upload.invalid'));
+      e.target.value = '';
+      return;
+    }
+    try {
+      const content = await readUploadedDocument(file);
+      setUploadedDoc({ name: file.name, content });
+    } catch (err) {
+      showToast(T('upload.invalid'));
+    }
+    e.target.value = '';
+  };
+
+  const removeUpload = () => setUploadedDoc(null);
 
   const hasKey = !!apiKey;
 
@@ -54,7 +80,7 @@ export default function Sidebar() {
     setLoadingOverlay({ companyName: val, step: 0, error: null });
 
     try {
-      const result = await apiAnalyze(val, apiKey, currentLang);
+      const result = await apiAnalyze(val, apiKey, currentLang, uploadedDoc);
       setCurrentCompany(result);
       addToHistory(result.name || val);
       setLoadingOverlay(null);
@@ -75,7 +101,7 @@ export default function Sidebar() {
     addToHistory(name);
     setView('profile');
     setLoadingOverlay({ companyName: name, step: 0, error: null });
-    apiAnalyze(name, apiKey, currentLang)
+    apiAnalyze(name, apiKey, currentLang, uploadedDoc)
       .then((result) => {
         setCurrentCompany(result);
         addToHistory(result.name || name);
@@ -128,16 +154,54 @@ export default function Sidebar() {
               onKeyDown={handleKeyDown}
             />
           </div>
-          <button
-            className="analyze-btn"
-            disabled={!hasKey}
-            onClick={handleAnalyze}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
-            {T('sidebar.generate')}
-          </button>
+          <div className="analyze-row">
+            <button
+              className="analyze-btn"
+              disabled={!hasKey}
+              onClick={handleAnalyze}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              {T('sidebar.generate')}
+            </button>
+            <button
+              type="button"
+              className="upload-btn"
+              disabled={!hasKey}
+              onClick={handleUploadClick}
+              title={T('upload.tooltip')}
+              aria-label={T('upload.tooltip')}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+          </div>
+          {uploadedDoc && (
+            <div className="upload-chip" title={uploadedDoc.name}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span className="upload-chip-name">{uploadedDoc.name}</span>
+              <button
+                type="button"
+                className="upload-chip-x"
+                onClick={removeUpload}
+                title={T('upload.remove')}
+                aria-label={T('upload.remove')}
+              >&times;</button>
+            </div>
+          )}
         </div>
 
         {searchHistory.length > 0 && (

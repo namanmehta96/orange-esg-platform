@@ -11,6 +11,7 @@ import CompanyProfile from './components/CompanyProfile';
 import Chatbot from './components/Chatbot';
 import LoadingOverlay from './components/LoadingOverlay';
 import SettingsModal from './components/SettingsModal';
+import Tutorial from './components/Tutorial';
 
 export default function App() {
   const {
@@ -21,6 +22,7 @@ export default function App() {
     loadingOverlay, setLoadingOverlay,
     settingsOpen, setSettingsOpen,
     sidebarOpen, setSidebarOpen,
+    uploadedDoc,
     addToHistory, getLocalizedData, T,
   } = useApp();
 
@@ -139,7 +141,7 @@ export default function App() {
     }, 2000);
 
     try {
-      const parsed = await apiAnalyzeCompany(name, apiKey, currentLang);
+      const parsed = await apiAnalyzeCompany(name, apiKey, currentLang, uploadedDoc);
       clearInterval(loadingIntervalRef.current);
       setLoadingOverlay(null);
       setCurrentCompany(parsed);
@@ -151,7 +153,7 @@ export default function App() {
         error: { msg: `${T('loading.error')} "${name}"`, detail: e.message || String(e) }
       });
     }
-  }, [apiKey, currentLang, addToHistory, setView, setLoadingOverlay, setCurrentCompany, setSettingsOpen, T]);
+  }, [apiKey, currentLang, uploadedDoc, addToHistory, setView, setLoadingOverlay, setCurrentCompany, setSettingsOpen, T]);
 
   const goHome = useCallback(() => {
     setView('home');
@@ -196,6 +198,7 @@ export default function App() {
         />
       )}
       {settingsOpen && <SettingsModal />}
+      <Tutorial />
     </div>
   );
 }

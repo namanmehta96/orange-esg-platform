@@ -95,10 +95,34 @@ export default function CompanyProfile({ company }) {
             {company.tags.map((tag, i) => (
               <span key={i} className={`tag ${company.tagClasses[i] || 'ts3'}`}>{tag}</span>
             ))}
+            {company._enrichedDocName && (
+              <span className="tag tag-enriched" title={company._enrichedDocName}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                {T('upload.badge')}
+              </span>
+            )}
           </div>
         </div>
         <div className="mat-blk">
-          <div className="mat-lbl">{T('profile.maturity')}</div>
+          <div className="mat-lbl">
+            {T('profile.maturity')}
+            <span className="mat-info" tabIndex="0" aria-label={T('maturity.tooltip.title')}>
+              i
+              <div className="mat-tooltip" role="tooltip">
+                <div className="mat-tt-title">{T('maturity.tooltip.title')}</div>
+                <div className="mat-tt-intro">{T('maturity.tooltip.intro')}</div>
+                <div className="mat-tt-section">{T('maturity.tooltip.calc')}</div>
+                <ul className="mat-tt-list">
+                  <li>{T('maturity.tooltip.r1')}</li>
+                  <li>{T('maturity.tooltip.r2')}</li>
+                  <li>{T('maturity.tooltip.r3')}</li>
+                  <li>{T('maturity.tooltip.r4')}</li>
+                  <li>{T('maturity.tooltip.r5')}</li>
+                </ul>
+                <div className="mat-tt-src">{T('maturity.tooltip.src')}</div>
+              </div>
+            </span>
+          </div>
           <div className="mat-ring">
             <svg viewBox="0 0 66 66">
               <circle cx="33" cy="33" r="27" fill="none" stroke="var(--line)" strokeWidth="5.5" />

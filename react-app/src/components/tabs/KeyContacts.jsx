@@ -51,6 +51,9 @@ export default function KeyContacts({ company }) {
               <div className="si2">
                 <div className="sn">{s.name}</div>
                 <div className="sr">{s.role}</div>
+                {s.verify && (
+                  <div className="sr-verify">{T('stakeholder.verify')}</div>
+                )}
               </div>
               <div className="sw">{s.why}</div>
               <div className={`spr ${s.ph ? 'ph' : 'pm'}`}>{s.priority}</div>

@@ -7,8 +7,6 @@ export default function OrangeBridge({ company }) {
   const [openPitches, setOpenPitches] = useState({});
   const pitchContentRefs = useRef({});
 
-  const riskHtml = getRiskOfInaction(company, currentLang);
-
   const togglePitch = useCallback((idx) => {
     setOpenPitches(prev => {
       const isOpen = !!prev[idx];
@@ -78,7 +76,7 @@ export default function OrangeBridge({ company }) {
                 </div>
                 <div className="pitch-risk-box">
                   <div className="pitch-label">{T('bridge.risk')}</div>
-                  <div className="pitch-row" dangerouslySetInnerHTML={{ __html: riskHtml }} />
+                  <div className="pitch-row" dangerouslySetInnerHTML={{ __html: getRiskOfInaction(company, currentLang, i) }} />
                 </div>
               </div>
             </div>

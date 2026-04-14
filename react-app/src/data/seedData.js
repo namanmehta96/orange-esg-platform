@@ -10,7 +10,7 @@ export const SEED_DATA = {
       sectorLeaderStory:'HSBC has built one of the most comprehensive financed emissions measurement frameworks in banking, tracking Category 15 emissions across its lending book using PCAF methodology. Their quarterly portfolio carbon intensity reports — verified by a Big Four auditor — set the transparency benchmark for the sector. Orange\'s ESG Data Platform enables similar structured data collection and quarterly verification workflows, giving your sustainability team the same infrastructure that makes HSBC\'s disclosures credible to investors and regulators.',
       orangeRole:'ESG Data Management Platform + Scope 3 Financed Emissions Estimator'},
     leaderQuotes:[
-      {name:'Jean-Laurent Bonnafé',title:'CEO, BNP Paribas',quote:'In the current geopolitical context, it is even more essential that we maintain an ambitious course towards a net-zero economy and finance the acceleration of renewable energies.',source:'BNP Paribas Green Bond Framework, 2024',orangeOpportunity:'Scope 3 Financed Emissions Estimator — BNP needs auditable Scope 3 data to back this commitment with verified numbers.'},
+      {name:'Jean-Laurent Bonnafé',title:'CEO, BNP Paribas',quote:'In the current geopolitical context, it is even more essential that we maintain an ambitious course towards a net-zero economy and finance the acceleration of renewable energies.',source:'BNP Paribas CSR Strategy April 2025 — https://invest.bnpparibas/document/bnp-paribas-strategy-rse-avril-2025',orangeOpportunity:'Scope 3 Financed Emissions Estimator — BNP needs auditable Scope 3 data to back this commitment with verified numbers.'},
       {name:'Jean-Laurent Bonnafé',title:'CEO, BNP Paribas',quote:'Our responsibility is to contribute to the emergence and implementation of solutions for a sustainable future.',source:'LinkedIn / Corporate communications',orangeOpportunity:'ESG Data Management Platform — translating this commitment into CSRD-compliant data workflows is where Orange can add immediate value.'}
     ],
     esg:[
@@ -40,7 +40,7 @@ export const SEED_DATA = {
       desc:'Lightweight NLP models extract ESG data points from existing BNP Paribas sustainability reports and supplier documents — avoiding costly new data infrastructure. Aligns with Orange\'s responsible AI principles.',
       saving:'Est. 60–70% reduction in manual ESG data entry · No new digital infrastructure required'},
     stakeholders:[
-      {init:'LM',bg:'#e8f0fb',tc:'#0056b3',name:'Laurent Mignon',role:'Group Chief Sustainability Officer · BNP Paribas',why:'Owns net-zero strategy & CSRD reporting',priority:'Priority 1',ph:true},
+      {init:'LP',bg:'#e8f0fb',tc:'#0056b3',name:'Laurence Pessez',role:'Global Head of CSR · BNP Paribas',why:'Owns net-zero strategy & CSRD reporting',priority:'Priority 1',ph:true},
       {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'Technology & Transformation Director',role:'CTO Office (via existing CIO relationship)',why:'Digital carbon & IT architecture',priority:'Priority 1',ph:true},
       {init:'ESG',bg:'#edf7f1',tc:'#1a7a4a',name:'Head of ESG Reporting & Data',role:'Finance Division · BNP Paribas',why:'CSRD data workflows & tooling gaps',priority:'Priority 2',ph:false}
     ],
@@ -65,7 +65,7 @@ export const SEED_DATA = {
       orangeRole:'Scope 3 Supplier Carbon Estimator + ESG Data Platform Supplier Portal'},
     leaderQuotes:[
       {name:'Hein Schumacher',title:'Former CEO, Unilever',quote:'We have too many long-term commitments that failed to make sufficient short-term impact, and the latter is what the world really needs right now.',source:'Q3 2023 Financial Update',orangeOpportunity:'Scope 3 Supplier Carbon Estimator — Unilever needs fast, measurable short-term supplier emissions reductions, not more long-term pledges.'},
-      {name:'Rebecca Marmot',title:'Chief Sustainability Officer, Unilever',quote:'Our Climate Transition Action Plan enables us to understand where our emissions sit across our business and our value chain.',source:'Unilever CTAP Launch, 2024',orangeOpportunity:'ESG Data Platform Supplier Portal — real-time supplier emissions tracking is the missing piece between ambition and verified CTAP progress.'}
+      {name:'Rebecca Marmot',title:'Chief Sustainability Officer, Unilever',quote:'Our Climate Transition Action Plan enables us to understand where our emissions sit across our business and our value chain.',source:'Unilever Climate Transition Action Plan 2024 — https://www.unilever.com/files/8b5df5f6-cb90-40fd-9691-38d06905d81d/unilever-climate-transition-action-plan-updated-2024.pdf',orangeOpportunity:'ESG Data Platform Supplier Portal — real-time supplier emissions tracking is the missing piece between ambition and verified CTAP progress.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2039',desc:'One of the world\'s most ambitious net-zero commitments — full value chain decarbonisation including Scope 3 supplier emissions.',fill:85,fillColor:'#1a7a4a'},
@@ -94,7 +94,7 @@ export const SEED_DATA = {
       desc:'Lightweight NLP models extract and cross-validate ESG data from supplier self-assessments and third-party audit reports — no large-model overhead. Processes PDFs from 56,000+ suppliers at scale with minimal compute footprint.',
       saving:'Est. 75% reduction in manual supplier data validation · Aligns with Unilever\'s responsible sourcing commitments'},
     stakeholders:[
-      {init:'RM',bg:'#edf7f1',tc:'#1a7a4a',name:'Rebecca Marmot',role:'Chief Sustainability Officer · Unilever',why:'Owns 2039 net-zero & supplier strategy',priority:'Priority 1',ph:true},
+      {init:'RM',bg:'#edf7f1',tc:'#1a7a4a',name:'Rebecca Marmot',role:'Chief Sustainability Officer · Unilever',why:'Owns 2039 net-zero & supplier strategy',priority:'Priority 1',ph:true,verify:true},
       {init:'SC',bg:'#e8f0fb',tc:'#0056b3',name:'Supply Chain Director',role:'Global Operations (via CIO relationship)',why:'Scope 3 data & supplier traceability',priority:'Priority 1',ph:true},
       {init:'PS',bg:'#fff3e8',tc:'#e06800',name:'Head of Sustainable Sourcing',role:'Procurement Division · Unilever',why:'Supplier ESG data collection gaps',priority:'Priority 2',ph:false}
     ],
@@ -118,8 +118,8 @@ export const SEED_DATA = {
       sectorLeaderStory:'Volkswagen Group leads the automotive sector in structured manufacturing emissions monitoring, having deployed real-time energy IoT across all major European plants by 2023. Their plant-level carbon KPI dashboards — updated hourly and feeding directly into CSRD ESRS E1 — reduced their reporting overhead by 55% and helped validate a credible Scope 1&2 reduction trajectory with investors. Orange\'s Smart Eco-Energy platform delivers the same capability for Renault\'s 15 manufacturing sites.',
       orangeRole:'Smart Eco-Energy for Manufacturing Plants + ESG Data Platform'},
     leaderQuotes:[
-      {name:'Luca de Meo',title:'CEO, Renault Group',quote:'The automotive industry is living through a radical transformation. Renault Group has decided to be at the forefront of this revolution — electrification, software, and sustainability are at the core of our strategy.',source:'Renault Group Annual Report 2024',orangeOpportunity:'Smart Eco-Energy for Manufacturing — Renault\'s 90% Scope 1&2 reduction target by 2030 requires real-time plant energy monitoring across 15 manufacturing sites.'},
-      {name:'Sylvie Gillet',title:'VP Sustainability, Renault Group',quote:'Our circular economy ambitions go beyond our vehicles — they extend to how we run our operations, manage our devices, and engage our entire supply chain.',source:'Renault Sustainability Report 2024',orangeOpportunity:'Circular Mobility Fleet Programme — Renault\'s 105,000-employee device fleet is a direct, measurable circular economy opportunity Orange can deliver immediately.'}
+      {name:'Luca de Meo',title:'CEO, Renault Group',quote:'The automotive industry is living through a radical transformation. Renault Group has decided to be at the forefront of this revolution — electrification, software, and sustainability are at the core of our strategy.',source:'Renault Group Annual Report 2024 — https://www.renaultgroup.com/en/finance/',orangeOpportunity:'Smart Eco-Energy for Manufacturing — Renault\'s 90% Scope 1&2 reduction target by 2030 requires real-time plant energy monitoring across 15 manufacturing sites.'},
+      {name:'Sylvie Gillet',title:'VP Sustainability, Renault Group',quote:'Our circular economy ambitions go beyond our vehicles — they extend to how we run our operations, manage our devices, and engage our entire supply chain.',source:'Renault Sustainability Report 2024 — https://www.renaultgroup.com/en/responsability/environment/',orangeOpportunity:'Circular Mobility Fleet Programme — Renault\'s 105,000-employee device fleet is a direct, measurable circular economy opportunity Orange can deliver immediately.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2050',desc:'Carbon neutral across full lifecycle by 2050. 90% reduction in Scope 1&2 by 2030, EV mix target of 100% passenger cars in Europe.',fill:68,fillColor:'#1a7a4a'},
@@ -148,7 +148,7 @@ export const SEED_DATA = {
       desc:'Deploy lightweight on-premise AI models to detect energy anomalies across Renault\'s plant IoT sensor networks in real time — with full transparency on the model\'s own carbon cost. Aligned to Orange\'s RGESN framework.',
       saving:'Est. 8–12% plant energy waste reduction · On-premise deployment minimises AI carbon footprint · Fully auditable'},
     stakeholders:[
-      {init:'TP',bg:'#fff3e8',tc:'#e06800',name:'Thierry Piéton',role:'Chief Financial Officer (ESG co-owner) · Renault',why:'CSRD financial materiality & net-zero investment',priority:'Priority 1',ph:true},
+      {init:'TP',bg:'#fff3e8',tc:'#e06800',name:'Thierry Piéton',role:'Chief Financial Officer (ESG co-owner) · Renault',why:'CSRD financial materiality & net-zero investment',priority:'Priority 1',ph:true,verify:true},
       {init:'VP',bg:'#edf7f1',tc:'#1a7a4a',name:'VP Sustainability & CSR',role:'Group Sustainability Division · Renault',why:'Owns EV lifecycle & circular economy strategy',priority:'Priority 1',ph:true},
       {init:'MF',bg:'#e8f0fb',tc:'#0056b3',name:'Manufacturing IT Director',role:'Industrial Systems (via CIO relationship)',why:'Plant IoT & energy management systems',priority:'Priority 2',ph:false}
     ],
@@ -172,8 +172,8 @@ export const SEED_DATA = {
       sectorLeaderStory:'Kering Group leads luxury sector ESG with the world\'s first Environmental Profit & Loss account applied across all Maisons. Their centralised ESG data platform aggregates impact data from 8 luxury houses quarterly, feeding into CSRD disclosures and investor presentations. The key to Kering\'s advantage: a single data taxonomy applied consistently across all brands, enabling like-for-like comparison. Orange\'s ESG Data Management Platform delivers this multi-Maison data infrastructure for LVMH.',
       orangeRole:'ESG Data Management Platform + Frugal AI for Supply Chain Traceability'},
     leaderQuotes:[
-      {name:'Bernard Arnault',title:'Chairman & CEO, LVMH',quote:'LIFE 360 is LVMH\'s roadmap for the future — a comprehensive programme that reflects our commitment to making luxury and sustainability inseparable.',source:'LVMH LIFE 360 Programme Launch',orangeOpportunity:'ESG Data Management Platform — LVMH needs to aggregate LIFE 360 sustainability data across 75 Maisons for CSRD Wave 1 disclosure.'},
-      {name:'Marie-Claire Daveu',title:'Chief Sustainability Officer, LVMH',quote:'Traceability is not optional for luxury — our customers and regulators demand to know the origin of every material we use.',source:'LVMH Sustainability Report 2024',orangeOpportunity:'Frugal AI for Supply Chain Traceability — lightweight AI models can automate supplier ESG verification across LVMH\'s complex multi-tier supply chain.'}
+      {name:'Bernard Arnault',title:'Chairman & CEO, LVMH',quote:'LIFE 360 is LVMH\'s roadmap for the future — a comprehensive programme that reflects our commitment to making luxury and sustainability inseparable.',source:'LVMH LIFE 360 Programme — https://www.lvmh.com/en/commitment-in-action/for-the-environment',orangeOpportunity:'ESG Data Management Platform — LVMH needs to aggregate LIFE 360 sustainability data across 75 Maisons for CSRD Wave 1 disclosure.'},
+      {name:'Marie-Claire Daveu',title:'Chief Sustainability Officer, LVMH',quote:'Traceability is not optional for luxury — our customers and regulators demand to know the origin of every material we use.',source:'LVMH Sustainability Report 2024 — https://www.lvmh.com/en/investors/esg',orangeOpportunity:'Frugal AI for Supply Chain Traceability — lightweight AI models can automate supplier ESG verification across LVMH\'s complex multi-tier supply chain.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2050',desc:'LIFE 360 environmental programme covers climate, biodiversity, circular economy and traceability across all 75 Maisons.',fill:72,fillColor:'#1a7a4a'},
@@ -202,7 +202,7 @@ export const SEED_DATA = {
       desc:'Replacing manual audit processes with efficient, low-carbon automated verification for LVMH\'s raw material supply chains — supporting LIFE 360 traceability commitments across leather, gold and diamond sourcing.',
       saving:'Est. 70% reduction in manual supply chain audit time · Supports LIFE 360 traceability · Low-carbon AI deployment'},
     stakeholders:[
-      {init:'HG',bg:'#e8f0fb',tc:'#0056b3',name:'Hélène Gauthier',role:'Chief Sustainability Officer · LVMH Group',why:'LIFE 360 programme owner — ESG & CSRD',priority:'Priority 1',ph:true},
+      {init:'HG',bg:'#e8f0fb',tc:'#0056b3',name:'Hélène Gauthier',role:'Chief Sustainability Officer · LVMH Group',why:'LIFE 360 programme owner — ESG & CSRD',priority:'Priority 1',ph:true,verify:true},
       {init:'CD',bg:'#fff3e8',tc:'#e06800',name:'Chief Digital Officer',role:'Group Digital & Innovation · LVMH',why:'Digital sustainability & eco-design',priority:'Priority 1',ph:true},
       {init:'SR',bg:'#edf7f1',tc:'#1a7a4a',name:'Head of Supplier Responsibility',role:'Operations & Supply Chain · LVMH',why:'Traceability & CSRD supply chain data',priority:'Priority 2',ph:false}
     ],
@@ -227,7 +227,7 @@ export const SEED_DATA = {
       orangeRole:'Orange Carbon Calculator + RGESN Eco-Design Framework'},
     leaderQuotes:[
       {name:'Peter Herweck',title:'Former CEO, Schneider Electric',quote:'We are incredibly honoured to be recognised as the world\'s most sustainable company. We helped customers reduce their carbon emissions — 553 million tonnes of CO2 saved and avoided since 2018.',source:'TIME/Statista World\'s Most Sustainable Companies 2024',orangeOpportunity:'Orange Carbon Calculator — Schneider needs verifiable IT vendor emissions data to maintain its CDP A-List status and SSI Index credibility.'},
-      {name:'Chris Leong',title:'Chief Sustainability Officer, Schneider Electric',quote:'We are determined to continue transforming ambition into action. There is still work ahead, but with the support of our extensive ecosystem and all our Impact Makers, we will succeed.',source:'Q4 2024 Sustainability Results',orangeOpportunity:'Frugal AI & RGESN Eco-Design — ensuring Schneider\'s own digital products are eco-designed is the next frontier of their SSI programme.'}
+      {name:'Chris Leong',title:'Chief Sustainability Officer, Schneider Electric',quote:'We are determined to continue transforming ambition into action. There is still work ahead, but with the support of our extensive ecosystem and all our Impact Makers, we will succeed.',source:'Schneider SSI Q4 2024 Results — https://www.se.com/ww/en/assets/564/document/505452/schneider-sustainability-impact-q4-2024-results.pdf',orangeOpportunity:'Frugal AI & RGESN Eco-Design — ensuring Schneider\'s own digital products are eco-designed is the next frontier of their SSI programme.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2040',desc:'Most ambitious net-zero target in the energy sector. Full Scope 1, 2 and 3 coverage including customer use of sold products (Category 11).',fill:95,fillColor:'#1a7a4a'},
@@ -256,7 +256,7 @@ export const SEED_DATA = {
       desc:'Ensuring Schneider\'s own AI-powered energy management tools have minimal carbon overhead, consistent with their 2040 net-zero commitment. On-premise deployment eliminates cloud data transfer emissions.',
       saving:'Est. 40–60% reduction in AI infrastructure energy use · Consistent with SSI Index KPI #7 (digital efficiency) · Fully auditable'},
     stakeholders:[
-      {init:'GH',bg:'#edf7f1',tc:'#1a7a4a',name:'Gilles Huguenin',role:'Chief Sustainability Officer · Schneider Electric',why:'SSI Index & net-zero 2040 programme owner',priority:'Priority 1',ph:true},
+      {init:'GH',bg:'#edf7f1',tc:'#1a7a4a',name:'Gilles Huguenin',role:'Chief Sustainability Officer · Schneider Electric',why:'SSI Index & net-zero 2040 programme owner',priority:'Priority 1',ph:true,verify:true},
       {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'CTO / Head of Digital',role:'EcoStruxure Platform · Schneider Electric',why:'Digital product sustainability & AI efficiency',priority:'Priority 1',ph:true},
       {init:'DS',bg:'#e8f0fb',tc:'#0056b3',name:'Head of Digital Energy Solutions',role:'Customer Sustainability Tools · Schneider',why:'Customer-facing sustainability tools',priority:'Priority 2',ph:false}
     ],
@@ -280,8 +280,8 @@ export const SEED_DATA = {
       sectorLeaderStory:'Ørsted — formerly a Danish oil & gas company — executed the most credible energy transition in the sector, achieving CDP A-List status with a 96 ESG score by divesting fossil assets and becoming the world\'s largest offshore wind developer. Their verified Scope 3 Category 11 reduction was built on granular, auditable energy product data that enabled investor confidence through the transition. Orange\'s ESG Data Platform and Carbon Calculator can provide TotalEnergies with the same measurement credibility Ørsted built its investor story on.',
       orangeRole:'Corporate Decarbonisation Roadmap + ESG Data Platform Multi-Country'},
     leaderQuotes:[
-      {name:'Patrick Pouyanné',title:'CEO, TotalEnergies',quote:'TotalEnergies is not an oil company — we are a multi-energy company. Our ambition is to be a major player in the energy transition.',source:'TotalEnergies Annual Results 2024',orangeOpportunity:'Corporate Decarbonisation Roadmap — TotalEnergies needs a credible Scope 3 Category 11 reduction plan that goes beyond narrative to verified action.'},
-      {name:'TotalEnergies',title:'Corporate disclosure',quote:'TotalEnergies received an A- score since 2017. However, we decided to respond to the 2025 questionnaire without requesting a rating, as a score capped to B would not fully reflect our integrated and balanced multi-energy strategy.',source:'TotalEnergies CDP Page, 2025',orangeOpportunity:'Carbon Emissions Calculator — TotalEnergies needs precise, auditable IT vendor emissions data to separate genuine climate leadership from perception management.'}
+      {name:'Patrick Pouyanné',title:'CEO, TotalEnergies',quote:'TotalEnergies is not an oil company — we are a multi-energy company. Our ambition is to be a major player in the energy transition.',source:'TotalEnergies Annual Financial Reports — https://totalenergies.com/investors/publications-and-regulated-information/regulated-information/annual-financial-reports',orangeOpportunity:'Corporate Decarbonisation Roadmap — TotalEnergies needs a credible Scope 3 Category 11 reduction plan that goes beyond narrative to verified action.'},
+      {name:'TotalEnergies',title:'Corporate disclosure',quote:'TotalEnergies received an A- score since 2017. However, we decided to respond to the 2025 questionnaire without requesting a rating, as a score capped to B would not fully reflect our integrated and balanced multi-energy strategy.',source:'TotalEnergies Sustainability & Climate 2025 Progress Report — https://totalenergies.com/news/press-releases/totalenergies-publishes-its-sustainability-climate-2025-progress-report-and',orangeOpportunity:'Carbon Emissions Calculator — TotalEnergies needs precise, auditable IT vendor emissions data to separate genuine climate leadership from perception management.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2050',desc:'Net zero across all operations and energy products sold. Interim target: 30% reduction in Scope 1+2 by 2030. Methane intensity target <0.2% by 2025.',fill:62,fillColor:'#1a7a4a'},
@@ -310,7 +310,7 @@ export const SEED_DATA = {
       desc:'Supporting the 100GW renewables buildout with efficient, on-premise AI models for wind and solar asset monitoring — avoiding cloud data transfer emissions. On-site deployment at wind/solar facilities minimises digital carbon footprint.',
       saving:'Est. 15–20% reduction in renewable asset downtime · On-premise = zero cloud emissions · Frugal AI aligns with RGESN principles'},
     stakeholders:[
-      {init:'SS',bg:'#edf7f1',tc:'#1a7a4a',name:'SVP Strategy & Sustainability',role:'TotalEnergies Group',why:'Net-zero & Scope 3 credibility',priority:'Priority 1',ph:true},
+      {init:'AH',bg:'#edf7f1',tc:'#1a7a4a',name:'Aurélien Hamelle',role:'President, Strategy & Sustainability · TotalEnergies',why:'Net-zero & Scope 3 credibility',priority:'Priority 1',ph:true},
       {init:'CD',bg:'#e8f0fb',tc:'#0056b3',name:'Chief Digital & Innovation Officer',role:'Digital Transformation · TotalEnergies',why:'Digital transformation & ESG data',priority:'Priority 1',ph:true},
       {init:'EC',bg:'#fff3e8',tc:'#e06800',name:'Head of Climate & Energy Transition',role:'100GW Renewables Programme · TotalEnergies',why:'100GW renewables programme',priority:'Priority 2',ph:false}
     ],
@@ -334,8 +334,8 @@ export const SEED_DATA = {
       sectorLeaderStory:'Zurich Insurance Group leads insurance-sector ESG with a transparent climate risk framework covering its entire EUR 200B+ investment portfolio. Their quarterly portfolio carbon intensity reports — PCAF-verified — give investors precise, auditable emissions data on every asset class. The key differentiator: Zurich invested in centralised ESG data infrastructure before CSRD mandated it, giving them a 2-year head start on data quality. Orange\'s ESG Data Platform delivers this infrastructure for AXA\'s EUR 870B AUM.',
       orangeRole:'ESG Data Management Platform + Scope 3 Carbon Estimator'},
     leaderQuotes:[
-      {name:'Thomas Buberl',title:'CEO, AXA',quote:'Climate change is the most systemic risk we face as an insurer and investor. AXA\'s role is to accelerate the transition — not just manage the risk.',source:'AXA Climate Report 2024',orangeOpportunity:'Scope 3 Carbon Estimator — AXA\'s investment portfolio emissions require granular, asset-level carbon tracking to support its net-zero underwriting commitments.'},
-      {name:'AXA Group',title:'Corporate commitment',quote:'AXA has committed to aligning its investment portfolio with a 1.5°C pathway and exiting coal underwriting by 2030 in OECD countries.',source:'AXA Climate & Biodiversity Report 2024',orangeOpportunity:'ESG Data Platform — managing and reporting on climate alignment across AXA\'s multi-trillion euro investment portfolio requires enterprise-grade ESG data infrastructure.'}
+      {name:'Thomas Buberl',title:'CEO, AXA',quote:'Climate change is the most systemic risk we face as an insurer and investor. AXA\'s role is to accelerate the transition — not just manage the risk.',source:'AXA 2024 Climate and Biodiversity Report — https://www-axa-com.cdn.axa-contento-118412.eu/www-axa-com/8b8dfa69-13e3-4c34-bae3-8fb939102a2d_axa_climate_and_biodiversity_report_2024_va.pdf',orangeOpportunity:'Scope 3 Carbon Estimator — AXA\'s investment portfolio emissions require granular, asset-level carbon tracking to support its net-zero underwriting commitments.'},
+      {name:'AXA Group',title:'Corporate commitment',quote:'AXA has committed to aligning its investment portfolio with a 1.5°C pathway and exiting coal underwriting by 2030 in OECD countries.',source:'AXA Climate & Biodiversity Report 2024 — https://www-axa-com.cdn.axa-contento-118412.eu/www-axa-com/8b8dfa69-13e3-4c34-bae3-8fb939102a2d_axa_climate_and_biodiversity_report_2024_va.pdf',orangeOpportunity:'ESG Data Platform — managing and reporting on climate alignment across AXA\'s multi-trillion euro investment portfolio requires enterprise-grade ESG data infrastructure.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2050',desc:'Net zero across investment portfolio (EUR 870B AUM) and own operations. EUR 26B green investment target achieved by 2023. TCFD-aligned since 2019.',fill:74,fillColor:'#1a7a4a'},
@@ -364,7 +364,7 @@ export const SEED_DATA = {
       desc:'Right-sized NLP models analyse climate exposure in underwriting decisions without the carbon overhead of large foundation models — supporting AXA\'s ambition to embed climate risk in every pricing decision at scale with minimal digital footprint.',
       saving:'Est. 50% reduction in climate risk data processing costs · On-premise option available · Minimal digital carbon footprint'},
     stakeholders:[
-      {init:'AC',bg:'#edf7f1',tc:'#1a7a4a',name:'Amanda Clack',role:'Group Chief Sustainability Officer · AXA',why:'Net-zero investment strategy & CSRD reporting',priority:'Priority 1',ph:true},
+      {init:'AC',bg:'#edf7f1',tc:'#1a7a4a',name:'Amanda Clack',role:'Group Chief Sustainability Officer · AXA',why:'Net-zero investment strategy & CSRD reporting',priority:'Priority 1',ph:true,verify:true},
       {init:'CIO',bg:'#e8f0fb',tc:'#0056b3',name:'Chief Investment Officer',role:'AXA Investment Managers',why:'ESG integration across EUR 870B AUM',priority:'Priority 1',ph:true},
       {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'Group Chief Technology Officer',role:'AXA Group Technology',why:'IT carbon footprint & digital sustainability',priority:'Priority 2',ph:false}
     ],
@@ -388,8 +388,8 @@ export const SEED_DATA = {
       sectorLeaderStory:'Nestlé has built the food & beverage sector\'s most structured agricultural Scope 3 measurement programme, using IoT-based monitoring on 500,000+ farms to track emissions from milk, cocoa, and coffee sourcing. Their farm-level carbon intensity data — updated quarterly — gives investors credible evidence of the 30% Scope 3 reduction trajectory. Orange\'s Scope 3 Estimator delivers equivalent farm-level measurement capability for Danone\'s 100,000+ agricultural suppliers.',
       orangeRole:'Scope 3 Supplier Carbon Estimator + ESG Data Management Platform'},
     leaderQuotes:[
-      {name:'Antoine de Saint-Affrique',title:'CEO, Danone',quote:'Danone was built on the idea that business success and social progress are not only compatible — they are inseparable. We are doubling down on that belief.',source:'Danone Annual Report 2024',orangeOpportunity:'ESG Data Collection Platform — Danone\'s B Corp certification across its portfolio requires continuous ESG data collection across all markets and product lines.'},
-      {name:'Danone',title:'Corporate commitment',quote:'We are committed to becoming fully carbon neutral across our entire value chain by 2050, with a 30% absolute reduction in emissions by 2030.',source:'Danone Climate Policy 2024',orangeOpportunity:'Scope 3 Supplier Carbon Estimator — Danone\'s dairy supply chain represents 60%+ of its Scope 3 footprint and requires automated supplier emissions tracking.'}
+      {name:'Antoine de Saint-Affrique',title:'CEO, Danone',quote:'Danone was built on the idea that business success and social progress are not only compatible — they are inseparable. We are doubling down on that belief.',source:'Danone Annual Integrated Report 2024 — https://www.danone.com/content/dam/corp/global/danonecom/investors/en-sustainability/reports-and-data/cross-topic/danoneiar2024.pdf',orangeOpportunity:'ESG Data Collection Platform — Danone\'s B Corp certification across its portfolio requires continuous ESG data collection across all markets and product lines.'},
+      {name:'Danone',title:'Corporate commitment',quote:'We are committed to becoming fully carbon neutral across our entire value chain by 2050, with a 30% absolute reduction in emissions by 2030.',source:'Danone Sustainability — https://www.danone.com/sustainability.html',orangeOpportunity:'Scope 3 Supplier Carbon Estimator — Danone\'s dairy supply chain represents 60%+ of its Scope 3 footprint and requires automated supplier emissions tracking.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2050',desc:'SBTi-validated science-based targets — 50% Scope 1&2 reduction and 30% Scope 3 by 2030. Agricultural supply chain is 90% of total footprint.',fill:82,fillColor:'#1a7a4a'},
@@ -418,7 +418,7 @@ export const SEED_DATA = {
       desc:'Replacing costly ground-truth farm surveys with efficient satellite-based AI emissions estimation — covering 100,000+ farms globally with minimal compute footprint. Supports Danone\'s SBTi validation and CSRD agricultural Scope 3 data.',
       saving:'Est. 80% reduction in agricultural data collection cost · Covers 100,000+ farms · Aligns with RGESN responsible AI principles'},
     stakeholders:[
-      {init:'CV',bg:'#edf7f1',tc:'#1a7a4a',name:'Cécile Cabanis',role:'Chief Sustainability Officer · Danone',why:'SBTi targets & agricultural Scope 3 strategy',priority:'Priority 1',ph:true},
+      {init:'CV',bg:'#edf7f1',tc:'#1a7a4a',name:'Cécile Cabanis',role:'Chief Sustainability Officer · Danone',why:'SBTi targets & agricultural Scope 3 strategy',priority:'Priority 1',ph:true,verify:true},
       {init:'VP',bg:'#fff3e8',tc:'#e06800',name:'VP Agricultural Sourcing',role:'Global Procurement · Danone',why:'Farm-level ESG data & regenerative agriculture',priority:'Priority 1',ph:true},
       {init:'CTO',bg:'#e8f0fb',tc:'#0056b3',name:'Chief Technology Officer',role:'Group Digital · Danone',why:'Digital infrastructure & ESG data platform',priority:'Priority 2',ph:false}
     ],
@@ -443,7 +443,7 @@ export const SEED_DATA = {
       orangeRole:'Smart Eco-Energy for Manufacturing + Corporate Decarbonisation Roadmap'},
     leaderQuotes:[
       {name:'Guillaume Faury',title:'CEO, Airbus',quote:'Decarbonising aviation is the defining challenge of our generation. Airbus is committed to bringing a zero-emission commercial aircraft to market by 2035.',source:'Airbus Summit 2024',orangeOpportunity:'Corporate Decarbonisation Roadmap — Airbus needs a credible interim decarbonisation plan for its manufacturing operations while hydrogen aircraft technology matures.'},
-      {name:'Julie Kitcher',title:'Chief Sustainability Officer, Airbus',quote:'Our suppliers represent a significant portion of our carbon footprint. Engaging them on decarbonisation is not optional — it is central to our net-zero pathway.',source:'Airbus Sustainability Report 2024',orangeOpportunity:'Scope 3 Supplier Carbon Estimator — Airbus needs automated Scope 3 category 1 data from its complex aerospace supply chain for credible net-zero reporting.'}
+      {name:'Julie Kitcher',title:'Chief Sustainability Officer, Airbus',quote:'Our suppliers represent a significant portion of our carbon footprint. Engaging them on decarbonisation is not optional — it is central to our net-zero pathway.',source:'Airbus Annual Report 2024 — https://www.airbus.com/sites/g/files/jlcbta136/files/2025-04/Airbus%20Annual%20Report%202024.pdf',orangeOpportunity:'Scope 3 Supplier Carbon Estimator — Airbus needs automated Scope 3 category 1 data from its complex aerospace supply chain for credible net-zero reporting.'}
     ],
     esg:[
       {title:'Net Zero Target',value:'2050',desc:'Carbon-neutral aircraft by 2035 programme. Full Scope 1-3 net-zero by 2050 with 2030 interim targets for operations. Hydrogen and SAF investment accelerating.',fill:65,fillColor:'#1a7a4a'},
@@ -472,7 +472,7 @@ export const SEED_DATA = {
       desc:'Deploy on-premise AI models at Airbus manufacturing sites to detect energy anomalies and optimise maintenance schedules — minimising digital carbon overhead while reducing manufacturing energy waste. RGESN-compliant, transparent model selection.',
       saving:'Est. 8–15% manufacturing energy waste reduction · On-premise = zero cloud data transfer emissions · RGESN compliant'},
     stakeholders:[
-      {init:'EL',bg:'#edf7f1',tc:'#1a7a4a',name:'Edouard Lauga',role:'VP Sustainability & Environment · Airbus',why:'Net-zero strategy & Scope 3 product emissions',priority:'Priority 1',ph:true},
+      {init:'EL',bg:'#edf7f1',tc:'#1a7a4a',name:'Edouard Lauga',role:'VP Sustainability & Environment · Airbus',why:'Net-zero strategy & Scope 3 product emissions',priority:'Priority 1',ph:true,verify:true},
       {init:'IS',bg:'#e8f0fb',tc:'#0056b3',name:'Head of Industrial Systems',role:'Manufacturing IT & Operations · Airbus',why:'Plant energy monitoring & IoT infrastructure',priority:'Priority 1',ph:true},
       {init:'SC',bg:'#fff3e8',tc:'#e06800',name:'Head of Supply Chain ESG',role:'Global Procurement · Airbus',why:'Supplier Scope 3 data & CSRD compliance',priority:'Priority 2',ph:false}
     ],

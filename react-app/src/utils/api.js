@@ -1,5 +1,8 @@
-export function buildPrompt(val, lang) {
-  return `You are an Orange Business ESG Sales Intelligence system. Analyze the company "${val}" and return ONLY valid JSON with no markdown, no explanation, no backticks — just raw JSON.
+export function buildPrompt(val, lang, uploadedDoc) {
+  const docBlock = uploadedDoc && uploadedDoc.content
+    ? `\n\nIn addition to publicly available ESG data, the following internal document has been provided by the Orange Business sales team (filename: ${uploadedDoc.name}). Use this information to enrich the profile where relevant and flag any insights from it:\n\n<internal-document>\n${uploadedDoc.content.slice(0, 20000)}\n</internal-document>\n`
+    : '';
+  return `You are an Orange Business ESG Sales Intelligence system. Analyze the company "${val}" and return ONLY valid JSON with no markdown, no explanation, no backticks — just raw JSON.${docBlock}
 
 Use this exact structure:
 {
@@ -74,11 +77,15 @@ Use ONLY Orange Business's actual pillars:
 
 Use your knowledge of ${val}'s actual published ESG strategy. Where possible, include real source URLs for ESG claims and ratings.
 
-The "leaderQuotes" array is REQUIRED and must contain 2-3 entries with real, verifiable executive quotes from published sources (annual reports, press releases, earnings calls, conference speeches, LinkedIn posts). Each entry must include the executive's name, title and company, the verbatim quote, the source document with date, and a one-sentence orangeOpportunity mapping the quote to a specific Orange Business solution. If you cannot find verified public quotes for this company, return an empty array [] rather than fabricating quotes.${lang === 'fr' ? ' IMPORTANT: All text values in the JSON must be written in natural, professional business French suitable for a French executive audience. Keep proper nouns in their original form.' : ''} Return ONLY the raw JSON object.`;
+The "leaderQuotes" array is REQUIRED and must contain 2-3 entries with real, verifiable executive quotes from published sources (annual reports, press releases, earnings calls, conference speeches, LinkedIn posts). Each entry must include the executive's name, title and company, the verbatim quote, the source document with date, and a one-sentence orangeOpportunity mapping the quote to a specific Orange Business solution.
+
+For the "source" field, ALWAYS include the full public URL of the cited document or page when one exists, using the exact format: "Document Name, Year — https://full.url/to/source". Example: "BNP Paribas Universal Registration Document 2024 — https://invest.bnpparibas/en/search/reports/documents/csr". Only omit the URL when the source is genuinely a non-indexable event (private earnings call, closed-door speech) and leave the source as plain text in that case. Never invent a URL — only cite URLs you have actually seen.
+
+If you cannot find verified public quotes for this company, return an empty array [] rather than fabricating quotes.${lang === 'fr' ? ' IMPORTANT: All text values in the JSON must be written in natural, professional business French suitable for a French executive audience. Keep proper nouns in their original form.' : ''} Return ONLY the raw JSON object.`;
 }
 
-export async function analyzeCompany(val, apiKey, lang) {
-  const prompt = buildPrompt(val, lang);
+export async function analyzeCompany(val, apiKey, lang, uploadedDoc) {
+  const prompt = buildPrompt(val, lang, uploadedDoc);
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -95,25 +102,54 @@ export async function analyzeCompany(val, apiKey, lang) {
   raw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
   const parsed = JSON.parse(raw);
   if (!parsed.benchmarkData) parsed.benchmarkData = { industryAvg: 60, sectorLeader: 85, sectorLeaderScore: 85, obScore: 88, industryLabel: 'Sector Avg' };
+  if (uploadedDoc && uploadedDoc.name) parsed._enrichedDocName = uploadedDoc.name;
   return parsed;
 }
 
+const FULL_CATALOG_SUMMARY = `Orange Business 14-solution catalog:
+IT for Green: (1) Orange Carbon Calculator — verified IT vendor emissions for CSRD ESRS E1; (2) Smart Eco-Energy for Commercial Buildings — IoT energy management to cut Scope 1/2; (3) Circular Economy & Device Lifecycle — circular mobile leasing reducing Scope 3 Cat.2; (4) Sustainable Cloud Infrastructure — PUE-optimised carbon-neutral hosting.
+IT for Society: (5) ESG Data Collection & CSRD Reporting Platform — ESRS-aligned data workflows; (6) Ethical AI & Digital Inclusion Framework — AI Act compliance & governance.
+Frugal AI & Eco-Design: (7) Frugal AI — right-sized models cutting compute cost 40–70%; (8) Eco-Design (RGESN Framework) — French eco-design standard across digital lifecycle; (9) Sustainability-Driven GenAI Governance — carbon-aware GenAI deployment; (10) Orange Eco-Design Certification — audit & certify digital products.
+Strategic Decarbonisation: (11) Corporate Decarbonisation Roadmap — end-to-end SBTi/net-zero planning; (12) Scope 3 Carbon Estimator & Supplier Engagement — PCAF/GHG Protocol aligned Scope 3 measurement; (13) CSRD & Regulatory Compliance Acceleration — double materiality, ESRS mapping, audit prep; (14) EcoVadis & ESG Rating Improvement Programme — ratings uplift methodology.`;
+
 export function buildChatSystemPrompt(currentCompany, lang) {
-  const langInstruction = lang === 'fr' ? '\n\nIMPORTANT: Respond entirely in French. Use natural, professional business French suitable for a French executive audience.' : '';
-  let ctx = `You are an expert ESG Sales Coach for Orange Business sales representatives. Orange Business is a global IT and telecom services company with:
-- EcoVadis Platinum status (top 1% globally)
-- SBTi-aligned net-zero 2040 commitment
-- CSRD Wave 1 reporter (FY2024)
-- 28,000+ enterprise customers
-- Solutions: ESG Data Platform, Carbon Calculator, Smart Eco-Energy IoT, Circular Device Leasing, Sustainable Cloud, Frugal AI, RGESN Eco-Design, Corporate Decarbonisation Roadmap
+  const langName = lang === 'fr' ? 'French' : 'English';
+  const co = currentCompany;
 
-You provide concise, actionable sales coaching. Keep responses under 150 words unless asked for something longer.${langInstruction}`;
+  if (!co) {
+    return `You are an expert Orange Business ESG sales coach embedded in the ESG Sales Intelligence Platform. No customer is currently loaded.
 
-  if (currentCompany) {
-    const co = currentCompany;
-    ctx += `\n\nCurrent account context: ${co.name} (${co.industry}, score ${co.score}/100, HQ: ${co.hq}). Top ESG topics: ${co.topics.slice(0, 3).map(t => t.name).join(', ')}. Recommended solutions: ${co.solutions.map(s => s.offer).join(', ')}. Key stakeholder: ${co.stakeholders[0].name || co.stakeholders[0].role}.`;
+${FULL_CATALOG_SUMMARY}
+Orange credentials: EcoVadis Platinum (top 1% globally), SBTi-aligned net-zero by 2040, RGESN eco-design framework, CDP A-List, CSRD Wave 1 reporter (FY2024), 28,000+ enterprise customers.
+
+Your role: answer general questions about Orange Business ESG solutions, sustainability frameworks, and sales coaching best practice. When asked for customer-specific advice, remind the user to load a company profile first. Be concise (3–4 sentences max per response) and specific. Respond in ${langName}.`;
   }
-  return ctx;
+
+  const commitments = (co.esg || []).map(e => `${e.title} ${e.value}`).join(' · ');
+  const topics = (co.topics || []).map(t => `${t.name} (${t.badge}, ${t.pct}%)`).join('; ');
+  const solutions = (co.solutions || []).map((s, i) => `(${i + 1}) ${s.offer} — ${s.why}`).join('\n');
+  const quotes = Array.isArray(co.leaderQuotes) && co.leaderQuotes.length
+    ? co.leaderQuotes.map(q => `"${q.quote}" — ${q.name}, ${q.title} → Opportunity: ${q.orangeOpportunity}`).join('\n')
+    : 'No verified quotes available.';
+  const stakeholders = (co.stakeholders || []).map(s => `${s.name || s.role} (${s.role}) — ${s.why}`).join('; ');
+
+  return `You are an expert Orange Business ESG sales coach embedded in the ESG Sales Intelligence Platform. You have full context on the current customer and the complete Orange Business solution catalog.
+
+Current customer: ${co.name} (${co.industry})
+ESG Maturity Score: ${co.score}/100 | CDP Score: ${co.cdpScore || 'n/a'}
+HQ: ${co.hq} | Size: ${co.size}
+Key commitments: ${commitments}
+Material ESG topics: ${topics}
+Top matched Orange solutions:
+${solutions}
+Senior leader quotes:
+${quotes}
+Key stakeholders: ${stakeholders}
+
+${FULL_CATALOG_SUMMARY}
+Orange credentials: EcoVadis Platinum (top 1% globally), SBTi-aligned net-zero by 2040, RGESN eco-design framework, CDP A-List, CSRD Wave 1 reporter (FY2024), 28,000+ enterprise customers.
+
+Your role: Help the Orange Business salesperson prepare for their meeting. Answer questions about the customer's ESG strategy, suggest opening lines, handle objections, explain which solution fits best and why, reference specific leader quotes, and provide meeting coaching. Be concise (3–4 sentences max per response), specific, and always reference actual customer context — never give generic answers. Respond in ${langName}.`;
 }
 
 export async function sendChatToAPI(apiKey, systemPrompt, messages) {

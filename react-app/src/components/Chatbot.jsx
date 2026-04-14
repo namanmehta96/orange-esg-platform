@@ -116,7 +116,7 @@ export default function Chatbot() {
   const addMessage = useCallback((role, content) => {
     setChatHistory(prev => {
       const updated = [...prev, { role, content }];
-      return updated.length > 20 ? updated.slice(-20) : updated;
+      return updated.length > 10 ? updated.slice(-10) : updated;
     });
   }, [setChatHistory]);
 
@@ -221,6 +221,14 @@ export default function Chatbot() {
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
+        </div>
+
+        {/* Context banner */}
+        <div className={`chatbot-context ${currentCompany ? 'loaded' : 'empty'}`}>
+          <span className="chatbot-context-dot" />
+          {currentCompany
+            ? <span>{T('chat.ctx.loaded')} <strong>{currentCompany.name}</strong></span>
+            : <span>{T('chat.ctx.empty')}</span>}
         </div>
 
         {/* Messages */}

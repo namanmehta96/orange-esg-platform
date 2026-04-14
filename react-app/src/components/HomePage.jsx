@@ -11,6 +11,7 @@ export default function HomePage() {
   const {
     apiKey, currentLang, darkMode,
     setCurrentCompany, setView, setLoadingOverlay, setSettingsOpen,
+    uploadedDoc,
     addToHistory, T,
   } = useApp();
 
@@ -262,7 +263,7 @@ export default function HomePage() {
     setView('profile');
     setLoadingOverlay({ companyName: val, step: 0, error: null });
     try {
-      const result = await apiAnalyze(val, apiKey, currentLang);
+      const result = await apiAnalyze(val, apiKey, currentLang, uploadedDoc);
       setCurrentCompany(result);
       addToHistory(result.name || val);
       setLoadingOverlay(null);
