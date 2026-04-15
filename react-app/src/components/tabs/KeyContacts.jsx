@@ -218,101 +218,119 @@ export default function KeyContacts({ company }) {
 
             {modalState.step === 'select' && (
               <>
-                <div className="email-selector-label">{T('contacts.email.pickSolution')}</div>
-                <div className="email-solution-grid">
-                  {orderedCatalog.map((sol) => {
-                    const active = modalState.selectedSolutionId === sol.id;
-                    const isTopPick = topPickIds.includes(sol.id);
-                    return (
-                      <button
-                        key={sol.id}
-                        type="button"
-                        className={`solution-chip${active ? ' active' : ''}${isTopPick ? ' top-pick' : ''}`}
-                        onClick={() => selectSolution(sol.id)}
-                      >
-                        <span className="solution-chip-name">{sol.name}</span>
-                        <span className="solution-chip-pillar" style={{ color: sol.pillarColor }}>{sol.pillar}</span>
-                        {isTopPick && (
-                          <span className="solution-chip-topbadge">{T('contacts.email.topPick')}</span>
-                        )}
-                      </button>
-                    );
-                  })}
+                <div className="email-modal-fixed-top">
+                  <div className="email-selector-label">{T('contacts.email.pickSolution')}</div>
                 </div>
-                <div className="modal-btns email-modal-btns">
-                  <button
-                    className="modal-save"
-                    onClick={generateEmail}
-                    disabled={!modalState.selectedSolutionId}
-                  >
-                    {T('contacts.email.generateWith', { name: selectedName })}
-                  </button>
-                  <button className="modal-clear" onClick={closeModal}>
-                    {T('contacts.email.close')}
-                  </button>
+                <div className="email-modal-scroll">
+                  <div className="email-solution-grid">
+                    {orderedCatalog.map((sol) => {
+                      const active = modalState.selectedSolutionId === sol.id;
+                      const isTopPick = topPickIds.includes(sol.id);
+                      return (
+                        <button
+                          key={sol.id}
+                          type="button"
+                          className={`solution-chip${active ? ' active' : ''}${isTopPick ? ' top-pick' : ''}`}
+                          onClick={() => selectSolution(sol.id)}
+                        >
+                          <span className="solution-chip-name">{sol.name}</span>
+                          <span className="solution-chip-pillar" style={{ color: sol.pillarColor }}>{sol.pillar}</span>
+                          {isTopPick && (
+                            <span className="solution-chip-topbadge">{T('contacts.email.topPick')}</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="email-modal-footer">
+                  <div className="modal-btns email-modal-btns">
+                    <button
+                      className="modal-save"
+                      onClick={generateEmail}
+                      disabled={!modalState.selectedSolutionId}
+                    >
+                      {T('contacts.email.generateWith', { name: selectedName })}
+                    </button>
+                    <button className="modal-clear" onClick={closeModal}>
+                      {T('contacts.email.close')}
+                    </button>
+                  </div>
                 </div>
               </>
             )}
 
             {modalState.step === 'loading' && (
-              <div className="email-loading">
-                <div className="spinner-sm" />
-                {T('contacts.email.loading.personalised', { name: modalState.stakeholder.name.split(' ')[0] })}
+              <div className="email-modal-scroll">
+                <div className="email-loading">
+                  <div className="spinner-sm" />
+                  {T('contacts.email.loading.personalised', { name: modalState.stakeholder.name.split(' ')[0] })}
+                </div>
               </div>
             )}
 
             {modalState.step === 'error' && (
               <>
-                <div style={{ color: 'var(--red)', padding: 12 }}>{modalState.error}</div>
-                <div className="modal-btns email-modal-btns">
-                  <button className="modal-save" onClick={regenerate}>{T('contacts.email.regenerate')}</button>
-                  <button className="modal-clear" onClick={goBackToSelector}>{T('contacts.email.changeSolution')}</button>
-                  <button className="modal-clear" onClick={closeModal}>{T('contacts.email.close')}</button>
+                <div className="email-modal-scroll">
+                  <div style={{ color: 'var(--red)', padding: 12 }}>{modalState.error}</div>
+                </div>
+                <div className="email-modal-footer">
+                  <div className="modal-btns email-modal-btns">
+                    <button className="modal-save" onClick={regenerate}>{T('contacts.email.regenerate')}</button>
+                    <button className="modal-clear" onClick={goBackToSelector}>{T('contacts.email.changeSolution')}</button>
+                    <button className="modal-clear" onClick={closeModal}>{T('contacts.email.close')}</button>
+                  </div>
                 </div>
               </>
             )}
 
             {modalState.step === 'ready' && modalState.email && (
               <>
-                {modalState.fromSample && (
-                  <div className="email-sample-banner">
-                    {modalState.sampleIsDefault
-                      ? T('contacts.email.sampleBanner')
-                      : T('contacts.email.sampleMismatch')}
+                <div className="email-modal-fixed-top">
+                  {modalState.fromSample && (
+                    <div className="email-sample-banner">
+                      {modalState.sampleIsDefault
+                        ? T('contacts.email.sampleBanner')
+                        : T('contacts.email.sampleMismatch')}
+                    </div>
+                  )}
+                  <div className="email-featuring">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                    <span>
+                      <strong>{T('contacts.email.featuring')}</strong> {selectedName}
+                    </span>
                   </div>
-                )}
-                <div className="email-featuring">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-                  <span>
-                    <strong>{T('contacts.email.featuring')}</strong> {selectedName}
-                  </span>
+                  <div className="email-subject">
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '.6px' }}>
+                      {T('contacts.email.subject')}
+                    </span>
+                    <br />
+                    <strong>{modalState.email.subject}</strong>
+                  </div>
                 </div>
-                <div className="email-subject">
-                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '.6px' }}>
-                    {T('contacts.email.subject')}
-                  </span>
-                  <br />
-                  <strong>{modalState.email.subject}</strong>
+                <div className="email-modal-scroll">
+                  <div className="email-body-text">{modalState.email.body}</div>
                 </div>
-                <div className="email-body-text">{modalState.email.body}</div>
-                <div className="modal-btns email-modal-btns">
-                  <button className="modal-save" onClick={copyDraft}>
-                    {T('contacts.email.copy')}
-                  </button>
-                  <button
-                    className="modal-clear"
-                    onClick={regenerate}
-                    disabled={!apiKey}
-                    title={!apiKey ? T('contacts.email.regenerate.nokey') : ''}
-                  >
-                    {T('contacts.email.regenerate')}
-                  </button>
-                  <button className="modal-clear" onClick={goBackToSelector}>
-                    {T('contacts.email.changeSolution')}
-                  </button>
-                  <button className="modal-clear" onClick={closeModal}>
-                    {T('contacts.email.close')}
-                  </button>
+                <div className="email-modal-footer">
+                  <div className="modal-btns email-modal-btns">
+                    <button className="modal-save" onClick={copyDraft}>
+                      {T('contacts.email.copy')}
+                    </button>
+                    <button
+                      className="modal-clear"
+                      onClick={regenerate}
+                      disabled={!apiKey}
+                      title={!apiKey ? T('contacts.email.regenerate.nokey') : ''}
+                    >
+                      {T('contacts.email.regenerate')}
+                    </button>
+                    <button className="modal-clear" onClick={goBackToSelector}>
+                      {T('contacts.email.changeSolution')}
+                    </button>
+                    <button className="modal-clear" onClick={closeModal}>
+                      {T('contacts.email.close')}
+                    </button>
+                  </div>
                 </div>
               </>
             )}

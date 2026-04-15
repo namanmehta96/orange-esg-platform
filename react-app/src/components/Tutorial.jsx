@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { SEED_DATA } from '../data/seedData';
 
@@ -7,11 +7,11 @@ const LS_KEY = 'ob_esg_tutorial_done';
 function buildSteps(hasCompany, T) {
   if (hasCompany) {
     return [
-      { title: T('tut.p1.title'), body: T('tut.p1.body'), target: '#main-tabs' },
-      { title: T('tut.p2.title'), body: T('tut.p2.body'), target: '#main-tabs .tab-btn:nth-child(1)' },
-      { title: T('tut.p3.title'), body: T('tut.p3.body'), target: '#main-tabs .tab-btn:nth-child(2)' },
-      { title: T('tut.p4.title'), body: T('tut.p4.body'), target: '#main-tabs .tab-btn:nth-child(4)' },
-      { title: T('tut.p5.title'), body: T('tut.p5.body'), target: '#chatbot-btn' },
+      { title: T('tut.p1.title'), body: T('tut.p1.body'), target: '.tabs', tabIndex: 0 },
+      { title: T('tut.p2.title'), body: T('tut.p2.body'), target: '.tabs', tabIndex: 0 },
+      { title: T('tut.p3.title'), body: T('tut.p3.body'), target: '.tabs', tabIndex: 1 },
+      { title: T('tut.p4.title'), body: T('tut.p4.body'), target: '.tabs', tabIndex: 3 },
+      { title: T('tut.p5.title'), body: T('tut.p5.body'), target: '#chatbot-btn', openChatbot: true },
     ];
   }
   return [
@@ -24,9 +24,17 @@ function buildSteps(hasCompany, T) {
 }
 
 export default function Tutorial() {
-  const { tutorialOpen, setTutorialOpen, currentCompany, setCurrentCompany, setView, T } = useApp();
+  const {
+    tutorialOpen, setTutorialOpen,
+    currentCompany, setCurrentCompany,
+    setView, T,
+    chatbotOpen, setChatbotOpen,
+  } = useApp();
+
   const [stepIdx, setStepIdx] = useState(0);
-  const [highlightRect, setHighlightRect] = useState(null);
+  const [rect, setRect] = useState(null);
+  const [vp, setVp] = useState(() => ({ w: typeof window !== 'undefined' ? window.innerWidth : 1280, h: typeof window !== 'undefined' ? window.innerHeight : 720 }));
+  const chatbotOpenedByTutorial = useRef(false);
 
   const steps = useMemo(() => buildSteps(!!currentCompany, T), [currentCompany, T]);
   const step = steps[stepIdx];
@@ -46,70 +54,61 @@ export default function Tutorial() {
     if (tutorialOpen) setStepIdx(0);
   }, [tutorialOpen, !!currentCompany]);
 
-  // Compute highlight rect for current step target, and lift the element above the overlay.
+  // Side effects per step: switch tabs, open chatbot
   useEffect(() => {
-    if (!tutorialOpen || !step || !step.target) {
-      setHighlightRect(null);
-      return;
+    if (!tutorialOpen || !step) return;
+
+    // Switch to the requested tab (profile state)
+    if (typeof step.tabIndex === 'number') {
+      const btns = document.querySelectorAll('.tabs .tab-btn');
+      if (btns && btns[step.tabIndex]) btns[step.tabIndex].click();
     }
 
-    let liftedEl = null;
-    let prev = { position: '', zIndex: '', boxShadow: '', borderRadius: '', transition: '' };
-
-    const lift = (el) => {
-      if (!el || liftedEl === el) return;
-      // Restore previous target first
-      if (liftedEl) {
-        liftedEl.style.position = prev.position;
-        liftedEl.style.zIndex = prev.zIndex;
-        liftedEl.style.boxShadow = prev.boxShadow;
-        liftedEl.style.borderRadius = prev.borderRadius;
-        liftedEl.style.transition = prev.transition;
+    // Open chatbot for the chatbot step; close it again when leaving
+    if (step.openChatbot) {
+      if (!chatbotOpen) {
+        setChatbotOpen(true);
+        chatbotOpenedByTutorial.current = true;
       }
-      liftedEl = el;
-      prev = {
-        position: el.style.position,
-        zIndex: el.style.zIndex,
-        boxShadow: el.style.boxShadow,
-        borderRadius: el.style.borderRadius,
-        transition: el.style.transition,
-      };
-      const cs = window.getComputedStyle(el);
-      if (cs.position === 'static') el.style.position = 'relative';
-      el.style.zIndex = '10000';
-      el.style.boxShadow = '0 0 0 4px #FF7900, 0 0 24px rgba(255,121,0,0.55)';
-      el.style.borderRadius = cs.borderRadius && cs.borderRadius !== '0px' ? cs.borderRadius : '8px';
-      el.style.transition = 'box-shadow .2s ease';
-    };
+    } else if (chatbotOpenedByTutorial.current) {
+      setChatbotOpen(false);
+      chatbotOpenedByTutorial.current = false;
+    }
+  }, [tutorialOpen, step, setChatbotOpen, chatbotOpen]);
 
+  // Compute rect for current step target
+  useEffect(() => {
+    if (!tutorialOpen || !step || !step.target) {
+      setRect(null);
+      return;
+    }
     const update = () => {
       const el = document.querySelector(step.target);
-      if (!el) {
-        setHighlightRect(null);
-        return;
-      }
+      if (!el) { setRect(null); return; }
       const r = el.getBoundingClientRect();
-      setHighlightRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-      lift(el);
+      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
     };
-
-    update();
-    const onResize = () => update();
-    const int = setInterval(update, 300);
+    // Give the tab click/chatbot open a tick to render, then measure
+    const t0 = setTimeout(update, 80);
+    const onResize = () => { setVp({ w: window.innerWidth, h: window.innerHeight }); update(); };
+    const int = setInterval(update, 350);
     window.addEventListener('resize', onResize);
-
+    window.addEventListener('scroll', update, true);
     return () => {
+      clearTimeout(t0);
       clearInterval(int);
       window.removeEventListener('resize', onResize);
-      if (liftedEl) {
-        liftedEl.style.position = prev.position;
-        liftedEl.style.zIndex = prev.zIndex;
-        liftedEl.style.boxShadow = prev.boxShadow;
-        liftedEl.style.borderRadius = prev.borderRadius;
-        liftedEl.style.transition = prev.transition;
-      }
+      window.removeEventListener('scroll', update, true);
     };
   }, [tutorialOpen, step]);
+
+  // Clean up chatbot state on tutorial close
+  useEffect(() => {
+    if (!tutorialOpen && chatbotOpenedByTutorial.current) {
+      setChatbotOpen(false);
+      chatbotOpenedByTutorial.current = false;
+    }
+  }, [tutorialOpen, setChatbotOpen]);
 
   if (!tutorialOpen) return null;
 
@@ -118,6 +117,10 @@ export default function Tutorial() {
 
   const finish = () => {
     localStorage.setItem(LS_KEY, 'true');
+    if (chatbotOpenedByTutorial.current) {
+      setChatbotOpen(false);
+      chatbotOpenedByTutorial.current = false;
+    }
     setTutorialOpen(false);
   };
 
@@ -128,41 +131,56 @@ export default function Tutorial() {
     if (bnp) {
       setCurrentCompany(bnp);
       setView('profile');
-      // After state update, the `currentCompany` changes, steps will rebuild.
-      // Reset to first profile-state step.
-      setTimeout(() => setStepIdx(0), 100);
+      setTimeout(() => setStepIdx(0), 120);
     }
   };
 
-  // Decide placement, try to place tooltip below the highlighted element; if it would go off-screen, place above.
+  // Compute tip position
   const tipStyle = {};
-  if (highlightRect) {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const tipWidth = Math.min(380, vw - 32);
-    const preferredLeft = Math.max(16, Math.min(highlightRect.left + highlightRect.width / 2 - tipWidth / 2, vw - tipWidth - 16));
+  if (rect) {
+    const tipWidth = Math.min(380, vp.w - 32);
+    const preferredLeft = Math.max(16, Math.min(rect.left + rect.width / 2 - tipWidth / 2, vp.w - tipWidth - 16));
     tipStyle.left = preferredLeft + 'px';
     tipStyle.width = tipWidth + 'px';
-    const belowSpace = vh - (highlightRect.top + highlightRect.height);
-    if (belowSpace > 220 || belowSpace > highlightRect.top) {
-      tipStyle.top = (highlightRect.top + highlightRect.height + 14) + 'px';
+    const belowSpace = vp.h - (rect.top + rect.height);
+    if (belowSpace > 260 || belowSpace > rect.top) {
+      tipStyle.top = Math.min(vp.h - 260, rect.top + rect.height + 14) + 'px';
     } else {
-      tipStyle.bottom = (vh - highlightRect.top + 14) + 'px';
+      tipStyle.bottom = Math.max(16, vp.h - rect.top + 14) + 'px';
     }
   } else {
-    // Center
     tipStyle.left = '50%';
     tipStyle.top = '50%';
     tipStyle.transform = 'translate(-50%, -50%)';
     tipStyle.width = 'min(420px, calc(100vw - 32px))';
   }
 
+  // Build the 4-panel cutout mask around the rect so the highlighted element
+  // is naturally uncovered (no z-index battles with backdrop-filter / stacking contexts).
+  let maskPanels = null;
+  let glowStyle = null;
+  if (rect) {
+    const pad = 8;
+    const t = Math.max(0, rect.top - pad);
+    const l = Math.max(0, rect.left - pad);
+    const w = Math.min(vp.w - l, rect.width + pad * 2);
+    const h = Math.min(vp.h - t, rect.height + pad * 2);
+    maskPanels = (
+      <>
+        <div className="tutorial-mask" style={{ top: 0, left: 0, width: '100vw', height: t }} onClick={skip} />
+        <div className="tutorial-mask" style={{ top: t, left: 0, width: l, height: h }} onClick={skip} />
+        <div className="tutorial-mask" style={{ top: t, left: l + w, width: Math.max(0, vp.w - (l + w)), height: h }} onClick={skip} />
+        <div className="tutorial-mask" style={{ top: t + h, left: 0, width: '100vw', height: Math.max(0, vp.h - (t + h)) }} onClick={skip} />
+      </>
+    );
+    glowStyle = { top: t, left: l, width: w, height: h };
+  }
+
   return (
     <div className="tutorial-root">
-      {/* Darkened overlay, the real highlighted element is lifted above this via z-index */}
-      <div className="tutorial-backdrop" onClick={skip} />
+      {rect ? maskPanels : <div className="tutorial-mask tutorial-mask-full" onClick={skip} />}
+      {glowStyle && <div className="tutorial-glow" style={glowStyle} />}
 
-      {/* Tooltip */}
       <div className="tutorial-tip" style={tipStyle} onClick={(e) => e.stopPropagation()}>
         <div className="tutorial-step">{T('tut.step', { n: stepIdx + 1, total })}</div>
         <div className="tutorial-title">{step.title}</div>

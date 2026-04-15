@@ -1652,14 +1652,20 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
    TUTORIAL OVERLAY
 ══════════════════════════════════════════════════════ */
 .tutorial-root{position:fixed;inset:0;z-index:9998;pointer-events:none;}
-.tutorial-backdrop{
-  position:absolute;inset:0;background:rgba(0,0,0,0.62);
-  backdrop-filter:blur(2px);animation:tutFadeIn .25s ease;
+.tutorial-mask{
+  position:fixed;background:rgba(0,0,0,0.75);
+  animation:tutFadeIn .25s ease;
   z-index:9998;pointer-events:auto;
+}
+.tutorial-mask-full{inset:0;width:100vw;height:100vh;}
+.tutorial-glow{
+  position:fixed;z-index:9999;pointer-events:none;border-radius:8px;
+  box-shadow:0 0 0 3px #FF7900, 0 0 24px rgba(255,121,0,0.4);
+  transition:top .2s ease,left .2s ease,width .2s ease,height .2s ease;
 }
 @keyframes tutFadeIn{from{opacity:0}to{opacity:1}}
 .tutorial-tip{
-  position:absolute;background:var(--card);color:var(--ink);
+  position:fixed;background:var(--card);color:var(--ink);
   border:2px solid var(--ob);border-radius:14px;padding:20px 22px;
   box-shadow:0 20px 60px rgba(0,0,0,0.35);z-index:10001;pointer-events:auto;
   animation:tutPop .3s cubic-bezier(.34,1.56,.64,1);
@@ -1702,7 +1708,34 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* ══════════════════════════════════════════════════════
    EMAIL MODAL, SOLUTION SELECTOR
 ══════════════════════════════════════════════════════ */
-.email-modal{max-width:620px;max-height:88vh;overflow-y:auto;}
+.email-modal{
+  max-width:620px;width:calc(100% - 40px);max-height:85vh;
+  padding:0;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.email-modal .modal-head{
+  padding:18px 22px 14px;margin:0;border-bottom:1px solid var(--line);
+  flex-shrink:0;
+}
+.email-modal .email-recipient{margin:12px 22px 0;}
+.email-modal-scroll{
+  flex:1 1 auto;overflow-y:auto;padding:14px 22px 4px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.email-modal-scroll .email-body-text{
+  max-height:none;overflow:visible;flex:0 0 auto;
+}
+.email-modal-footer{
+  flex-shrink:0;padding:14px 22px 18px;border-top:1px solid var(--line);
+  background:var(--card);
+}
+.email-modal-footer .modal-btns{margin:0;}
+.email-modal-fixed-top{padding:0 22px 6px;flex-shrink:0;}
+@media (max-width:560px){
+  .email-modal{max-height:92vh;width:calc(100% - 20px);}
+  .email-modal .modal-head,.email-modal .email-recipient,.email-modal-scroll,.email-modal-footer,.email-modal-fixed-top{padding-left:16px;padding-right:16px;}
+  .email-modal .email-recipient{margin-left:16px;margin-right:16px;}
+}
 .email-recipient{
   display:flex;flex-direction:column;gap:2px;padding:10px 14px;margin-bottom:14px;
   background:var(--surface);border-left:3px solid var(--ob);border-radius:6px;
@@ -1748,16 +1781,43 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
    UPLOAD CHECKBOX + ZONE (sidebar + homepage)
 ══════════════════════════════════════════════════════ */
 .upload-check, .home-upload-check {
-  display:flex;align-items:flex-start;gap:8px;margin-top:10px;
-  font-size:12px;color:var(--ink2);cursor:pointer;user-select:none;
+  display:inline-flex;align-items:center;gap:8px;margin-top:10px;
+  font-family:'Inter','Helvetica Neue',Arial,sans-serif;
+  font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;user-select:none;
+  position:relative;line-height:1.4;transition:color .15s;
 }
-.home-upload-check{justify-content:center;font-size:13px;color:var(--ink2);}
-.upload-check input, .home-upload-check input {
-  margin:2px 0 0;cursor:pointer;accent-color:var(--ob);width:14px;height:14px;
+.upload-check:hover, .home-upload-check:hover { color:var(--ink); }
+.home-upload-check{font-size:14px;color:var(--ink3);}
+[data-theme="dark"] .home-upload-check{color:rgba(240,240,240,0.75);}
+.home-upload-check:hover{color:var(--ink);}
+
+/* Hide the native input but keep it accessible */
+.upload-check input[type="checkbox"],
+.home-upload-check input[type="checkbox"]{
+  position:absolute;opacity:0;width:16px;height:16px;margin:0;cursor:pointer;
+  top:0;left:0;z-index:1;
 }
-.upload-check span, .home-upload-check span {
-  flex:1;line-height:1.4;
+
+/* Custom visible checkbox square, rendered as a ::before on the label */
+.upload-check::before,
+.home-upload-check::before{
+  content:'';display:inline-block;flex-shrink:0;
+  width:16px;height:16px;
+  border:1.5px solid var(--ob);border-radius:3px;
+  background:transparent;transition:background .15s,box-shadow .15s,border-color .15s;
 }
+.upload-check:has(input:checked)::before,
+.home-upload-check:has(input:checked)::before{
+  background:var(--ob);
+  box-shadow:0 0 0 3px rgba(255,121,0,0.15);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-size:12px 12px;background-position:center;background-repeat:no-repeat;
+}
+.upload-check:focus-within::before,
+.home-upload-check:focus-within::before{
+  outline:2px solid var(--ob);outline-offset:2px;
+}
+.upload-check span, .home-upload-check span { flex:1; }
 
 .upload-zone-wrap, .home-upload-wrap {
   max-height:0;overflow:hidden;
