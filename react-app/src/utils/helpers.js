@@ -223,7 +223,7 @@ export function splitSourceAndUrl(text) {
   if (!match) return { label: str, url: null };
   let url = match[1].replace(/[.,;:!?]+$/, '');
   if (url.toLowerCase().startsWith('www.')) url = 'https://' + url;
-  let label = str.replace(match[1], '').replace(/[\s\u2014\-–-:|]+$/, '').trim();
+  let label = str.replace(match[1], '').replace(/[\s\u2014\u2013\-:|]+$/, '').trim();
   return { label: label || url, url };
 }
 
