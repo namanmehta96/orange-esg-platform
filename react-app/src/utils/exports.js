@@ -60,7 +60,7 @@ export function exportCSV(d, lang, T) {
   d.questions.forEach(q => rows.push([q.text.replace(/[""]/g, '"'), q.persona]));
   rows.push(['']);
   rows.push(['=== KEY TALKING POINTS ===', '', '']);
-  d.solutions.forEach(s => rows.push([s.offer + ' — Differentiator', getOrangeDiff(s.pillar, lang), '']));
+  d.solutions.forEach(s => rows.push([s.offer + ', Differentiator', getOrangeDiff(s.pillar, lang), '']));
   rows.push(['']);
   rows.push(['=== CRM RECORD ===', '', '']);
   rows.push(['Field', 'Value', 'Source']);
@@ -108,7 +108,7 @@ function generatePPT(pptx, d, lang, T) {
   // Slide 2: ESG Overview
   slide = pptx.addSlide();
   slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.5, fill: { color: OB } });
-  slide.addText((lang === 'fr' ? 'Aperçu ESG' : 'ESG Overview') + ' — ' + d.name.split(' ')[0], { x: 0.5, y: 0.05, fontSize: 14, bold: true, color: WHITE, fontFace: 'Arial' });
+  slide.addText((lang === 'fr' ? 'Aperçu ESG' : 'ESG Overview') + ', ' + d.name.split(' ')[0], { x: 0.5, y: 0.05, fontSize: 14, bold: true, color: WHITE, fontFace: 'Arial' });
   slide.addText(lang === 'fr' ? 'Score de Maturité ESG' : 'ESG Maturity Score', { x: 0.5, y: 0.8, fontSize: 12, bold: true, color: BLACK, fontFace: 'Arial' });
   slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 1.15, w: 2, h: 0.5, fill: { color: OB }, rectRadius: 0.1 });
   slide.addText(d.score + ' / 100', { x: 0.5, y: 1.15, w: 2, h: 0.5, fontSize: 20, bold: true, color: WHITE, fontFace: 'Arial', align: 'center', valign: 'middle' });
@@ -152,7 +152,7 @@ function generatePPT(pptx, d, lang, T) {
   // Slide 6: Meeting Agenda
   slide = pptx.addSlide();
   slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.5, fill: { color: OB } });
-  slide.addText(T('meeting.agenda') + ' — ' + d.name.split(' ')[0], { x: 0.5, y: 0.05, fontSize: 14, bold: true, color: WHITE, fontFace: 'Arial' });
+  slide.addText(T('meeting.agenda') + ', ' + d.name.split(' ')[0], { x: 0.5, y: 0.05, fontSize: 14, bold: true, color: WHITE, fontFace: 'Arial' });
   const agendaItems = [
     { time: T('meeting.open.time'), title: T('meeting.open.title') },
     { time: T('meeting.disc.time'), title: T('meeting.disc.title') },

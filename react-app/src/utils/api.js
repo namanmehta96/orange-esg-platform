@@ -2,7 +2,7 @@ export function buildPrompt(val, lang, uploadedDoc) {
   const docBlock = uploadedDoc && uploadedDoc.content
     ? `\n\nIn addition to publicly available ESG data, the following internal document has been provided by the Orange Business sales team (filename: ${uploadedDoc.name}). Use this information to enrich the profile where relevant and flag any insights from it:\n\n<internal-document>\n${uploadedDoc.content.slice(0, 20000)}\n</internal-document>\n`
     : '';
-  return `You are an Orange Business ESG Sales Intelligence system. Analyze the company "${val}" and return ONLY valid JSON with no markdown, no explanation, no backticks — just raw JSON.${docBlock}
+  return `You are an Orange Business ESG Sales Intelligence system. Analyze the company "${val}" and return ONLY valid JSON with no markdown, no explanation, no backticks, just raw JSON.${docBlock}
 
 Use this exact structure:
 {
@@ -36,9 +36,9 @@ Use this exact structure:
   ],
   "frugal": {"title":"Specific frugal AI use case","desc":"2-3 sentences.","saving":"Quantified benefit estimate"},
   "stakeholders": [
-    {"init":"2L","bg":"#edf7f1","tc":"#1a7a4a","name":"Verified CSO or Head of Sustainability — use real public name where possible, else describe role and append (unverified)","role":"Full title · Company","why":"Why relevant","priority":"Priority 1","emailFocus":"sustainability","ph":true},
-    {"init":"2L","bg":"#fff3e8","tc":"#e06800","name":"Verified CEO or Board-level executive with ESG mandate — append (unverified) if not confirmed","role":"...","why":"...","priority":"Priority 1","emailFocus":"executive","ph":true},
-    {"init":"2L","bg":"#e8f0fb","tc":"#0056b3","name":"Verified CTO / CIO / Chief Technology leader — append (unverified) if not confirmed","role":"...","why":"...","priority":"Priority 2","emailFocus":"technology","ph":true}
+    {"init":"2L","bg":"#edf7f1","tc":"#1a7a4a","name":"Verified CSO or Head of Sustainability, use real public name where possible, else describe role and append (unverified)","role":"Full title · Company","why":"Why relevant","priority":"Priority 1","emailFocus":"sustainability","ph":true},
+    {"init":"2L","bg":"#fff3e8","tc":"#e06800","name":"Verified CEO or Board-level executive with ESG mandate, append (unverified) if not confirmed","role":"...","why":"...","priority":"Priority 1","emailFocus":"executive","ph":true},
+    {"init":"2L","bg":"#e8f0fb","tc":"#0056b3","name":"Verified CTO / CIO / Chief Technology leader, append (unverified) if not confirmed","role":"...","why":"...","priority":"Priority 2","emailFocus":"technology","ph":true}
   ],
   "questions": [
     {"text":"Specific question tied to this company's ESG commitment","persona":"For: Role"},
@@ -75,13 +75,13 @@ Use ONLY Orange Business's actual pillars:
 - Strategic Decarbonisation: Corporate Decarbonisation Roadmap, Scope 3 Estimator, CSRD Acceleration, EcoVadis Programme
 - Orange credentials: EcoVadis Platinum, SBTi-aligned net-zero 2040, RGESN certified, 28,000+ enterprise customers
 
-For the "stakeholders" array, return EXACTLY 3 entries in this order: (1) sustainability owner — CSO / Head of Sustainability / Environmental Director (emailFocus: "sustainability"); (2) executive sponsor — CEO, Chairman or a Board-level executive with ESG accountability (emailFocus: "executive"); (3) technology leader — CTO, CIO or Chief Technology/Digital Officer (emailFocus: "technology"). Use real, publicly verifiable names wherever possible. If you cannot verify a specific incumbent with high confidence, use a role-based description (e.g. "Chief Sustainability Officer") and append "(unverified)" at the end of the role field. Never fabricate specific names.
+For the "stakeholders" array, return EXACTLY 3 entries in this order: (1) sustainability owner, CSO / Head of Sustainability / Environmental Director (emailFocus: "sustainability"); (2) executive sponsor, CEO, Chairman or a Board-level executive with ESG accountability (emailFocus: "executive"); (3) technology leader, CTO, CIO or Chief Technology/Digital Officer (emailFocus: "technology"). Use real, publicly verifiable names wherever possible. If you cannot verify a specific incumbent with high confidence, use a role-based description (e.g. "Chief Sustainability Officer") and append "(unverified)" at the end of the role field. Never fabricate specific names.
 
 Use your knowledge of ${val}'s actual published ESG strategy. Where possible, include real source URLs for ESG claims and ratings.
 
 The "leaderQuotes" array is REQUIRED and must contain 2-3 entries with real, verifiable executive quotes from published sources (annual reports, press releases, earnings calls, conference speeches, LinkedIn posts). Each entry must include the executive's name, title and company, the verbatim quote, the source document with date, and a one-sentence orangeOpportunity mapping the quote to a specific Orange Business solution.
 
-For the "source" field, ALWAYS include the full public URL of the cited document or page when one exists, using the exact format: "Document Name, Year — https://full.url/to/source". Example: "BNP Paribas Universal Registration Document 2024 — https://invest.bnpparibas/en/search/reports/documents/csr". Only omit the URL when the source is genuinely a non-indexable event (private earnings call, closed-door speech) and leave the source as plain text in that case. Never invent a URL — only cite URLs you have actually seen.
+For the "source" field, ALWAYS include the full public URL of the cited document or page when one exists, using the exact format: "Document Name, Year, https://full.url/to/source". Example: "BNP Paribas Universal Registration Document 2024, https://invest.bnpparibas/en/search/reports/documents/csr". Only omit the URL when the source is genuinely a non-indexable event (private earnings call, closed-door speech) and leave the source as plain text in that case. Never invent a URL, only cite URLs you have actually seen.
 
 If you cannot find verified public quotes for this company, return an empty array [] rather than fabricating quotes.${lang === 'fr' ? ' IMPORTANT: All text values in the JSON must be written in natural, professional business French suitable for a French executive audience. Keep proper nouns in their original form.' : ''} Return ONLY the raw JSON object.`;
 }
@@ -98,7 +98,7 @@ export async function analyzeCompany(val, apiKey, lang, uploadedDoc) {
     },
     body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] })
   });
-  if (!res.ok) throw new Error('API error ' + res.status + ' — check your API key has credits.');
+  if (!res.ok) throw new Error('API error ' + res.status + ', check your API key has credits.');
   const data = await res.json();
   let raw = data.content[0].text.trim();
   raw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
@@ -109,10 +109,10 @@ export async function analyzeCompany(val, apiKey, lang, uploadedDoc) {
 }
 
 const FULL_CATALOG_SUMMARY = `Orange Business 14-solution catalog:
-IT for Green: (1) Orange Carbon Calculator — verified IT vendor emissions for CSRD ESRS E1; (2) Smart Eco-Energy for Commercial Buildings — IoT energy management to cut Scope 1/2; (3) Circular Economy & Device Lifecycle — circular mobile leasing reducing Scope 3 Cat.2; (4) Sustainable Cloud Infrastructure — PUE-optimised carbon-neutral hosting.
-IT for Society: (5) ESG Data Collection & CSRD Reporting Platform — ESRS-aligned data workflows; (6) Ethical AI & Digital Inclusion Framework — AI Act compliance & governance.
-Frugal AI & Eco-Design: (7) Frugal AI — right-sized models cutting compute cost 40–70%; (8) Eco-Design (RGESN Framework) — French eco-design standard across digital lifecycle; (9) Sustainability-Driven GenAI Governance — carbon-aware GenAI deployment; (10) Orange Eco-Design Certification — audit & certify digital products.
-Strategic Decarbonisation: (11) Corporate Decarbonisation Roadmap — end-to-end SBTi/net-zero planning; (12) Scope 3 Carbon Estimator & Supplier Engagement — PCAF/GHG Protocol aligned Scope 3 measurement; (13) CSRD & Regulatory Compliance Acceleration — double materiality, ESRS mapping, audit prep; (14) EcoVadis & ESG Rating Improvement Programme — ratings uplift methodology.`;
+IT for Green: (1) Orange Carbon Calculator, verified IT vendor emissions for CSRD ESRS E1; (2) Smart Eco-Energy for Commercial Buildings, IoT energy management to cut Scope 1/2; (3) Circular Economy & Device Lifecycle, circular mobile leasing reducing Scope 3 Cat.2; (4) Sustainable Cloud Infrastructure, PUE-optimised carbon-neutral hosting.
+IT for Society: (5) ESG Data Collection & CSRD Reporting Platform, ESRS-aligned data workflows; (6) Ethical AI & Digital Inclusion Framework, AI Act compliance & governance.
+Frugal AI & Eco-Design: (7) Frugal AI, right-sized models cutting compute cost 40–70%; (8) Eco-Design (RGESN Framework), French eco-design standard across digital lifecycle; (9) Sustainability-Driven GenAI Governance, carbon-aware GenAI deployment; (10) Orange Eco-Design Certification, audit & certify digital products.
+Strategic Decarbonisation: (11) Corporate Decarbonisation Roadmap, end-to-end SBTi/net-zero planning; (12) Scope 3 Carbon Estimator & Supplier Engagement, PCAF/GHG Protocol aligned Scope 3 measurement; (13) CSRD & Regulatory Compliance Acceleration, double materiality, ESRS mapping, audit prep; (14) EcoVadis & ESG Rating Improvement Programme, ratings uplift methodology.`;
 
 export function buildChatSystemPrompt(currentCompany, lang) {
   const langName = lang === 'fr' ? 'French' : 'English';
@@ -129,11 +129,11 @@ Your role: answer general questions about Orange Business ESG solutions, sustain
 
   const commitments = (co.esg || []).map(e => `${e.title} ${e.value}`).join(' · ');
   const topics = (co.topics || []).map(t => `${t.name} (${t.badge}, ${t.pct}%)`).join('; ');
-  const solutions = (co.solutions || []).map((s, i) => `(${i + 1}) ${s.offer} — ${s.why}`).join('\n');
+  const solutions = (co.solutions || []).map((s, i) => `(${i + 1}) ${s.offer}, ${s.why}`).join('\n');
   const quotes = Array.isArray(co.leaderQuotes) && co.leaderQuotes.length
-    ? co.leaderQuotes.map(q => `"${q.quote}" — ${q.name}, ${q.title} → Opportunity: ${q.orangeOpportunity}`).join('\n')
+    ? co.leaderQuotes.map(q => `"${q.quote}", ${q.name}, ${q.title} → Opportunity: ${q.orangeOpportunity}`).join('\n')
     : 'No verified quotes available.';
-  const stakeholders = (co.stakeholders || []).map(s => `${s.name || s.role} (${s.role}) — ${s.why}`).join('; ');
+  const stakeholders = (co.stakeholders || []).map(s => `${s.name || s.role} (${s.role}), ${s.why}`).join('; ');
 
   return `You are an expert Orange Business ESG sales coach embedded in the ESG Sales Intelligence Platform. You have full context on the current customer and the complete Orange Business solution catalog.
 
@@ -151,7 +151,7 @@ Key stakeholders: ${stakeholders}
 ${FULL_CATALOG_SUMMARY}
 Orange credentials: EcoVadis Platinum (top 1% globally), SBTi-aligned net-zero by 2040, RGESN eco-design framework, CDP A-List, CSRD Wave 1 reporter (FY2024), 28,000+ enterprise customers.
 
-Your role: Help the Orange Business salesperson prepare for their meeting. Answer questions about the customer's ESG strategy, suggest opening lines, handle objections, explain which solution fits best and why, reference specific leader quotes, and provide meeting coaching. Be concise (3–4 sentences max per response), specific, and always reference actual customer context — never give generic answers. Respond in ${langName}.`;
+Your role: Help the Orange Business salesperson prepare for their meeting. Answer questions about the customer's ESG strategy, suggest opening lines, handle objections, explain which solution fits best and why, reference specific leader quotes, and provide meeting coaching. Be concise (3–4 sentences max per response), specific, and always reference actual customer context, never give generic answers. Respond in ${langName}.`;
 }
 
 export async function sendChatToAPI(apiKey, systemPrompt, messages) {
@@ -198,23 +198,23 @@ export async function generateOutreachEmail(stakeholder, company, apiKey, lang, 
   if (apiKey) {
     const commitments = (company.esg || []).map(e => `${e.title} ${e.value}`).join(' · ');
     const topQuote = Array.isArray(company.leaderQuotes) && company.leaderQuotes[0]
-      ? `"${company.leaderQuotes[0].quote}" — ${company.leaderQuotes[0].name}, ${company.leaderQuotes[0].title}`
-      : 'No public quote available — reference the published ESG commitments instead.';
+      ? `"${company.leaderQuotes[0].quote}", ${company.leaderQuotes[0].name}, ${company.leaderQuotes[0].title}`
+      : 'No public quote available, reference the published ESG commitments instead.';
 
     const systemPrompt = `You are an expert Orange Business sales writer. Generate a personalised cold outreach email.
 
 Recipient: ${stakeholder.name}, ${stakeholder.role} at ${company.name}
 Their focus area: ${stakeholder.why}
-Selected Orange solution to feature: ${solName} — ${solDesc}
+Selected Orange solution to feature: ${solName}, ${solDesc}
 Company ESG context: ${commitments}
 Relevant company leader quote: ${topQuote}
 Orange credentials: EcoVadis Platinum (top 1% globally), SBTi-aligned net-zero by 2040, RGESN eco-design certified.
 
 Write a cold email that:
-1. Opens with ONE specific reference to ${company.name}'s public ESG commitment or a leader statement — make it show you've done your research
+1. Opens with ONE specific reference to ${company.name}'s public ESG commitment or a leader statement, make it show you've done your research
 2. Identifies the specific gap or pressure point most relevant to ${stakeholder.role} and ${stakeholder.why}
-3. Positions ${solName} as the precise answer to that gap — be specific about what it does
-4. References Orange Business's own ESG credentials as proof of credibility — we practice what we sell
+3. Positions ${solName} as the precise answer to that gap, be specific about what it does
+4. References Orange Business's own ESG credentials as proof of credibility, we practice what we sell
 5. Closes with a clear low-friction CTA: a 15-minute call to share how we helped a similar company
 
 Rules: Under 200 words. No em dashes. No generic phrases like "I hope this finds you well". Professional and direct. Respond in ${langName}.
@@ -234,7 +234,7 @@ Return ONLY a JSON object with this exact shape, nothing else: {"subject":"email
     return parsed;
   }
 
-  // Template fallback (no API key) — still solution-aware
+  // Template fallback (no API key), still solution-aware
   const fallbackSol = selectedSolution || company.solutions?.[0] || { name: 'ESG Data Platform', offer: 'ESG Data Platform', pillar: 'IT for Society', desc: '' };
   const fallbackName = fallbackSol.name || fallbackSol.offer || 'ESG Data Platform';
   const critical = company.topics?.find(t => t.badge === 'Critical' || t.badge === 'Critique') || company.topics?.[0];
@@ -255,7 +255,7 @@ Return ONLY a JSON object with this exact shape, nothing else: {"subject":"email
 
   return {
     _solution: fallbackName,
-    subject: `${company.name.split(' ')[0]} × Orange Business — ${fallbackName}`,
+    subject: `${company.name.split(' ')[0]} × Orange Business, ${fallbackName}`,
     body: `Dear ${stakeholder.name.split(' ')[0]},
 
 I am reaching out from Orange Business about ${fallbackName}, specifically in relation to ${company.name}'s public ${company.topics?.[0]?.name?.toLowerCase() || 'sustainability'} commitments.

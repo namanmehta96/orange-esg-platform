@@ -8,8 +8,9 @@ import SolutionCatalog from './tabs/SolutionCatalog';
 import MeetingIntel from './tabs/MeetingIntel';
 import KeyContacts from './tabs/KeyContacts';
 import CrmExport from './tabs/CrmExport';
+import FAQ from './tabs/FAQ';
 
-const TAB_KEYS = ['exec-summary', 'bridge', 'catalog', 'meeting', 'contacts', 'crm'];
+const TAB_KEYS = ['exec-summary', 'bridge', 'catalog', 'meeting', 'contacts', 'crm', 'faq'];
 
 export default function CompanyProfile({ company }) {
   const { currentLang, T, getSourceUrl, locale } = useApp();
@@ -143,7 +144,7 @@ export default function CompanyProfile({ company }) {
       <div className="full-box">
         <div className="tabs" id="main-tabs">
           {TAB_KEYS.map((key, i) => {
-            const labels = ['tab.exec', 'tab.bridge', 'tab.catalog', 'tab.meeting', 'tab.contacts', 'tab.crm'];
+            const labels = ['tab.exec', 'tab.bridge', 'tab.catalog', 'tab.meeting', 'tab.contacts', 'tab.crm', 'tab.faq'];
             return (
               <button
                 key={key}
@@ -162,6 +163,7 @@ export default function CompanyProfile({ company }) {
         {activeTab === 'meeting' && <MeetingIntel company={company} />}
         {activeTab === 'contacts' && <KeyContacts company={company} />}
         {activeTab === 'crm' && <CrmExport company={company} />}
+        {activeTab === 'faq' && <FAQ />}
       </div>
 
       {/* Action Buttons */}

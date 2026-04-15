@@ -1,79 +1,117 @@
 import { useState, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { esc, showToast } from '../../utils/helpers';
+import { esc, showToast, getMatchScore, getCompanyKey } from '../../utils/helpers';
 import { generateOutreachEmail } from '../../utils/api';
+import { sampleEmails, stakeholderDefaultSolution } from '../../data/sampleEmails';
 
-function pickDefaultSolution(company, emailFocus, catalog) {
-  if (!catalog || !catalog.length) return null;
+function computeTopPicks(company, catalog, n = 3) {
+  const scored = catalog.map(sol => ({ sol, score: getMatchScore(sol, company) }));
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, n).map(x => x.sol.id);
+}
+
+function pickDefaultSolutionId(companyKey, stakeholderInitLower, stakeholder, catalog, topPickIds) {
+  const defaults = (companyKey && stakeholderDefaultSolution[companyKey]) || null;
+  if (defaults && defaults[stakeholderInitLower]) return defaults[stakeholderInitLower];
+
+  const focus = stakeholder.emailFocus;
   const matchById = (id) => catalog.find(c => c.id === id);
 
-  if (emailFocus === 'executive') {
-    const firstOffer = ((company.solutions || [])[0]?.offer || '').toLowerCase();
-    if (firstOffer) {
-      const found = catalog.find(c => firstOffer.includes(c.name.toLowerCase().split(/[\s—&·]/)[0]) || c.name.toLowerCase().includes(firstOffer.split(/[\s—&·]/)[0]));
-      if (found) return found;
-    }
-    return matchById('decarb-roadmap') || catalog[0];
-  }
-
-  if (emailFocus === 'technology') {
+  if (focus === 'technology') {
     const techIds = ['rgesn', 'frugal-ai', 'carbon-calc', 'ecodesign-cert', 'genai-gov', 'sustainable-cloud'];
-    for (const id of techIds) {
-      const found = matchById(id);
-      if (found) return found;
-    }
-    return catalog[0];
+    for (const id of techIds) if (matchById(id) && topPickIds.includes(id)) return id;
+    for (const id of techIds) if (matchById(id)) return id;
   }
-
-  // sustainability default
-  const susIds = ['esg-platform', 'decarb-roadmap', 'scope3-estimator', 'csrd-accel', 'ecovadis'];
-  for (const id of susIds) {
-    const found = matchById(id);
-    if (found) return found;
+  if (focus === 'sustainability') {
+    const susIds = ['esg-platform', 'scope3-estimator', 'csrd-accel', 'decarb-roadmap', 'ecovadis'];
+    for (const id of susIds) if (matchById(id) && topPickIds.includes(id)) return id;
+    for (const id of susIds) if (matchById(id)) return id;
   }
-  return catalog[0];
+  // executive: prefer top pick #1 or decarb-roadmap
+  return topPickIds[0] || 'decarb-roadmap';
 }
 
 export default function KeyContacts({ company }) {
   const { T, apiKey, currentLang, getLocalizedCatalog } = useApp();
-  // modalState: null | { stakeholder, step: 'select'|'loading'|'ready'|'error', selectedSolution, email, error }
+  // { stakeholder, stakeholderKey, step: 'select'|'loading'|'ready'|'error', selectedSolutionId, email, error, fromSample }
   const [modalState, setModalState] = useState(null);
 
   const catalog = useMemo(() => getLocalizedCatalog(), [getLocalizedCatalog]);
+  const companyKey = useMemo(() => getCompanyKey(company), [company]);
+  const topPickIds = useMemo(() => computeTopPicks(company, catalog, 3), [company, catalog]);
+
+  const orderedCatalog = useMemo(() => {
+    const tops = topPickIds
+      .map(id => catalog.find(c => c.id === id))
+      .filter(Boolean);
+    const rest = catalog.filter(c => !topPickIds.includes(c.id));
+    return [...tops, ...rest];
+  }, [catalog, topPickIds]);
 
   const openSolutionPicker = (stakeholder) => {
-    const preselected = pickDefaultSolution(company, stakeholder.emailFocus, catalog);
-    setModalState({ stakeholder, step: 'select', selectedSolution: preselected, email: null, error: null });
+    const key = (stakeholder.init || '').toLowerCase();
+    const defaultId = pickDefaultSolutionId(companyKey, key, stakeholder, catalog, topPickIds);
+    setModalState({
+      stakeholder,
+      stakeholderKey: key,
+      step: 'select',
+      selectedSolutionId: defaultId,
+      email: null,
+      error: null,
+      fromSample: false,
+    });
   };
 
-  const generateForSelected = async (nextState) => {
-    const base = nextState || modalState;
-    if (!base || !base.selectedSolution) return;
-    setModalState({ ...base, step: 'loading', email: null, error: null });
+  const selectSolution = (id) => {
+    setModalState(prev => prev ? { ...prev, selectedSolutionId: id } : prev);
+  };
+
+  const getSolutionById = (id) => catalog.find(c => c.id === id);
+
+  const generateEmail = async () => {
+    if (!modalState) return;
+    const selectedSolution = getSolutionById(modalState.selectedSolutionId);
+    const defaultForStakeholder = (companyKey && stakeholderDefaultSolution[companyKey])
+      ? stakeholderDefaultSolution[companyKey][modalState.stakeholderKey]
+      : null;
+
+    // No API key path: show hardcoded sample if the user kept the default solution
+    if (!apiKey) {
+      const sample = companyKey && sampleEmails[companyKey] && sampleEmails[companyKey][modalState.stakeholderKey];
+      if (sample) {
+        const keptDefault = defaultForStakeholder && defaultForStakeholder === modalState.selectedSolutionId;
+        setModalState({
+          ...modalState,
+          step: 'ready',
+          email: { subject: sample.subject, body: sample.body },
+          fromSample: true,
+          sampleIsDefault: keptDefault,
+          error: null,
+        });
+        return;
+      }
+    }
+
+    // API key path: call live API
+    setModalState({ ...modalState, step: 'loading', email: null, error: null });
     try {
       const email = await generateOutreachEmail(
-        base.stakeholder,
+        modalState.stakeholder,
         company,
         apiKey,
         currentLang,
-        base.selectedSolution
+        selectedSolution
       );
-      setModalState(prev => prev ? { ...prev, step: 'ready', email, error: null } : prev);
+      setModalState(prev => prev ? { ...prev, step: 'ready', email, fromSample: false, error: null } : prev);
     } catch (err) {
       setModalState(prev => prev ? { ...prev, step: 'error', email: null, error: err.message || String(err) } : prev);
     }
   };
 
-  const selectSolution = (sol) => {
-    setModalState(prev => prev ? { ...prev, selectedSolution: sol } : prev);
-  };
+  const regenerate = () => generateEmail();
 
   const goBackToSelector = () => {
     setModalState(prev => prev ? { ...prev, step: 'select', email: null, error: null } : prev);
-  };
-
-  const regenerate = () => {
-    generateForSelected();
   };
 
   const closeModal = () => setModalState(null);
@@ -92,6 +130,9 @@ export default function KeyContacts({ company }) {
       showToast(T('toast.copyfail'));
     }
   };
+
+  const selectedSolution = modalState ? getSolutionById(modalState.selectedSolutionId) : null;
+  const selectedName = selectedSolution?.name || '';
 
   return (
     <div className="tab-panel active" id="tab-contacts">
@@ -163,7 +204,7 @@ export default function KeyContacts({ company }) {
                 <div className="modal-title-ico">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                 </div>
-                {T('contacts.email.modalTitle')}
+                {T('contacts.email.modalTitleFor', { name: modalState.stakeholder.name })}
               </div>
               <button className="modal-close" onClick={closeModal} aria-label="Close">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
@@ -179,28 +220,32 @@ export default function KeyContacts({ company }) {
               <>
                 <div className="email-selector-label">{T('contacts.email.pickSolution')}</div>
                 <div className="email-solution-grid">
-                  {catalog.map((sol) => {
-                    const active = modalState.selectedSolution && modalState.selectedSolution.id === sol.id;
+                  {orderedCatalog.map((sol) => {
+                    const active = modalState.selectedSolutionId === sol.id;
+                    const isTopPick = topPickIds.includes(sol.id);
                     return (
                       <button
                         key={sol.id}
                         type="button"
-                        className={`solution-chip${active ? ' active' : ''}`}
-                        onClick={() => selectSolution(sol)}
+                        className={`solution-chip${active ? ' active' : ''}${isTopPick ? ' top-pick' : ''}`}
+                        onClick={() => selectSolution(sol.id)}
                       >
                         <span className="solution-chip-name">{sol.name}</span>
                         <span className="solution-chip-pillar" style={{ color: sol.pillarColor }}>{sol.pillar}</span>
+                        {isTopPick && (
+                          <span className="solution-chip-topbadge">{T('contacts.email.topPick')}</span>
+                        )}
                       </button>
                     );
                   })}
                 </div>
-                <div className="modal-btns">
+                <div className="modal-btns email-modal-btns">
                   <button
                     className="modal-save"
-                    onClick={() => generateForSelected()}
-                    disabled={!modalState.selectedSolution}
+                    onClick={generateEmail}
+                    disabled={!modalState.selectedSolutionId}
                   >
-                    {T('contacts.email.generate')}
+                    {T('contacts.email.generateWith', { name: selectedName })}
                   </button>
                   <button className="modal-clear" onClick={closeModal}>
                     {T('contacts.email.close')}
@@ -219,8 +264,9 @@ export default function KeyContacts({ company }) {
             {modalState.step === 'error' && (
               <>
                 <div style={{ color: 'var(--red)', padding: 12 }}>{modalState.error}</div>
-                <div className="modal-btns">
+                <div className="modal-btns email-modal-btns">
                   <button className="modal-save" onClick={regenerate}>{T('contacts.email.regenerate')}</button>
+                  <button className="modal-clear" onClick={goBackToSelector}>{T('contacts.email.changeSolution')}</button>
                   <button className="modal-clear" onClick={closeModal}>{T('contacts.email.close')}</button>
                 </div>
               </>
@@ -228,10 +274,17 @@ export default function KeyContacts({ company }) {
 
             {modalState.step === 'ready' && modalState.email && (
               <>
+                {modalState.fromSample && (
+                  <div className="email-sample-banner">
+                    {modalState.sampleIsDefault
+                      ? T('contacts.email.sampleBanner')
+                      : T('contacts.email.sampleMismatch')}
+                  </div>
+                )}
                 <div className="email-featuring">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
                   <span>
-                    <strong>{T('contacts.email.featuring')}</strong> {modalState.selectedSolution?.name || modalState.email._solution}
+                    <strong>{T('contacts.email.featuring')}</strong> {selectedName}
                   </span>
                 </div>
                 <div className="email-subject">
@@ -246,7 +299,12 @@ export default function KeyContacts({ company }) {
                   <button className="modal-save" onClick={copyDraft}>
                     {T('contacts.email.copy')}
                   </button>
-                  <button className="modal-clear" onClick={regenerate}>
+                  <button
+                    className="modal-clear"
+                    onClick={regenerate}
+                    disabled={!apiKey}
+                    title={!apiKey ? T('contacts.email.regenerate.nokey') : ''}
+                  >
                     {T('contacts.email.regenerate')}
                   </button>
                   <button className="modal-clear" onClick={goBackToSelector}>

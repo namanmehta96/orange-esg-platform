@@ -3,6 +3,7 @@ import { useApp } from '../contexts/AppContext';
 import { SEED_DATA } from '../data/seedData';
 import { SEED_DATA_FR } from '../data/seedDataFr';
 import { analyzeCompany as apiAnalyze } from '../utils/api';
+import { readUploadedDocument, showToast } from '../utils/helpers';
 import gsap from 'gsap';
 
 const DEMO_KEYS = ['bnp', 'unilever', 'renault', 'lvmh', 'schneider', 'total', 'axa', 'danone', 'airbus'];
@@ -11,11 +12,37 @@ export default function HomePage() {
   const {
     apiKey, currentLang, darkMode,
     setCurrentCompany, setView, setLoadingOverlay, setSettingsOpen,
-    uploadedDoc,
+    uploadedDoc, setUploadedDoc,
     addToHistory, T,
   } = useApp();
 
   const [searchVal, setSearchVal] = useState('');
+  const [uploadChecked, setUploadChecked] = useState(!!uploadedDoc);
+  const fileInputRef = useRef(null);
+
+  const handleUploadClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const lower = file.name.toLowerCase();
+    if (!lower.endsWith('.pdf') && !lower.endsWith('.docx')) {
+      showToast(T('upload.invalid'));
+      e.target.value = '';
+      return;
+    }
+    try {
+      const content = await readUploadedDocument(file);
+      setUploadedDoc({ name: file.name, content });
+    } catch {
+      showToast(T('upload.invalid'));
+    }
+    e.target.value = '';
+  };
+
+  const removeUpload = () => setUploadedDoc(null);
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const logoRef = useRef(null);
@@ -311,6 +338,58 @@ export default function HomePage() {
           <button className="home-search-btn" onClick={handleSearch}>
             {T('home.search.btn')}
           </button>
+        </div>
+
+        <label className="home-upload-check">
+          <input
+            type="checkbox"
+            checked={uploadChecked}
+            onChange={(e) => {
+              const on = e.target.checked;
+              setUploadChecked(on);
+              if (!on) removeUpload();
+            }}
+          />
+          <span>{T('upload.checkbox')}</span>
+        </label>
+
+        <div className={`home-upload-wrap${uploadChecked ? ' open' : ''}`}>
+          {!uploadedDoc ? (
+            <button
+              type="button"
+              className="home-upload-zone"
+              onClick={handleUploadClick}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <span>{T('upload.zone')}</span>
+            </button>
+          ) : (
+            <div className="upload-chip home-upload-chip" title={uploadedDoc.name}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span className="upload-chip-name">{uploadedDoc.name}</span>
+              <button
+                type="button"
+                className="upload-chip-x"
+                onClick={removeUpload}
+                title={T('upload.remove')}
+                aria-label={T('upload.remove')}
+              >&times;</button>
+            </div>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
         </div>
 
         <div className="home-demo-label">{T('home.demo.label')}</div>

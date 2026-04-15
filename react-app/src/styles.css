@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════
-   CSS VARIABLES — LIGHT & DARK THEMES
+   CSS VARIABLES, LIGHT & DARK THEMES
 ══════════════════════════════════════════════════════ */
 :root {
   --ob:#FF7900; --ob-dark:#E06800; --ob-light:#FFF3E8; --ob-pale:#FFFAF5; --ob-border:#ffd4a0;
@@ -1127,7 +1127,7 @@ button:active{transform:scale(0.97);}
 .skeleton-grid-item { height:80px; }
 
 /* ══════════════════════════════════════════════════════
-   DARK MODE — POLISH & DEPTH
+   DARK MODE, POLISH & DEPTH
 ══════════════════════════════════════════════════════ */
 
 /* Nav: deeper shadow in dark for clear separation */
@@ -1231,7 +1231,7 @@ button:active{transform:scale(0.97);}
   border-color: #2e2e2e;
 }
 
-/* CDP badge and sector leader — fix nearly-invisible green borders */
+/* CDP badge and sector leader, fix nearly-invisible green borders */
 [data-theme="dark"] .cdp-badge {
   border-color: rgba(26,122,74,0.40);
   background: rgba(26,122,74,0.14);
@@ -1636,27 +1636,32 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* ══════════════════════════════════════════════════════
    NAV HELP (?) BUTTON
 ══════════════════════════════════════════════════════ */
-.nav-help-btn{color:var(--ob);}
-.nav-help-btn:hover{background:var(--ob-light);color:var(--ob-dark);}
+.nav-help-btn{
+  width:32px;height:32px;min-width:32px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:2px solid var(--ob);background:transparent;color:var(--ob);
+  border-radius:50%;cursor:pointer;
+  font-family:inherit;font-size:15px;font-weight:800;line-height:1;
+  padding:0;margin:0;flex-shrink:0;overflow:visible;
+  transition:background .15s,color .15s,box-shadow .15s;
+}
+.nav-help-btn:hover{background:var(--ob);color:white;box-shadow:0 3px 10px rgba(255,121,0,0.28);}
+.nav-help-btn:focus-visible{outline:2px solid var(--ob);outline-offset:2px;}
 
 /* ══════════════════════════════════════════════════════
    TUTORIAL OVERLAY
 ══════════════════════════════════════════════════════ */
-.tutorial-root{position:fixed;inset:0;z-index:10000;}
+.tutorial-root{position:fixed;inset:0;z-index:9998;pointer-events:none;}
 .tutorial-backdrop{
   position:absolute;inset:0;background:rgba(0,0,0,0.62);
   backdrop-filter:blur(2px);animation:tutFadeIn .25s ease;
+  z-index:9998;pointer-events:auto;
 }
 @keyframes tutFadeIn{from{opacity:0}to{opacity:1}}
-.tutorial-spot{
-  position:absolute;border-radius:10px;
-  box-shadow:0 0 0 9999px rgba(0,0,0,0.55), 0 0 0 3px var(--ob), 0 0 30px rgba(255,121,0,0.6);
-  pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);
-}
 .tutorial-tip{
   position:absolute;background:var(--card);color:var(--ink);
   border:2px solid var(--ob);border-radius:14px;padding:20px 22px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.35);z-index:10001;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35);z-index:10001;pointer-events:auto;
   animation:tutPop .3s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes tutPop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -1695,7 +1700,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .tutorial-btn-secondary:hover{background:var(--card);color:var(--ink);}
 
 /* ══════════════════════════════════════════════════════
-   EMAIL MODAL — SOLUTION SELECTOR
+   EMAIL MODAL, SOLUTION SELECTOR
 ══════════════════════════════════════════════════════ */
 .email-modal{max-width:620px;max-height:88vh;overflow-y:auto;}
 .email-recipient{
@@ -1737,4 +1742,91 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 @media (max-width:560px){
   .email-solution-grid{grid-template-columns:1fr;}
+}
+
+/* ══════════════════════════════════════════════════════
+   UPLOAD CHECKBOX + ZONE (sidebar + homepage)
+══════════════════════════════════════════════════════ */
+.upload-check, .home-upload-check {
+  display:flex;align-items:flex-start;gap:8px;margin-top:10px;
+  font-size:12px;color:var(--ink2);cursor:pointer;user-select:none;
+}
+.home-upload-check{justify-content:center;font-size:13px;color:var(--ink2);}
+.upload-check input, .home-upload-check input {
+  margin:2px 0 0;cursor:pointer;accent-color:var(--ob);width:14px;height:14px;
+}
+.upload-check span, .home-upload-check span {
+  flex:1;line-height:1.4;
+}
+
+.upload-zone-wrap, .home-upload-wrap {
+  max-height:0;overflow:hidden;
+  transition:max-height .32s ease, opacity .25s ease, margin-top .25s ease;
+  opacity:0;
+}
+.upload-zone-wrap.open, .home-upload-wrap.open {
+  max-height:220px;opacity:1;margin-top:8px;
+}
+.upload-zone, .home-upload-zone {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:16px 12px;
+  background:var(--ob-pale);color:var(--ob-dark);
+  border:1.5px dashed var(--ob);border-radius:var(--r);
+  cursor:pointer;font-family:inherit;text-align:center;
+  transition:background .15s,border-color .15s,box-shadow .15s;
+  font-size:11.5px;line-height:1.4;
+}
+.home-upload-zone{padding:22px 16px;font-size:12.5px;}
+.upload-zone:hover, .home-upload-zone:hover {
+  background:var(--ob-light);box-shadow:0 4px 14px rgba(255,121,0,0.12);
+}
+.upload-zone svg, .home-upload-zone svg { width:20px;height:20px;color:var(--ob); }
+.home-upload-zone svg { width:28px;height:28px; }
+.home-upload-chip { margin:0 auto; }
+
+/* ══════════════════════════════════════════════════════
+   EMAIL MODAL: TOP PICK CHIP STYLES
+══════════════════════════════════════════════════════ */
+.solution-chip { position:relative; }
+.solution-chip.top-pick {
+  border-color:var(--ob);background:var(--ob-pale);
+  padding-bottom:18px;
+}
+.solution-chip.top-pick:not(.active) {
+  box-shadow:0 0 0 1px var(--ob-border);
+}
+.solution-chip.top-pick.active {
+  background:var(--ob);border-color:var(--ob);
+}
+.solution-chip.top-pick.active .solution-chip-name,
+.solution-chip.top-pick.active .solution-chip-pillar {
+  color:white;
+}
+.solution-chip.active .solution-chip-name,
+.solution-chip.active .solution-chip-pillar {
+  color:white;
+}
+.solution-chip.active { background:var(--ob);border-color:var(--ob); }
+.solution-chip-topbadge {
+  position:absolute;bottom:4px;left:10px;
+  font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--ob);line-height:1;
+}
+.solution-chip.top-pick.active .solution-chip-topbadge { color:white; }
+
+/* ══════════════════════════════════════════════════════
+   EMAIL SAMPLE BANNER
+══════════════════════════════════════════════════════ */
+.email-sample-banner {
+  display:block;padding:8px 12px;margin-bottom:10px;
+  background:var(--surface);border:1px dashed var(--line);border-left:3px solid var(--ob);
+  border-radius:6px;font-size:11.5px;line-height:1.5;color:var(--ink2);
+}
+
+/* ══════════════════════════════════════════════════════
+   HOME PAGE UPLOAD PLACEMENT
+══════════════════════════════════════════════════════ */
+.home-hero .home-upload-check,
+.home-hero .home-upload-wrap {
+  width:100%;max-width:520px;margin-left:auto;margin-right:auto;
 }

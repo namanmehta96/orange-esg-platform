@@ -46,12 +46,42 @@ export default function Tutorial() {
     if (tutorialOpen) setStepIdx(0);
   }, [tutorialOpen, !!currentCompany]);
 
-  // Compute highlight rect for current step target
+  // Compute highlight rect for current step target, and lift the element above the overlay.
   useEffect(() => {
     if (!tutorialOpen || !step || !step.target) {
       setHighlightRect(null);
       return;
     }
+
+    let liftedEl = null;
+    let prev = { position: '', zIndex: '', boxShadow: '', borderRadius: '', transition: '' };
+
+    const lift = (el) => {
+      if (!el || liftedEl === el) return;
+      // Restore previous target first
+      if (liftedEl) {
+        liftedEl.style.position = prev.position;
+        liftedEl.style.zIndex = prev.zIndex;
+        liftedEl.style.boxShadow = prev.boxShadow;
+        liftedEl.style.borderRadius = prev.borderRadius;
+        liftedEl.style.transition = prev.transition;
+      }
+      liftedEl = el;
+      prev = {
+        position: el.style.position,
+        zIndex: el.style.zIndex,
+        boxShadow: el.style.boxShadow,
+        borderRadius: el.style.borderRadius,
+        transition: el.style.transition,
+      };
+      const cs = window.getComputedStyle(el);
+      if (cs.position === 'static') el.style.position = 'relative';
+      el.style.zIndex = '10000';
+      el.style.boxShadow = '0 0 0 4px #FF7900, 0 0 24px rgba(255,121,0,0.55)';
+      el.style.borderRadius = cs.borderRadius && cs.borderRadius !== '0px' ? cs.borderRadius : '8px';
+      el.style.transition = 'box-shadow .2s ease';
+    };
+
     const update = () => {
       const el = document.querySelector(step.target);
       if (!el) {
@@ -60,14 +90,24 @@ export default function Tutorial() {
       }
       const r = el.getBoundingClientRect();
       setHighlightRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+      lift(el);
     };
+
     update();
     const onResize = () => update();
-    const int = setInterval(update, 250);
+    const int = setInterval(update, 300);
     window.addEventListener('resize', onResize);
+
     return () => {
       clearInterval(int);
       window.removeEventListener('resize', onResize);
+      if (liftedEl) {
+        liftedEl.style.position = prev.position;
+        liftedEl.style.zIndex = prev.zIndex;
+        liftedEl.style.boxShadow = prev.boxShadow;
+        liftedEl.style.borderRadius = prev.borderRadius;
+        liftedEl.style.transition = prev.transition;
+      }
     };
   }, [tutorialOpen, step]);
 
@@ -94,7 +134,7 @@ export default function Tutorial() {
     }
   };
 
-  // Decide placement — try to place tooltip below the highlighted element; if it would go off-screen, place above.
+  // Decide placement, try to place tooltip below the highlighted element; if it would go off-screen, place above.
   const tipStyle = {};
   if (highlightRect) {
     const vw = window.innerWidth;
@@ -119,20 +159,8 @@ export default function Tutorial() {
 
   return (
     <div className="tutorial-root">
-      {/* Darkened overlay with optional cutout */}
-      <div className="tutorial-backdrop" onClick={skip}>
-        {highlightRect && (
-          <div
-            className="tutorial-spot"
-            style={{
-              top: highlightRect.top - 6,
-              left: highlightRect.left - 6,
-              width: highlightRect.width + 12,
-              height: highlightRect.height + 12,
-            }}
-          />
-        )}
-      </div>
+      {/* Darkened overlay, the real highlighted element is lifted above this via z-index */}
+      <div className="tutorial-backdrop" onClick={skip} />
 
       {/* Tooltip */}
       <div className="tutorial-tip" style={tipStyle} onClick={(e) => e.stopPropagation()}>
