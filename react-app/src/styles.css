@@ -1781,44 +1781,35 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
    UPLOAD CHECKBOX + ZONE (sidebar + homepage)
 ══════════════════════════════════════════════════════ */
 .upload-check, .home-upload-check {
-  display:inline-flex;align-items:center;gap:5px;margin-top:10px;
+  display:flex;align-items:center;gap:6px;margin:10px 0 0 0;padding:0;
   font-family:'Inter','Helvetica Neue',Arial,sans-serif;
   font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;user-select:none;
-  position:relative;line-height:1.4;transition:color .15s;
+  line-height:1.4;transition:color .15s;
 }
-.upload-check span, .home-upload-check span { margin:0;padding:0; }
 .upload-check:hover, .home-upload-check:hover { color:var(--ink); }
 .home-upload-check{font-size:14px;color:var(--ink3);}
 [data-theme="dark"] .home-upload-check{color:rgba(240,240,240,0.75);}
 .home-upload-check:hover{color:var(--ink);}
 
-/* Hide the native input but keep it accessible */
-.upload-check input[type="checkbox"],
-.home-upload-check input[type="checkbox"]{
-  position:absolute;opacity:0;width:16px;height:16px;margin:0;cursor:pointer;
-  top:0;left:0;z-index:1;
-}
-
-/* Custom visible checkbox square, rendered as a ::before on the label */
-.upload-check::before,
-.home-upload-check::before{
-  content:'';display:inline-block;flex-shrink:0;
-  width:16px;height:16px;
-  border:1.5px solid var(--ob);border-radius:3px;
+.upload-check .custom-check-box,
+.home-upload-check .custom-check-box{
+  display:inline-block;flex-shrink:0;
+  width:16px;height:16px;margin:0;padding:0;
+  border:1.5px solid #FF7900;border-radius:3px;
   background:transparent;transition:background .15s,box-shadow .15s,border-color .15s;
 }
-.upload-check:has(input:checked)::before,
-.home-upload-check:has(input:checked)::before{
-  background:var(--ob);
+.upload-check .custom-check-box.checked,
+.home-upload-check .custom-check-box.checked{
+  background:#FF7900;
   box-shadow:0 0 0 3px rgba(255,121,0,0.15);
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
   background-size:12px 12px;background-position:center;background-repeat:no-repeat;
 }
-.upload-check:focus-within::before,
-.home-upload-check:focus-within::before{
-  outline:2px solid var(--ob);outline-offset:2px;
+
+.upload-check .custom-check-label,
+.home-upload-check .custom-check-label{
+  margin:0;padding:0;display:inline-block;
 }
-.upload-check span, .home-upload-check span { flex:1; }
 
 .upload-zone-wrap, .home-upload-wrap {
   max-height:0;overflow:hidden;
@@ -1891,5 +1882,5 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .home-hero .home-upload-wrap {
   width:100%;max-width:520px;margin-left:auto;margin-right:auto;
 }
-.home-hero .home-upload-check { margin-bottom:16px; gap:5px; }
+.home-hero .home-upload-check { margin-bottom:16px; gap:6px; }
 .home-hero .home-upload-wrap.open { margin-top:8px; margin-bottom:24px; }

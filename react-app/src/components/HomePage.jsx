@@ -352,8 +352,10 @@ export default function HomePage() {
               setUploadChecked(on);
               if (!on) removeUpload();
             }}
+            style={{ display: 'none' }}
           />
-          <span>{T('upload.checkbox')}</span>
+          <span className={`custom-check-box${uploadChecked ? ' checked' : ''}`} />
+          <span className="custom-check-label">{T('upload.checkbox')}</span>
         </label>
 
         <div className={`home-upload-wrap${uploadChecked ? ' open' : ''}`}>
