@@ -256,6 +256,9 @@ export default function HomePage() {
       .fromTo(el.querySelector('.home-search-wrap'),
         { opacity: 0, y: 14 },
         { opacity: 1, y: 0, duration: 0.42 }, '-=0.22')
+      .fromTo(el.querySelector('.home-upload-check'),
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.35 }, '-=0.18')
       .fromTo(el.querySelector('.home-demo-label'),
         { opacity: 0 },
         { opacity: 1, duration: 0.38 }, '-=0.15');

@@ -1890,5 +1890,5 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .home-hero .home-upload-wrap {
   width:100%;max-width:520px;margin-left:auto;margin-right:auto;
 }
-.home-hero .home-upload-check { margin-bottom:16px; }
-.home-hero .home-upload-wrap.open { margin-top:8px; }
+.home-hero .home-upload-check { margin-bottom:16px; gap:6px; }
+.home-hero .home-upload-wrap.open { margin-top:8px; margin-bottom:24px; }
