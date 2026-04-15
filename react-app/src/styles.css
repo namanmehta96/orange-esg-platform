@@ -1781,11 +1781,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
    UPLOAD CHECKBOX + ZONE (sidebar + homepage)
 ══════════════════════════════════════════════════════ */
 .upload-check, .home-upload-check {
-  display:inline-flex;align-items:center;gap:8px;margin-top:10px;
+  display:inline-flex;align-items:center;gap:5px;margin-top:10px;
   font-family:'Inter','Helvetica Neue',Arial,sans-serif;
   font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;user-select:none;
   position:relative;line-height:1.4;transition:color .15s;
 }
+.upload-check span, .home-upload-check span { margin:0;padding:0; }
 .upload-check:hover, .home-upload-check:hover { color:var(--ink); }
 .home-upload-check{font-size:14px;color:var(--ink3);}
 [data-theme="dark"] .home-upload-check{color:rgba(240,240,240,0.75);}
@@ -1890,5 +1891,5 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .home-hero .home-upload-wrap {
   width:100%;max-width:520px;margin-left:auto;margin-right:auto;
 }
-.home-hero .home-upload-check { margin-bottom:16px; gap:6px; }
+.home-hero .home-upload-check { margin-bottom:16px; gap:5px; }
 .home-hero .home-upload-wrap.open { margin-top:8px; margin-bottom:24px; }
