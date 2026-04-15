@@ -36,9 +36,9 @@ Use this exact structure:
   ],
   "frugal": {"title":"Specific frugal AI use case","desc":"2-3 sentences.","saving":"Quantified benefit estimate"},
   "stakeholders": [
-    {"init":"2L","bg":"#e8f0fb","tc":"#0056b3","name":"Name or role","role":"Full title · Company","why":"Why relevant","priority":"Priority 1","ph":true},
-    {"init":"2L","bg":"#fff3e8","tc":"#e06800","name":"...","role":"...","why":"...","priority":"Priority 1","ph":true},
-    {"init":"2L","bg":"#edf7f1","tc":"#1a7a4a","name":"...","role":"...","why":"...","priority":"Priority 2","ph":false}
+    {"init":"2L","bg":"#edf7f1","tc":"#1a7a4a","name":"Verified CSO or Head of Sustainability — use real public name where possible, else describe role and append (unverified)","role":"Full title · Company","why":"Why relevant","priority":"Priority 1","emailFocus":"sustainability","ph":true},
+    {"init":"2L","bg":"#fff3e8","tc":"#e06800","name":"Verified CEO or Board-level executive with ESG mandate — append (unverified) if not confirmed","role":"...","why":"...","priority":"Priority 1","emailFocus":"executive","ph":true},
+    {"init":"2L","bg":"#e8f0fb","tc":"#0056b3","name":"Verified CTO / CIO / Chief Technology leader — append (unverified) if not confirmed","role":"...","why":"...","priority":"Priority 2","emailFocus":"technology","ph":true}
   ],
   "questions": [
     {"text":"Specific question tied to this company's ESG commitment","persona":"For: Role"},
@@ -74,6 +74,8 @@ Use ONLY Orange Business's actual pillars:
 - Frugal AI & Eco-Design: RGESN framework, right-sized AI models, GenAI governance, eco-design certification
 - Strategic Decarbonisation: Corporate Decarbonisation Roadmap, Scope 3 Estimator, CSRD Acceleration, EcoVadis Programme
 - Orange credentials: EcoVadis Platinum, SBTi-aligned net-zero 2040, RGESN certified, 28,000+ enterprise customers
+
+For the "stakeholders" array, return EXACTLY 3 entries in this order: (1) sustainability owner — CSO / Head of Sustainability / Environmental Director (emailFocus: "sustainability"); (2) executive sponsor — CEO, Chairman or a Board-level executive with ESG accountability (emailFocus: "executive"); (3) technology leader — CTO, CIO or Chief Technology/Digital Officer (emailFocus: "technology"). Use real, publicly verifiable names wherever possible. If you cannot verify a specific incumbent with high confidence, use a role-based description (e.g. "Chief Sustainability Officer") and append "(unverified)" at the end of the role field. Never fabricate specific names.
 
 Use your knowledge of ${val}'s actual published ESG strategy. Where possible, include real source URLs for ESG claims and ratings.
 
@@ -187,37 +189,54 @@ Return ONLY raw JSON.`;
   return JSON.parse(raw);
 }
 
-export async function generateOutreachEmail(stakeholder, company, apiKey, lang) {
+export async function generateOutreachEmail(stakeholder, company, apiKey, lang, selectedSolution) {
+  const sol = selectedSolution || company.solutions?.[0] || { name: 'ESG Data Platform', desc: '' };
+  const solName = sol.name || sol.offer || 'Orange Business solution';
+  const solDesc = sol.desc || sol.description || '';
+  const langName = lang === 'fr' ? 'French' : 'English';
+
   if (apiKey) {
-    const langInstruction = lang === 'fr'
-      ? ' Write the email in natural, professional business French suitable for a French executive audience.'
-      : '';
-    const prompt = `Generate a professional, personalised cold outreach email for an Orange Business sales rep to send to ${stakeholder.name} (${stakeholder.role}) at ${company.name}.
+    const commitments = (company.esg || []).map(e => `${e.title} ${e.value}`).join(' · ');
+    const topQuote = Array.isArray(company.leaderQuotes) && company.leaderQuotes[0]
+      ? `"${company.leaderQuotes[0].quote}" — ${company.leaderQuotes[0].name}, ${company.leaderQuotes[0].title}`
+      : 'No public quote available — reference the published ESG commitments instead.';
 
-Context:
-- Company: ${company.name} (${company.industry}, ESG score ${company.score}/100)
-- Contact reason: ${stakeholder.why}
-- Company's top ESG priority: ${company.topics[0]?.name} (${company.topics[0]?.pct}% priority)
-- Recommended Orange solution: ${company.solutions[0]?.offer}
-- Orange credentials: EcoVadis Platinum, SBTi-aligned net-zero 2040, CSRD Wave 1 reporter
+    const systemPrompt = `You are an expert Orange Business sales writer. Generate a personalised cold outreach email.
 
-Write a concise, professional cold outreach email. Keep it under 200 words. Focus on their specific ESG challenge, not a generic pitch.${langInstruction}
+Recipient: ${stakeholder.name}, ${stakeholder.role} at ${company.name}
+Their focus area: ${stakeholder.why}
+Selected Orange solution to feature: ${solName} — ${solDesc}
+Company ESG context: ${commitments}
+Relevant company leader quote: ${topQuote}
+Orange credentials: EcoVadis Platinum (top 1% globally), SBTi-aligned net-zero by 2040, RGESN eco-design certified.
 
-Return ONLY a JSON object: {"subject":"email subject","body":"full email body text, no HTML, with line breaks"}`;
+Write a cold email that:
+1. Opens with ONE specific reference to ${company.name}'s public ESG commitment or a leader statement — make it show you've done your research
+2. Identifies the specific gap or pressure point most relevant to ${stakeholder.role} and ${stakeholder.why}
+3. Positions ${solName} as the precise answer to that gap — be specific about what it does
+4. References Orange Business's own ESG credentials as proof of credibility — we practice what we sell
+5. Closes with a clear low-friction CTA: a 15-minute call to share how we helped a similar company
+
+Rules: Under 200 words. No em dashes. No generic phrases like "I hope this finds you well". Professional and direct. Respond in ${langName}.
+
+Return ONLY a JSON object with this exact shape, nothing else: {"subject":"email subject line","body":"full email body with line breaks"}`;
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 700, messages: [{ role: 'user', content: systemPrompt }] })
     });
     if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     let raw = data.content[0].text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    parsed._solution = solName;
+    return parsed;
   }
 
-  // Template fallback (no API key)
-  const sol = company.solutions[0] || { offer: 'ESG Data Platform', pillar: 'IT for Society' };
+  // Template fallback (no API key) — still solution-aware
+  const fallbackSol = selectedSolution || company.solutions?.[0] || { name: 'ESG Data Platform', offer: 'ESG Data Platform', pillar: 'IT for Society', desc: '' };
+  const fallbackName = fallbackSol.name || fallbackSol.offer || 'ESG Data Platform';
   const critical = company.topics?.find(t => t.badge === 'Critical' || t.badge === 'Critique') || company.topics?.[0];
   const csrdEsg = company.esg?.find(e => /csrd|wave/i.test(e.title + ' ' + e.value));
   const ind = (company.industry || 'sector').toLowerCase();
@@ -225,26 +244,27 @@ Return ONLY a JSON object: {"subject":"email subject","body":"full email body te
   let postscript;
   if (csrdEsg && critical) {
     const wave = /wave/i.test(csrdEsg.value) ? csrdEsg.value : 'Wave 1';
-    postscript = `As a CSRD ${wave} reporter, ${company.name}'s ${critical.name.toLowerCase()} data (${critical.pct}% materiality) will face external audit this reporting cycle — in our experience, that's precisely where organisations most regret not having the right infrastructure in place sooner.`;
+    postscript = `As a CSRD ${wave} reporter, ${company.name}'s ${critical.name.toLowerCase()} data (${critical.pct}% materiality) will face external audit this reporting cycle, and that is precisely where organisations most regret not having the right infrastructure in place sooner.`;
   } else if (critical && critical.pct >= 88) {
-    postscript = `With ${critical.name.toLowerCase()} at ${critical.pct}% on ${company.name}'s materiality matrix, this is the pressure point where reactive management starts becoming a real liability — it's also where we've delivered the fastest, most measurable impact for comparable ${ind} clients.`;
+    postscript = `With ${critical.name.toLowerCase()} at ${critical.pct}% on ${company.name}'s materiality matrix, this is the pressure point where reactive management becomes a liability, and where we have delivered the fastest measurable impact for comparable ${ind} clients.`;
   } else if (critical) {
-    postscript = `${company.name} has flagged ${critical.name.toLowerCase()} as a critical material issue — our ${sol.pillar || 'approach'} is built specifically for organisations at exactly this stage of their ESG journey.`;
+    postscript = `${company.name} has flagged ${critical.name.toLowerCase()} as a critical material issue, and ${fallbackName} is built specifically for organisations at exactly this stage of their ESG journey.`;
   } else {
-    postscript = `${company.name}'s ESG disclosures show the kind of ambition where execution infrastructure — not strategy — becomes the limiting factor. That's the conversation I'd most like to have.`;
+    postscript = `${company.name}'s ESG disclosures show the kind of ambition where execution infrastructure, not strategy, becomes the limiting factor.`;
   }
 
   return {
-    subject: `${company.name.split(' ')[0]} × Orange Business — ${sol.offer}`,
+    _solution: fallbackName,
+    subject: `${company.name.split(' ')[0]} × Orange Business — ${fallbackName}`,
     body: `Dear ${stakeholder.name.split(' ')[0]},
 
-I hope this finds you well. I'm reaching out from Orange Business, where we partner with organisations like ${company.name} to address their most pressing ESG challenges.
+I am reaching out from Orange Business about ${fallbackName}, specifically in relation to ${company.name}'s public ${company.topics?.[0]?.name?.toLowerCase() || 'sustainability'} commitments.
 
-Given ${company.name}'s commitment to ${company.topics[0]?.name?.toLowerCase() || 'sustainable development'} and your upcoming CSRD obligations, I believe our ${sol.offer} could offer immediate, measurable value.
+Given your role as ${stakeholder.role.split('·')[0].trim()} and the ${stakeholder.why.toLowerCase()}, ${fallbackName} offers a direct way to close the gap between commitment and verified, auditable data.
 
-We've helped comparable ${company.industry} organisations reduce their ESG reporting overhead by 40–60% while improving data quality scores — and our own EcoVadis Platinum status means we bring practitioner experience, not just advisory.
+Orange Business holds EcoVadis Platinum status (top 1% globally), is SBTi-aligned to net zero by 2040, and was a CSRD Wave 1 reporter. We practise what we sell.
 
-I'd love to share a 20-minute overview of how we've approached similar challenges in your sector. Would you be open to a brief call next week?
+Could we find 15 minutes next week to share how we have helped a comparable ${company.industry} organisation operationalise exactly this?
 
 Best regards,
 [Your name]

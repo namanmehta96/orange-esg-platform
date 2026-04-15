@@ -40,9 +40,9 @@ export const SEED_DATA = {
       desc:'Lightweight NLP models extract ESG data points from existing BNP Paribas sustainability reports and supplier documents — avoiding costly new data infrastructure. Aligns with Orange\'s responsible AI principles.',
       saving:'Est. 60–70% reduction in manual ESG data entry · No new digital infrastructure required'},
     stakeholders:[
-      {init:'LP',bg:'#e8f0fb',tc:'#0056b3',name:'Laurence Pessez',role:'Global Head of CSR · BNP Paribas',why:'Owns net-zero strategy & CSRD reporting',priority:'Priority 1',ph:true},
-      {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'Technology & Transformation Director',role:'CTO Office (via existing CIO relationship)',why:'Digital carbon & IT architecture',priority:'Priority 1',ph:true},
-      {init:'ESG',bg:'#edf7f1',tc:'#1a7a4a',name:'Head of ESG Reporting & Data',role:'Finance Division · BNP Paribas',why:'CSRD data workflows & tooling gaps',priority:'Priority 2',ph:false}
+      {init:'LP',bg:'#edf7f1',tc:'#1a7a4a',name:'Laurence Pessez',role:'Global Head of CSR · BNP Paribas',why:'Owns net-zero strategy, CSRD reporting and ESG KPI governance across the Group',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'BG',bg:'#e8f0fb',tc:'#0056b3',name:'Bernard Gavgani',role:'Group Chief Information Officer · BNP Paribas',why:'Oversees all IT infrastructure, digital transformation and technology carbon footprint across the Group',priority:'Priority 1',emailFocus:'technology',ph:true},
+      {init:'JLB',bg:'#fff3e8',tc:'#e06800',name:'Jean-Laurent Bonnafé',role:'Chief Executive Officer · BNP Paribas',why:'Final decision-maker on net-zero financing commitments and ESG integration into Group strategy',priority:'Priority 2',emailFocus:'executive',ph:true}
     ],
     questions:[
       {text:'"How are you currently tracking financed emissions across your portfolio, and where are the biggest data gaps ahead of your 2030 SBTi interim targets?"',persona:'For: Chief Sustainability Officer'},
@@ -94,9 +94,9 @@ export const SEED_DATA = {
       desc:'Lightweight NLP models extract and cross-validate ESG data from supplier self-assessments and third-party audit reports — no large-model overhead. Processes PDFs from 56,000+ suppliers at scale with minimal compute footprint.',
       saving:'Est. 75% reduction in manual supplier data validation · Aligns with Unilever\'s responsible sourcing commitments'},
     stakeholders:[
-      {init:'RM',bg:'#edf7f1',tc:'#1a7a4a',name:'Rebecca Marmot',role:'Chief Sustainability Officer · Unilever',why:'Owns 2039 net-zero & supplier strategy',priority:'Priority 1',ph:true,verify:true},
-      {init:'SC',bg:'#e8f0fb',tc:'#0056b3',name:'Supply Chain Director',role:'Global Operations (via CIO relationship)',why:'Scope 3 data & supplier traceability',priority:'Priority 1',ph:true},
-      {init:'PS',bg:'#fff3e8',tc:'#e06800',name:'Head of Sustainable Sourcing',role:'Procurement Division · Unilever',why:'Supplier ESG data collection gaps',priority:'Priority 2',ph:false}
+      {init:'MS',bg:'#edf7f1',tc:'#1a7a4a',name:'Michael Stewart',role:'Chief Corporate Affairs & Communications Officer · Unilever',why:'Leads global sustainability strategy and external ESG commitments since November 2025',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'FF',bg:'#fff3e8',tc:'#e06800',name:'Fernando Fernandez',role:'Chief Executive Officer · Unilever',why:'CEO since March 2025, accountable for Climate Transition Action Plan and net-zero 2039 delivery',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'HP',bg:'#e8f0fb',tc:'#0056b3',name:'Head of Procurement Sustainability',role:'Supply Chain Division · Unilever',why:'Scope 3 supplier emissions reduction across 300 priority suppliers under the CTAP',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"Your 2039 net-zero target relies on Scope 3 — how are you currently collecting and validating carbon data from your 56,000+ suppliers at scale?"',persona:'For: Chief Sustainability Officer'},
@@ -148,9 +148,9 @@ export const SEED_DATA = {
       desc:'Deploy lightweight on-premise AI models to detect energy anomalies across Renault\'s plant IoT sensor networks in real time — with full transparency on the model\'s own carbon cost. Aligned to Orange\'s RGESN framework.',
       saving:'Est. 8–12% plant energy waste reduction · On-premise deployment minimises AI carbon footprint · Fully auditable'},
     stakeholders:[
-      {init:'TP',bg:'#fff3e8',tc:'#e06800',name:'Thierry Piéton',role:'Chief Financial Officer (ESG co-owner) · Renault',why:'CSRD financial materiality & net-zero investment',priority:'Priority 1',ph:true,verify:true},
-      {init:'VP',bg:'#edf7f1',tc:'#1a7a4a',name:'VP Sustainability & CSR',role:'Group Sustainability Division · Renault',why:'Owns EV lifecycle & circular economy strategy',priority:'Priority 1',ph:true},
-      {init:'MF',bg:'#e8f0fb',tc:'#0056b3',name:'Manufacturing IT Director',role:'Industrial Systems (via CIO relationship)',why:'Plant IoT & energy management systems',priority:'Priority 2',ph:false}
+      {init:'TP',bg:'#edf7f1',tc:'#1a7a4a',name:'Thierry Piéton',role:'Chief Financial Officer · Renault Group',why:'Co-pilots CSRD compliance and net-zero capital allocation strategy',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'PB',bg:'#e8f0fb',tc:'#0056b3',name:'Philippe Brunet',role:'Chief Technology Officer · Renault Group',why:'CTO since September 2025, leads EV engineering, electrification and digital manufacturing transformation',priority:'Priority 1',emailFocus:'technology',ph:true},
+      {init:'FP',bg:'#fff3e8',tc:'#e06800',name:'François Provost',role:'Chief Executive Officer · Renault Group',why:'CEO since July 2025, leading accelerated transformation toward electrification and sustainability',priority:'Priority 2',emailFocus:'executive',ph:true}
     ],
     questions:[
       {text:'"Your 2030 Scope 1&2 target requires 90% reduction — how are you currently monitoring and reporting energy consumption at plant level in real time?"',persona:'For: VP Sustainability / CFO'},
@@ -202,9 +202,9 @@ export const SEED_DATA = {
       desc:'Replacing manual audit processes with efficient, low-carbon automated verification for LVMH\'s raw material supply chains — supporting LIFE 360 traceability commitments across leather, gold and diamond sourcing.',
       saving:'Est. 70% reduction in manual supply chain audit time · Supports LIFE 360 traceability · Low-carbon AI deployment'},
     stakeholders:[
-      {init:'HG',bg:'#e8f0fb',tc:'#0056b3',name:'Hélène Gauthier',role:'Chief Sustainability Officer · LVMH Group',why:'LIFE 360 programme owner — ESG & CSRD',priority:'Priority 1',ph:true,verify:true},
-      {init:'CD',bg:'#fff3e8',tc:'#e06800',name:'Chief Digital Officer',role:'Group Digital & Innovation · LVMH',why:'Digital sustainability & eco-design',priority:'Priority 1',ph:true},
-      {init:'SR',bg:'#edf7f1',tc:'#1a7a4a',name:'Head of Supplier Responsibility',role:'Operations & Supply Chain · LVMH',why:'Traceability & CSRD supply chain data',priority:'Priority 2',ph:false}
+      {init:'HV',bg:'#edf7f1',tc:'#1a7a4a',name:'Hélène Valade',role:'Environmental Development Director · LVMH',why:'Leads LIFE 360 programme across all 75 Maisons covering climate, biodiversity and circularity',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'AA',bg:'#fff3e8',tc:'#e06800',name:'Antoine Arnault',role:'Director of Image & Environment · LVMH',why:'Executive Committee sponsor of all environmental initiatives, oversees Hélène Valade',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'CC',bg:'#e8f0fb',tc:'#0056b3',name:'Cécile Cabanis',role:'Chief Financial Officer · LVMH',why:'CFO since February 2025, responsible for CSRD financial disclosure and ESG integration into capital allocation',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"LIFE 360 commits to full traceability across your supply chain — how are you currently collecting ESG data from 75 Maisons at the cadence CSRD Wave 1 requires?"',persona:'For: Chief Sustainability Officer'},
@@ -256,9 +256,9 @@ export const SEED_DATA = {
       desc:'Ensuring Schneider\'s own AI-powered energy management tools have minimal carbon overhead, consistent with their 2040 net-zero commitment. On-premise deployment eliminates cloud data transfer emissions.',
       saving:'Est. 40–60% reduction in AI infrastructure energy use · Consistent with SSI Index KPI #7 (digital efficiency) · Fully auditable'},
     stakeholders:[
-      {init:'GH',bg:'#edf7f1',tc:'#1a7a4a',name:'Gilles Huguenin',role:'Chief Sustainability Officer · Schneider Electric',why:'SSI Index & net-zero 2040 programme owner',priority:'Priority 1',ph:true,verify:true},
-      {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'CTO / Head of Digital',role:'EcoStruxure Platform · Schneider Electric',why:'Digital product sustainability & AI efficiency',priority:'Priority 1',ph:true},
-      {init:'DS',bg:'#e8f0fb',tc:'#0056b3',name:'Head of Digital Energy Solutions',role:'Customer Sustainability Tools · Schneider',why:'Customer-facing sustainability tools',priority:'Priority 2',ph:false}
+      {init:'CL',bg:'#edf7f1',tc:'#1a7a4a',name:'Chris Leong',role:'Chief Sustainability Officer · Schneider Electric',why:'Oversees SSI programme, CDP A-List status and net-zero 2040 supply chain roadmap',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'OB',bg:'#fff3e8',tc:'#e06800',name:'Olivier Blum',role:'Chief Executive Officer · Schneider Electric',why:'CEO since November 2024, accelerating sustainability and AI-driven energy management strategy',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'DM',bg:'#e8f0fb',tc:'#0056b3',name:'Digitisation & IT Leadership',role:'CTO Office · Schneider Electric',why:'Eco-design compliance, RGESN framework implementation and digital product carbon footprint',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"Your SSI Index tracks 11 sustainability KPIs quarterly — how much of that data collection is still manual, and where are the biggest accuracy risks in your current process?"',persona:'For: Chief Sustainability Officer'},
@@ -310,9 +310,9 @@ export const SEED_DATA = {
       desc:'Supporting the 100GW renewables buildout with efficient, on-premise AI models for wind and solar asset monitoring — avoiding cloud data transfer emissions. On-site deployment at wind/solar facilities minimises digital carbon footprint.',
       saving:'Est. 15–20% reduction in renewable asset downtime · On-premise = zero cloud emissions · Frugal AI aligns with RGESN principles'},
     stakeholders:[
-      {init:'AH',bg:'#edf7f1',tc:'#1a7a4a',name:'Aurélien Hamelle',role:'President, Strategy & Sustainability · TotalEnergies',why:'Net-zero & Scope 3 credibility',priority:'Priority 1',ph:true},
-      {init:'CD',bg:'#e8f0fb',tc:'#0056b3',name:'Chief Digital & Innovation Officer',role:'Digital Transformation · TotalEnergies',why:'Digital transformation & ESG data',priority:'Priority 1',ph:true},
-      {init:'EC',bg:'#fff3e8',tc:'#e06800',name:'Head of Climate & Energy Transition',role:'100GW Renewables Programme · TotalEnergies',why:'100GW renewables programme',priority:'Priority 2',ph:false}
+      {init:'AH',bg:'#edf7f1',tc:'#1a7a4a',name:'Aurélien Hamelle',role:'President, Strategy & Sustainability · TotalEnergies',why:'Executive Committee member responsible for climate strategy, sustainability and government affairs since January 2024',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'PP',bg:'#fff3e8',tc:'#e06800',name:'Patrick Pouyanné',role:'Chairman & CEO · TotalEnergies',why:'Personally drives the multi-energy company strategy and net-zero narrative',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'JS',bg:'#e8f0fb',tc:'#0056b3',name:'Jean-Pierre Sbraire',role:'Chief Financial Officer · TotalEnergies',why:'CFO responsible for CSRD financial reporting and capital allocation toward low-carbon investments',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"TotalEnergies\' Scope 3 Category 11 represents 90% of your footprint — what is your current strategy for demonstrating credible reduction progress to investors and ESG rating agencies?"',persona:'For: SVP Strategy & Sustainability'},
@@ -364,9 +364,9 @@ export const SEED_DATA = {
       desc:'Right-sized NLP models analyse climate exposure in underwriting decisions without the carbon overhead of large foundation models — supporting AXA\'s ambition to embed climate risk in every pricing decision at scale with minimal digital footprint.',
       saving:'Est. 50% reduction in climate risk data processing costs · On-premise option available · Minimal digital carbon footprint'},
     stakeholders:[
-      {init:'AC',bg:'#edf7f1',tc:'#1a7a4a',name:'Amanda Clack',role:'Group Chief Sustainability Officer · AXA',why:'Net-zero investment strategy & CSRD reporting',priority:'Priority 1',ph:true,verify:true},
-      {init:'CIO',bg:'#e8f0fb',tc:'#0056b3',name:'Chief Investment Officer',role:'AXA Investment Managers',why:'ESG integration across EUR 870B AUM',priority:'Priority 1',ph:true},
-      {init:'CTO',bg:'#fff3e8',tc:'#e06800',name:'Group Chief Technology Officer',role:'AXA Group Technology',why:'IT carbon footprint & digital sustainability',priority:'Priority 2',ph:false}
+      {init:'TB',bg:'#fff3e8',tc:'#e06800',name:'Thomas Buberl',role:'Chief Executive Officer · AXA',why:'Personally committed to net-zero underwriting by 2050 and climate systemic risk leadership',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'AJ',bg:'#edf7f1',tc:'#1a7a4a',name:'Alban de Mailly Nesle',role:'Group Chief Risk Officer · AXA',why:'Oversees climate risk integration into underwriting, investment and ESG portfolio alignment',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'FT',bg:'#e8f0fb',tc:'#0056b3',name:'Frédéric de Courtois',role:'Deputy CEO · AXA',why:'Deputy CEO overseeing transformation including digital infrastructure and ESG data systems',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"AXA\'s TCFD alignment commits to portfolio-level climate risk disclosure — how are you currently collecting verified ESG data from investee companies at the scale CSRD now requires?"',persona:'For: Chief Sustainability Officer'},
@@ -418,9 +418,9 @@ export const SEED_DATA = {
       desc:'Replacing costly ground-truth farm surveys with efficient satellite-based AI emissions estimation — covering 100,000+ farms globally with minimal compute footprint. Supports Danone\'s SBTi validation and CSRD agricultural Scope 3 data.',
       saving:'Est. 80% reduction in agricultural data collection cost · Covers 100,000+ farms · Aligns with RGESN responsible AI principles'},
     stakeholders:[
-      {init:'CV',bg:'#edf7f1',tc:'#1a7a4a',name:'Cécile Cabanis',role:'Chief Sustainability Officer · Danone',why:'SBTi targets & agricultural Scope 3 strategy',priority:'Priority 1',ph:true,verify:true},
-      {init:'VP',bg:'#fff3e8',tc:'#e06800',name:'VP Agricultural Sourcing',role:'Global Procurement · Danone',why:'Farm-level ESG data & regenerative agriculture',priority:'Priority 1',ph:true},
-      {init:'CTO',bg:'#e8f0fb',tc:'#0056b3',name:'Chief Technology Officer',role:'Group Digital · Danone',why:'Digital infrastructure & ESG data platform',priority:'Priority 2',ph:false}
+      {init:'BS',bg:'#edf7f1',tc:'#1a7a4a',name:'Bertrand Swiderski',role:'Chief Sustainability Officer · Danone',why:'Leads B Corp certification strategy, Scope 3 agricultural emissions and CSRD compliance',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'AS',bg:'#fff3e8',tc:'#e06800',name:'Antoine de Saint-Affrique',role:'Chief Executive Officer · Danone',why:'CEO driving sustainability as core business strategy and B Corp commitment across all markets',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'JE',bg:'#e8f0fb',tc:'#0056b3',name:'Juergen Esser',role:'Chief Financial & Technology Officer · Danone',why:'CFO and CTO combined role, responsible for ESG data infrastructure and CSRD financial disclosure',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"Danone\'s SBTi targets require 30% Scope 3 reduction by 2030 — how are you currently collecting and verifying carbon data from your 100,000+ agricultural suppliers at the cadence SBTi validation requires?"',persona:'For: Chief Sustainability Officer'},
@@ -472,9 +472,9 @@ export const SEED_DATA = {
       desc:'Deploy on-premise AI models at Airbus manufacturing sites to detect energy anomalies and optimise maintenance schedules — minimising digital carbon overhead while reducing manufacturing energy waste. RGESN-compliant, transparent model selection.',
       saving:'Est. 8–15% manufacturing energy waste reduction · On-premise = zero cloud data transfer emissions · RGESN compliant'},
     stakeholders:[
-      {init:'EL',bg:'#edf7f1',tc:'#1a7a4a',name:'Edouard Lauga',role:'VP Sustainability & Environment · Airbus',why:'Net-zero strategy & Scope 3 product emissions',priority:'Priority 1',ph:true,verify:true},
-      {init:'IS',bg:'#e8f0fb',tc:'#0056b3',name:'Head of Industrial Systems',role:'Manufacturing IT & Operations · Airbus',why:'Plant energy monitoring & IoT infrastructure',priority:'Priority 1',ph:true},
-      {init:'SC',bg:'#fff3e8',tc:'#e06800',name:'Head of Supply Chain ESG',role:'Global Procurement · Airbus',why:'Supplier Scope 3 data & CSRD compliance',priority:'Priority 2',ph:false}
+      {init:'JK',bg:'#edf7f1',tc:'#1a7a4a',name:'Julie Kitcher',role:'EVP Communications & Corporate Affairs · Airbus',why:'Oversees sustainability strategy, net-zero 2050 roadmap and hydrogen aircraft programme externally',priority:'Priority 1',emailFocus:'sustainability',ph:true},
+      {init:'GF',bg:'#fff3e8',tc:'#e06800',name:'Guillaume Faury',role:'Chief Executive Officer · Airbus',why:'Personally committed to zero-emission commercial aircraft by 2035 and full aviation decarbonisation',priority:'Priority 1',emailFocus:'executive',ph:true},
+      {init:'SK',bg:'#e8f0fb',tc:'#0056b3',name:'Sabine Klauke',role:'Chief Technology Officer · Airbus',why:'CTO leading hydrogen propulsion, sustainable aviation fuel technology and zero-emission aircraft development',priority:'Priority 2',emailFocus:'technology',ph:true}
     ],
     questions:[
       {text:'"Airbus\'s 35+ manufacturing sites generate significant Scope 1&2 emissions — how are you currently monitoring and reporting energy consumption at site level in real time for your CSRD E1 disclosure?"',persona:'For: VP Sustainability & Environment'},

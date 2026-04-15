@@ -1,20 +1,79 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { esc, showToast } from '../../utils/helpers';
 import { generateOutreachEmail } from '../../utils/api';
 
-export default function KeyContacts({ company }) {
-  const { T, apiKey, currentLang } = useApp();
-  const [modalState, setModalState] = useState(null); // null | { stakeholder, loading, email, error }
+function pickDefaultSolution(company, emailFocus, catalog) {
+  if (!catalog || !catalog.length) return null;
+  const matchById = (id) => catalog.find(c => c.id === id);
 
-  const openEmailDraft = async (stakeholder) => {
-    setModalState({ stakeholder, loading: true, email: null, error: null });
-    try {
-      const email = await generateOutreachEmail(stakeholder, company, apiKey, currentLang);
-      setModalState({ stakeholder, loading: false, email, error: null });
-    } catch (err) {
-      setModalState({ stakeholder, loading: false, email: null, error: err.message || String(err) });
+  if (emailFocus === 'executive') {
+    const firstOffer = ((company.solutions || [])[0]?.offer || '').toLowerCase();
+    if (firstOffer) {
+      const found = catalog.find(c => firstOffer.includes(c.name.toLowerCase().split(/[\s—&·]/)[0]) || c.name.toLowerCase().includes(firstOffer.split(/[\s—&·]/)[0]));
+      if (found) return found;
     }
+    return matchById('decarb-roadmap') || catalog[0];
+  }
+
+  if (emailFocus === 'technology') {
+    const techIds = ['rgesn', 'frugal-ai', 'carbon-calc', 'ecodesign-cert', 'genai-gov', 'sustainable-cloud'];
+    for (const id of techIds) {
+      const found = matchById(id);
+      if (found) return found;
+    }
+    return catalog[0];
+  }
+
+  // sustainability default
+  const susIds = ['esg-platform', 'decarb-roadmap', 'scope3-estimator', 'csrd-accel', 'ecovadis'];
+  for (const id of susIds) {
+    const found = matchById(id);
+    if (found) return found;
+  }
+  return catalog[0];
+}
+
+export default function KeyContacts({ company }) {
+  const { T, apiKey, currentLang, getLocalizedCatalog } = useApp();
+  // modalState: null | { stakeholder, step: 'select'|'loading'|'ready'|'error', selectedSolution, email, error }
+  const [modalState, setModalState] = useState(null);
+
+  const catalog = useMemo(() => getLocalizedCatalog(), [getLocalizedCatalog]);
+
+  const openSolutionPicker = (stakeholder) => {
+    const preselected = pickDefaultSolution(company, stakeholder.emailFocus, catalog);
+    setModalState({ stakeholder, step: 'select', selectedSolution: preselected, email: null, error: null });
+  };
+
+  const generateForSelected = async (nextState) => {
+    const base = nextState || modalState;
+    if (!base || !base.selectedSolution) return;
+    setModalState({ ...base, step: 'loading', email: null, error: null });
+    try {
+      const email = await generateOutreachEmail(
+        base.stakeholder,
+        company,
+        apiKey,
+        currentLang,
+        base.selectedSolution
+      );
+      setModalState(prev => prev ? { ...prev, step: 'ready', email, error: null } : prev);
+    } catch (err) {
+      setModalState(prev => prev ? { ...prev, step: 'error', email: null, error: err.message || String(err) } : prev);
+    }
+  };
+
+  const selectSolution = (sol) => {
+    setModalState(prev => prev ? { ...prev, selectedSolution: sol } : prev);
+  };
+
+  const goBackToSelector = () => {
+    setModalState(prev => prev ? { ...prev, step: 'select', email: null, error: null } : prev);
+  };
+
+  const regenerate = () => {
+    generateForSelected();
   };
 
   const closeModal = () => setModalState(null);
@@ -30,7 +89,7 @@ export default function KeyContacts({ company }) {
       await navigator.clipboard.writeText(text);
       showToast(T('contacts.email.copied'));
     } catch {
-      showToast('Copy failed');
+      showToast(T('toast.copyfail'));
     }
   };
 
@@ -51,9 +110,6 @@ export default function KeyContacts({ company }) {
               <div className="si2">
                 <div className="sn">{s.name}</div>
                 <div className="sr">{s.role}</div>
-                {s.verify && (
-                  <div className="sr-verify">{T('stakeholder.verify')}</div>
-                )}
               </div>
               <div className="sw">{s.why}</div>
               <div className={`spr ${s.ph ? 'ph' : 'pm'}`}>{s.priority}</div>
@@ -69,7 +125,7 @@ export default function KeyContacts({ company }) {
               <button
                 type="button"
                 className="email-draft-btn"
-                onClick={() => openEmailDraft(s)}
+                onClick={() => openSolutionPicker(s)}
                 title={T('contacts.email.title')}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
@@ -101,7 +157,7 @@ export default function KeyContacts({ company }) {
 
       {modalState && (
         <div className="modal-overlay" style={{ display: 'flex' }} onClick={backdropClick}>
-          <div className="modal-box" style={{ maxWidth: 560 }}>
+          <div className="modal-box email-modal">
             <div className="modal-head">
               <div className="modal-title">
                 <div className="modal-title-ico">
@@ -114,34 +170,87 @@ export default function KeyContacts({ company }) {
               </button>
             </div>
 
-            <div style={{ fontSize: 12, color: 'var(--ink3)', marginBottom: 12 }}>
-              <strong style={{ color: 'var(--ink)' }}>{modalState.stakeholder.name}</strong> · {modalState.stakeholder.role}
+            <div className="email-recipient">
+              <strong>{modalState.stakeholder.name}</strong>
+              <span>{modalState.stakeholder.role}</span>
             </div>
 
-            {modalState.loading && (
+            {modalState.step === 'select' && (
+              <>
+                <div className="email-selector-label">{T('contacts.email.pickSolution')}</div>
+                <div className="email-solution-grid">
+                  {catalog.map((sol) => {
+                    const active = modalState.selectedSolution && modalState.selectedSolution.id === sol.id;
+                    return (
+                      <button
+                        key={sol.id}
+                        type="button"
+                        className={`solution-chip${active ? ' active' : ''}`}
+                        onClick={() => selectSolution(sol)}
+                      >
+                        <span className="solution-chip-name">{sol.name}</span>
+                        <span className="solution-chip-pillar" style={{ color: sol.pillarColor }}>{sol.pillar}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="modal-btns">
+                  <button
+                    className="modal-save"
+                    onClick={() => generateForSelected()}
+                    disabled={!modalState.selectedSolution}
+                  >
+                    {T('contacts.email.generate')}
+                  </button>
+                  <button className="modal-clear" onClick={closeModal}>
+                    {T('contacts.email.close')}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {modalState.step === 'loading' && (
               <div className="email-loading">
                 <div className="spinner-sm" />
-                {T('contacts.email.loading')}
+                {T('contacts.email.loading.personalised', { name: modalState.stakeholder.name.split(' ')[0] })}
               </div>
             )}
 
-            {modalState.error && (
-              <div style={{ color: 'var(--red)', padding: 12 }}>{modalState.error}</div>
+            {modalState.step === 'error' && (
+              <>
+                <div style={{ color: 'var(--red)', padding: 12 }}>{modalState.error}</div>
+                <div className="modal-btns">
+                  <button className="modal-save" onClick={regenerate}>{T('contacts.email.regenerate')}</button>
+                  <button className="modal-clear" onClick={closeModal}>{T('contacts.email.close')}</button>
+                </div>
+              </>
             )}
 
-            {modalState.email && (
+            {modalState.step === 'ready' && modalState.email && (
               <>
+                <div className="email-featuring">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                  <span>
+                    <strong>{T('contacts.email.featuring')}</strong> {modalState.selectedSolution?.name || modalState.email._solution}
+                  </span>
+                </div>
                 <div className="email-subject">
                   <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink3)', textTransform: 'uppercase', letterSpacing: '.6px' }}>
-                    {T('contacts.email.subject')}:
+                    {T('contacts.email.subject')}
                   </span>
                   <br />
-                  {modalState.email.subject}
+                  <strong>{modalState.email.subject}</strong>
                 </div>
                 <div className="email-body-text">{modalState.email.body}</div>
-                <div className="modal-btns">
+                <div className="modal-btns email-modal-btns">
                   <button className="modal-save" onClick={copyDraft}>
                     {T('contacts.email.copy')}
+                  </button>
+                  <button className="modal-clear" onClick={regenerate}>
+                    {T('contacts.email.regenerate')}
+                  </button>
+                  <button className="modal-clear" onClick={goBackToSelector}>
+                    {T('contacts.email.changeSolution')}
                   </button>
                   <button className="modal-clear" onClick={closeModal}>
                     {T('contacts.email.close')}
