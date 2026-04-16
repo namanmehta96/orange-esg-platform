@@ -91,7 +91,7 @@ export default function CompanyProfile({ company }) {
               </a>
             ) : esc(company.name)}
           </div>
-          <div className="co-sub">{company.size} &middot; {company.hq}</div>
+          <div className="co-sub">{company.size} · {company.hq}</div>
           <div className="co-tags">
             {company.tags.map((tag, i) => (
               <span key={i} className={`tag ${company.tagClasses[i] || 'ts3'}`}>{tag}</span>

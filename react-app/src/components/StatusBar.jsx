@@ -14,11 +14,11 @@ export default function StatusBar() {
         {T('status.live')}
       </div>
       <div className="si">
-        <span className="sck">&#10003;</span>
+        <span className="sck">✓</span>
         {T('status.claude')}
       </div>
       <div className="si">
-        <span className="sck">&#10003;</span>
+        <span className="sck">✓</span>
         {T('status.mapping')}
       </div>
       <div id="status-right" style={{ marginLeft: 'auto', fontWeight: 400, opacity: 0.9 }}>

@@ -274,19 +274,19 @@ export default function ExecSummary({ company }) {
           </div>
           <div className="two-col">
             <div className="case-card">
-              <div className="case-label">&#9889; {T('exec.case.label')}</div>
+              <div className="case-label">⚡ {T('exec.case.label')}</div>
               <div className="case-type">Mid-size {company.industry} company, ESG score ~{company.score - 5}</div>
               <div className="case-row"><div className="case-field">{T('exec.case.challenge')}</div><div className="case-val">Manual CSRD data collection across 40+ sites taking 6 FTE months per year; significant risk of ESRS non-compliance</div></div>
               <div className="case-row"><div className="case-field">{T('exec.case.solution')}</div><div className="case-val">Orange ESG Data Platform + Carbon Calculator for IT vendor emissions</div></div>
-              <div className="case-metric">&#10003; 58% reduction in reporting overhead &middot; 100% ESRS E1 data completeness</div>
+              <div className="case-metric">✓ 58% reduction in reporting overhead · 100% ESRS E1 data completeness</div>
               <div className="case-disclaimer">{T('exec.case.disclaimer')}</div>
             </div>
             <div className="case-card">
-              <div className="case-label">&#9889; {T('exec.case.label')}</div>
+              <div className="case-label">⚡ {T('exec.case.label')}</div>
               <div className="case-type">{company.industry} operator, 80,000+ employees</div>
-              <div className="case-row"><div className="case-field">{T('exec.case.challenge')}</div><div className="case-val">No real-time energy monitoring at manufacturing/operational sites; Scope 1&amp;2 targets at risk due to data gaps</div></div>
+              <div className="case-row"><div className="case-field">{T('exec.case.challenge')}</div><div className="case-val">No real-time energy monitoring at manufacturing/operational sites; Scope 1&2 targets at risk due to data gaps</div></div>
               <div className="case-row"><div className="case-field">{T('exec.case.solution')}</div><div className="case-val">Orange Smart Eco-Energy IoT deployment across 12 key facilities</div></div>
-              <div className="case-metric">&#10003; 11% energy cost reduction &middot; Scope 1&amp;2 tracking now real-time and CSRD-ready</div>
+              <div className="case-metric">✓ 11% energy cost reduction · Scope 1&2 tracking now real-time and CSRD-ready</div>
               <div className="case-disclaimer">{T('exec.case.disclaimer')}</div>
             </div>
           </div>

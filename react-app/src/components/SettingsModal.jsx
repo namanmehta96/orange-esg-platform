@@ -94,7 +94,7 @@ export default function SettingsModal() {
 
         <div className={`modal-status ${apiKey ? 'set' : 'none'}`}>
           {apiKey ? (
-            <>&#10003; {T('settings.set')}</>
+            <>✓ {T('settings.set')}</>
           ) : (
             T('settings.none')
           )}

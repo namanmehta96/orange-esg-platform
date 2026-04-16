@@ -54,7 +54,7 @@ export default function SolutionCatalog({ company }) {
       <div className="sec-hdr">
         <div className="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg></div>
         <div className="sec-title">{T('catalog.title')}</div>
-        <div className="sec-sub">{localCatalog.length} {T('catalog.solutions')} &middot; {T('catalog.scored')} {esc(company.name.split(' ')[0])}</div>
+        <div className="sec-sub">{localCatalog.length} {T('catalog.solutions')} · {T('catalog.scored')} {esc(company.name.split(' ')[0])}</div>
       </div>
 
       <div className="catalog-search">

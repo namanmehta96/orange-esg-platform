@@ -298,7 +298,7 @@ export default function MeetingIntel({ company }) {
               >
                 <div className="ta-pillar-dot" style={{ background: s.pillarColor || '#FF7900' }} />
                 <div className="ta-offer">{s.offer}</div>
-                <div className="ta-chevron">&#9660;</div>
+                <div className="ta-chevron">▼</div>
               </div>
               <div
                 className="ta-body"
