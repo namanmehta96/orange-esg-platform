@@ -197,9 +197,9 @@ export default function KeyContacts({ company }) {
       </div>
 
       {modalState && (
-        <div className="modal-overlay" style={{ display: 'flex' }} onClick={backdropClick}>
-          <div className="modal-box email-modal">
-            <div className="modal-head">
+        <div className="modal-overlay" style={{ position:'fixed', inset:0, zIndex:2000, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(0,0,0,0.7)', padding:'16px' }} onClick={backdropClick}>
+          <div className="modal-box email-modal" style={{ display:'flex', flexDirection:'column', width:'100%', maxWidth:'620px', maxHeight:'85vh', background:'var(--card)', borderRadius:'12px', overflow:'hidden' }}>
+            <div className="modal-head" style={{ flexShrink:0, padding:'20px 20px 0' }}>
               <div className="modal-title">
                 <div className="modal-title-ico">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
@@ -211,17 +211,17 @@ export default function KeyContacts({ company }) {
               </button>
             </div>
 
-            <div className="email-recipient">
+            <div className="email-recipient" style={{ flexShrink:0, padding:'12px 20px 0' }}>
               <strong>{modalState.stakeholder.name}</strong>
               <span>{modalState.stakeholder.role}</span>
             </div>
 
             {modalState.step === 'select' && (
               <>
-                <div className="email-modal-fixed-top">
+                <div className="email-modal-fixed-top" style={{ flexShrink:0, padding:'0 20px 6px' }}>
                   <div className="email-selector-label">{T('contacts.email.pickSolution')}</div>
                 </div>
-                <div className="email-modal-scroll">
+                <div className="email-modal-scroll" style={{ flex:1, minHeight:0, overflowY:'auto', padding:'0 20px 20px' }}>
                   <div className="email-solution-grid">
                     {orderedCatalog.map((sol) => {
                       const active = modalState.selectedSolutionId === sol.id;
@@ -243,25 +243,23 @@ export default function KeyContacts({ company }) {
                     })}
                   </div>
                 </div>
-                <div className="email-modal-footer">
-                  <div className="modal-btns email-modal-btns">
-                    <button
-                      className="modal-save"
-                      onClick={generateEmail}
-                      disabled={!modalState.selectedSolutionId}
-                    >
-                      {T('contacts.email.generateWith', { name: selectedName })}
-                    </button>
-                    <button className="modal-clear" onClick={closeModal}>
-                      {T('contacts.email.close')}
-                    </button>
-                  </div>
+                <div className="email-modal-footer" style={{ flexShrink:0, padding:'12px 20px 16px', borderTop:'1px solid var(--line)', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                  <button
+                    className="modal-save"
+                    onClick={generateEmail}
+                    disabled={!modalState.selectedSolutionId}
+                  >
+                    {T('contacts.email.generateWith', { name: selectedName })}
+                  </button>
+                  <button className="modal-clear" onClick={closeModal}>
+                    {T('contacts.email.close')}
+                  </button>
                 </div>
               </>
             )}
 
             {modalState.step === 'loading' && (
-              <div className="email-modal-scroll">
+              <div className="email-modal-scroll" style={{ flex:1, minHeight:0, overflowY:'auto', padding:'0 20px 20px' }}>
                 <div className="email-loading">
                   <div className="spinner-sm" />
                   {T('contacts.email.loading.personalised', { name: modalState.stakeholder.name.split(' ')[0] })}
@@ -271,22 +269,20 @@ export default function KeyContacts({ company }) {
 
             {modalState.step === 'error' && (
               <>
-                <div className="email-modal-scroll">
+                <div className="email-modal-scroll" style={{ flex:1, minHeight:0, overflowY:'auto', padding:'0 20px 20px' }}>
                   <div style={{ color: 'var(--red)', padding: 12 }}>{modalState.error}</div>
                 </div>
-                <div className="email-modal-footer">
-                  <div className="modal-btns email-modal-btns">
-                    <button className="modal-save" onClick={regenerate}>{T('contacts.email.regenerate')}</button>
-                    <button className="modal-clear" onClick={goBackToSelector}>{T('contacts.email.changeSolution')}</button>
-                    <button className="modal-clear" onClick={closeModal}>{T('contacts.email.close')}</button>
-                  </div>
+                <div className="email-modal-footer" style={{ flexShrink:0, padding:'12px 20px 16px', borderTop:'1px solid var(--line)', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                  <button className="modal-save" onClick={regenerate}>{T('contacts.email.regenerate')}</button>
+                  <button className="modal-clear" onClick={goBackToSelector}>{T('contacts.email.changeSolution')}</button>
+                  <button className="modal-clear" onClick={closeModal}>{T('contacts.email.close')}</button>
                 </div>
               </>
             )}
 
             {modalState.step === 'ready' && modalState.email && (
               <>
-                <div className="email-modal-fixed-top">
+                <div style={{ flexShrink:0, padding:'12px 20px 0' }}>
                   {modalState.fromSample && (
                     <div className="email-sample-banner">
                       {modalState.sampleIsDefault
@@ -308,29 +304,27 @@ export default function KeyContacts({ company }) {
                     <strong>{modalState.email.subject}</strong>
                   </div>
                 </div>
-                <div className="email-modal-scroll">
+                <div style={{ flex:1, minHeight:0, overflowY:'auto', padding:'0 20px 20px' }}>
                   <div className="email-body-text">{modalState.email.body}</div>
                 </div>
-                <div className="email-modal-footer">
-                  <div className="modal-btns email-modal-btns">
-                    <button className="modal-save" onClick={copyDraft}>
-                      {T('contacts.email.copy')}
-                    </button>
-                    <button
-                      className="modal-clear"
-                      onClick={regenerate}
-                      disabled={!apiKey}
-                      title={!apiKey ? T('contacts.email.regenerate.nokey') : ''}
-                    >
-                      {T('contacts.email.regenerate')}
-                    </button>
-                    <button className="modal-clear" onClick={goBackToSelector}>
-                      {T('contacts.email.changeSolution')}
-                    </button>
-                    <button className="modal-clear" onClick={closeModal}>
-                      {T('contacts.email.close')}
-                    </button>
-                  </div>
+                <div style={{ flexShrink:0, padding:'12px 20px 16px', borderTop:'1px solid var(--line)', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                  <button className="modal-save" onClick={copyDraft}>
+                    {T('contacts.email.copy')}
+                  </button>
+                  <button
+                    className="modal-clear"
+                    onClick={regenerate}
+                    disabled={!apiKey}
+                    title={!apiKey ? T('contacts.email.regenerate.nokey') : ''}
+                  >
+                    {T('contacts.email.regenerate')}
+                  </button>
+                  <button className="modal-clear" onClick={goBackToSelector}>
+                    {T('contacts.email.changeSolution')}
+                  </button>
+                  <button className="modal-clear" onClick={closeModal}>
+                    {T('contacts.email.close')}
+                  </button>
                 </div>
               </>
             )}
